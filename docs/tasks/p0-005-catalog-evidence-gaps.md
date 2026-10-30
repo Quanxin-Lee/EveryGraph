@@ -10,7 +10,7 @@
 - Dependencies: P0-003 (accepted)
 - Created: 2026-10-30
 - Updated: 2026-10-31
-- Branch / worktree / base revision: current branch `main`; HEAD `77c3693`. The working tree contains the P0-005 appendix and this record, plus concurrent P1-003 changes (`docs/engineering/development.md`, `docs/engineering/sbom/generate_sbom.py`, `docs/tasks/p1-003-dependency-pins-sbom.md`, and untracked `docs/engineering/sbom/README.md`). P0-005 did not edit the board, another task's record or the P1-003 files, and did not create a branch or worktree.
+- Branch / worktree / base revision: current branch `main`. The P0-005 appendix and record were committed as `3d87dc4`; this record follow-up links that commit. Concurrent P1-003 changes remain dirty (`docs/engineering/development.md`, `docs/engineering/sbom/generate_sbom.py`, `docs/tasks/p1-003-dependency-pins-sbom.md`, and untracked `docs/engineering/sbom/README.md`). P0-005 did not edit the board, another task's record or the P1-003 files, and did not create a branch or worktree.
 - Authorization: the user requested execution on 2026-10-30 and continuation on the current branch on 2026-10-31, without creating another branch. Authorized scope: lawful public vendor documentation retrieval, citation-only rights assessment, the new evidence appendix and this record. The P0-003 evidence document contains a P0-005 follow-up section added before the exclusive-ownership rule; P0-005 has not modified that owner's file in this commit and reports the pre-rule append for the P0-003 owner's decision. The board is P0-000-owned and was not edited. No push or publication is authorized.
 
 ## Scope and acceptance
@@ -44,6 +44,7 @@ AC-1, AC-2, AC-4, AC-5 and AC-6 pass; AC-3 remains Partial. Under the recording 
 | 2026-10-31 | EveryGraph Research / main agent | Resolved all round-1 factual findings: corrected the 2026b source claim; completed AC-5 metadata for the 21 graph additions and the two control rows; removed the unregistered 2024 note; corrected link counts and source counts; updated current HEAD/validator state. The pre-rule P0-003 append was reported to its owner; P0-005 restored the file to HEAD and made no further edit to it. | This record; appendix |
 | 2026-10-31 | Independent review subagent / read-only reviewer | Round 2 rechecked the fixes; confirmed most were resolved; found that AC-3 remains Partial and the record's link/table counts were wrong; identified AC-1 wording and P0-003 remediation wording as should-fix; edited no file | Review round 2, below |
 | 2026-10-31 | EveryGraph Research / main agent | Applied round-2 factual fixes: record counts corrected to 12/12 links and 7 tables; AC-1 wording changed to narrowed/explained rather than reconciled; P0-003 pre-rule append documented as a cross-task item for its owner; P1-003 dirty set updated; appendix extended-label sentence corrected; exact Conclusion Charts name and Decision Tree uncertainty corrected. AC-3 retained Partial; no acceptance criterion was amended. | This record; appendix |
+| 2026-10-31 | EveryGraph Research / main agent | Committed the appendix and record as `3d87dc4` on `main`; excluded the P1-003 files; no push. The task remains `in_progress` because AC-3 is Partial. | Git log `3d87dc4` |
 
 No product code, build configuration, dependency lock, register row, validator rule or platform claim was produced. P0-000 committed the earlier P0-005 artifacts in `26f391e`; P0-005 did not edit the board or P1-003 files.
 
@@ -62,7 +63,7 @@ Working directory, OS, architecture and tool versions: `/Users/leo/Documents/Gen
 | 2026-10-31 | `python3 tools/validate_planning.py` | PASS: 339 original IDs; 428 traced requirements; 48 documents; input hashes, coverage, source anchors, classifications, local links, fences, English policy and matrix weights all pass | The validator does not check remote URL availability, Mermaid rendering, scientific semantics or application behavior |
 | 2026-10-31 | `shasum -a 256 origin-feature-inventory.md datagraph-feature-inventory.md docs/planning/feature-traceability.csv docs/planning/functional-scope.md tools/validate_planning.py` | Inventory hashes match the validator constants: `fd2213...d0ff8` and `f5e687...9ad62fb`. Register, scope and validator have no working-tree diff. | Confirms protected files, not the correctness of their contents |
 | 2026-10-31 | CSV/record consistency check over the 17-row board | 17 rows, 17 unique IDs; P0-005 row is present, `in_progress`, with a resolvable `P0-003` dependency, all listed requirement IDs present and the record path existing | Read-only check; the board is P0-000-owned and was not modified by P0-005 |
-| 2026-10-31 | `git branch --show-current`; `git rev-parse --short HEAD`; `git status --short` | Branch `main`; HEAD `77c3693`; no unmerged paths. Dirty files: P0-005 appendix/record and concurrent P1-003 files (`docs/engineering/development.md`, `docs/engineering/sbom/generate_sbom.py`, `docs/tasks/p1-003-dependency-pins-sbom.md`, untracked `docs/engineering/sbom/README.md`). The P0-003 document is unchanged relative to HEAD. | The P1-003 files are another owner's work and were not touched by P0-005 |
+| 2026-10-31 | `git branch --show-current`; `git rev-parse --short HEAD`; `git status --short` | Branch `main`; evidence commit `3d87dc4`; no unmerged paths. At the final check the working tree contained only concurrent P1-003 changes (`docs/engineering/development.md`, `docs/engineering/sbom/generate_sbom.py`, `docs/tasks/p1-003-dependency-pins-sbom.md`, untracked `docs/engineering/sbom/README.md`). The P0-003 document is unchanged relative to HEAD. | The P1-003 files are another owner's work and were not touched by P0-005 |
 | 2026-10-31 | `git show HEAD:docs/research/capability-catalog-decomposition.md` piped to `wc -l`, then inspection | 650 lines; section 15 present; the file is unchanged in the working tree relative to HEAD | The pre-rule P0-005 append remains in the P0-003 owner's file; its owner must decide whether to retain or remove it |
 
 Checks not run and their reasons:
@@ -81,8 +82,8 @@ Checks not run and their reasons:
 
 | File | Change | Current state |
 |---|---|---|
-| `docs/research/catalog-evidence-gaps-2026b.md` | Evidence appendix with the corrected 2026b source claim, source counts, normalization caveats, 21-entry metadata and AC-5 fields | Modified relative to `26f391e`; no broken links or table errors; to be committed on `main` |
-| `docs/tasks/p0-005-catalog-evidence-gaps.md` | This record, updated with both review rounds, current HEAD/validator state and the retained AC-3 Partial | Modified; to be committed on `main` |
+| `docs/research/catalog-evidence-gaps-2026b.md` | Evidence appendix with the corrected 2026b source claim, source counts, normalization caveats, 21-entry metadata and AC-5 fields | Committed in `3d87dc4`; clean |
+| `docs/tasks/p0-005-catalog-evidence-gaps.md` | This record, updated with both review rounds, current HEAD/validator state and the retained AC-3 Partial | Committed in `3d87dc4`; this follow-up adds the commit reference |
 
 The P0-003 document is unchanged relative to HEAD; the pre-rule section 15 append is reported to its owner. The board is P0-000-owned and unchanged. Concurrent P1-003 files are not P0-005 work and must be excluded from the P0-005 commit.
 
@@ -151,7 +152,7 @@ Acceptance decision, accepting role and date: **not accepted**. AC-3 remains Par
 
 ## Handoff and remaining work
 
-Last verified state: `main` at `77c3693`; no unmerged paths; the 17-row board is valid and P0-005 remains `in_progress`; `python3 tools/validate_planning.py` passes with 48 documents; the appendix and record carry both review rounds' fixes; the P0-003 document is unchanged at 650 lines with the pre-rule section 15 append, pending its owner's decision. The concurrent P1-003 changes are another owner's work and are excluded from P0-005.
+Last verified state: `main`; the P0-005 appendix and record are committed as `3d87dc4`; no unmerged paths; the 17-row board is valid and P0-005 remains `in_progress`; `python3 tools/validate_planning.py` passes with 48 documents; the appendix and record carry both review rounds' fixes; the P0-003 document is unchanged at 650 lines with the pre-rule section 15 append, pending its owner's decision. The concurrent P1-003 changes are another owner's work and are excluded from P0-005.
 
 Blockers and unblock actions:
 
