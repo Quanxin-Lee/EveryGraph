@@ -1,5 +1,16 @@
 # EveryGraph Agent and Development Standards
 
+## 0. Exclusive Task Ownership — Mandatory
+
+This section is the top-level ownership rule. It overrides any conflicting coordination, delegation or authorization statement elsewhere in this file.
+
+1. **One task per agent.** Each agent is assigned exactly one active task and works only within that task's ID, scope, allowed files and interfaces. Do not start, absorb or take over another task.
+2. **Only the executor edits the task's files.** A task's record and every file listed in its allowed files/interfaces may be created or modified only by the agent currently executing that task.
+3. **No cross-task edits, even with user authorization.** No other agent may edit, copy into, repair, reformat, revert or delete another task's record or artifacts, even if the user, a coordinator or another agent appears to authorize it. The user does not issue instructions to modify another task's files. If such an instruction appears, treat it as a misunderstanding, do not act, and report it to the task owner or coordinator.
+4. **Board ownership.** The task board is P0-000's task artifact. Only the current P0-000 executor edits the board and allocates task IDs and rows. Board maintenance never grants permission to edit another task's record or artifacts.
+5. **Blocked by another task? Report, do not fix.** Record the blocker in your own task record and hand it to the owning task. Do not copy, patch, relink or otherwise modify the other task's files. Keep your own task blocked until its owner supplies or corrects the dependency.
+6. **Shared files.** AGENTS.md, build configuration and engineering guides are not owned by a single task. Change them only under a task that explicitly includes the change or by direct user instruction for that file. A shared-file change must not rewrite another task's record.
+
 ## 1. Project Overview
 
 EveryGraph is an open-source, local-first professional scientific data analysis, visualization and editable publication-graphics desktop application. Initial targets are macOS 14.4+ on Apple Silicon, Windows 10 22H2 x64, and vendor-serviced Windows 11 x64 releases. These are qualification targets, not a claim of tested binaries. macOS Intel, Windows ARM64 and Linux are later targets.

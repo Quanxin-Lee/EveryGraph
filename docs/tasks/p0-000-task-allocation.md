@@ -11,7 +11,7 @@
 - Created: 2026-10-30
 - Updated: 2026-10-31
 - Branch / worktree / base revision: repository `main` at the consolidation tip `7e4bc8e`, based on `origin/main` at `747809e`. The task branches were merged as `fca707a` (fast-forward, P1-001), `c5ad88b` (P1-003) and `7b6646b` (P1-004), then deleted together with their checkpoint worktrees; no stash remains. The newest worktree records and research documents were integrated in `26f391e`. No push occurred.
-- Authorization: the user instructed on 2026-10-31 to consolidate all branches and task state, use the newest files, dispose of the branches, and then execute P0-000. The same instruction prohibits modifying other owners' work files or records. Local commits and branch/worktree/stash cleanup are authorized; push, remote publication and acceptance of another owner's task are not.
+- Authorization: the user instructed on 2026-10-31 to consolidate all branches and task state, use the newest files, dispose of the branches, and then execute P0-000. The same instruction prohibits modifying other owners' work files or records. The user also directly instructed that only the task executor may modify its own task files, that no other agent may do so even with user authorization, and that each agent is responsible for only one task; that rule is now section 0 of AGENTS.md. Local commits and branch/worktree/stash cleanup are authorized; push, remote publication and acceptance of another owner's task are not.
 
 ## Scope and acceptance
 
@@ -19,7 +19,7 @@ Objective: provide one authoritative allocation point for new task IDs and task-
 
 P0-000 is a standing coordination task. It may be executed by different agents over time. Each executor must read the current board, this record and the target task record before allocating anything, and must record its own agent/session label in the Contributions table.
 
-Allowed files and interfaces: this record and the task-board rows P0-000 allocates or maintains. P0-000 may add a board row for a new task and update its own P0-000 row. Each new task's record is written and maintained by its assigned owner, not by P0-000.
+Allowed files and interfaces: this record and the task-board rows P0-000 allocates or maintains. P0-000 may add a board row for a new task and update its own P0-000 row. It may also update the top-level exclusive task-ownership text in AGENTS.md when the user directly requests that governance change; that is a shared-file edit, not a cross-task edit. Each new task's record is written and maintained by its assigned owner, not by P0-000.
 
 Out of scope: product implementation, executing another task, accepting another owner's task, editing another owner's task record, dependency installation, Windows/CI execution, signing, push or publication.
 
@@ -41,6 +41,7 @@ Out of scope: product implementation, executing another task, accepting another 
 | 2026-10-30 | EveryGraph Verification / committer | Committed this record and P0-006 as `8f403e4`, after AGENTS.md `54a8a7b`; did not commit the shared board or other owners' files | Git log |
 | 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Read the live board and all task records; inventoried three branches, two checkpoint worktrees and two stashes; merged P1-001, P1-003 and P1-004 into `main`; integrated the newest worktree records and research documents; deleted the merged branches, worktrees and stashes; reran the validator, board checks and five macOS presets; updated the P0-000 row and this record | Commits `fca707a`, `c5ad88b`, `7b6646b`, `26f391e`, `7e4bc8e`; [board](../planning/task-board.csv); this record |
 | 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Ownership correction: reverted unauthorized edits to the P1-003/P1-004 records and restored the P1-004 build and guide files to their owner versions before P0-000 execution | Revert `7e4bc8e`; file hashes match the branch tips |
+| 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Added the exclusive task-ownership rule as section 0 of AGENTS.md at the user's direct request; no other task record or artifact was edited | [AGENTS.md](../../AGENTS.md); this record |
 
 The P0-006 batch (P0-004, P0-005, P1-005 to P1-010) was allocated before P0-000 was established. It is recognized as the initial batch. Future allocations, including new P1/P2/P3 task IDs, must go through P0-000.
 
@@ -69,7 +70,7 @@ Reviewed files / revision: the task board, this record, the three branch tips, t
 
 Findings, resolutions and recheck evidence:
 
-- P1-004 remains `blocked` in its owner's record even though its AC-7 external documentation blocker was removed by this consolidation: the research appendix and P0-006 record are now committed, `planning_validation` passes and all five macOS presets pass. Updating that record and accepting the task belong to its owner.
+- P1-004 remains `blocked` in its owner's record even though its AC-7 external documentation blocker was removed by this consolidation: the research appendix and P0-006 record are now committed, `planning_validation` passes and all five macOS presets pass. P0-000 did not copy the research file into P1-004's branch and did not edit its record; the file is on `main`, and the P1-004 executor must rerun and update its own record.
 - P1-003 remains `in_progress`; its shared-worktree/stash blocker is resolved by this consolidation, but its record still describes the earlier conflict. Its dynamic graph and SBOM work remain open.
 - P0-005 remains `in_progress`; its worktree-conflict and commit blockers are resolved and the validator now passes, but its record still describes the earlier checkpoint. Its evidence review remains open.
 - The P1-004 branch's `CMakeLists.txt` lacks the `EVERYGRAPH_ENABLE_QT_PROBE` option declaration present in P1-001. The Qt presets still pass because they set the cache variable, but the default option is undefined outside the presets. The P1-004 owner should restore it; P0-000 did not edit the file.
@@ -106,3 +107,4 @@ Files or commands needed to resume: [task board](../planning/task-board.csv), [r
 | 2026-10-30 | Committed this record | Committed as `8f403e4`; the shared board and other owners' records remained uncommitted |
 | 2026-10-31 | Repository and branch consolidation executed; no status change | User directed consolidation of all branches and task state, use of the newest files, and P0-000 execution; push remains unauthorized |
 | 2026-10-31 | Ownership constraint recorded | User prohibited modifying other owners' work files; the brief unauthorized edits were reverted and P0-000 edited only its own record and row |
+| 2026-10-31 | Top-level ownership rule added to AGENTS.md; no task status change | Direct user instruction; the rule makes exclusive task ownership mandatory and prohibits cross-task edits even with user authorization |
