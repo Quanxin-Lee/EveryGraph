@@ -10,7 +10,7 @@
 - Dependencies: P0-001 (accepted)
 - Created: 2026-10-30
 - Updated: 2026-10-31
-- Branch / worktree / base revision: isolated checkpoint worktree `out/p1-004-checkpoint` on local branch `feat/p1-004-command-kernel`, fast-forwarded from `41b6cf8` to `fca707a` (the latest governance commit, including P0-000 and P0-006 records) before the P1-004 commit. The shared checkout is on `main`; its prior stash-pop conflicts were resolved to the stashed side and the stash entry was retained. Nothing was pushed.
+- Branch / worktree / base revision: isolated checkpoint worktree `out/p1-004-checkpoint` on local branch `feat/p1-004-command-kernel`, fast-forwarded from `41b6cf8` to `fca707a` (the latest governance commit, including P0-000 and P0-006 records) before the P1-004 commit. The checkpoint implementation commit is `969842a`; this record link is a follow-up documentation commit. The shared checkout is on `main`; its prior stash-pop conflicts were resolved to the stashed side and the stash entry was retained. Nothing was pushed.
 - Authorization: implementation was authorized by the user on 2026-10-30 within this task's scope. The user's 2026-10-31 pause instruction authorizes this local checkpoint commit and record update. No push, network access, package installation, Qt linking by the kernel modules, product data or external publication is authorized.
 
 ## Scope and acceptance
@@ -60,7 +60,8 @@ Working directory, OS, architecture and relevant tool versions: isolated checkpo
 | 2026-10-30 | Shared worktree before branch isolation: debug/release/sanitize | Each 4/5; only `planning_validation` failed on the P1-003 record link to P0-006; kernel 26/26; Qt presets 5/6 with kernel and `qt_probe_smoke` passing | Branch mismatch and stash-pop artifacts; resolved to the stashed side and preserved the stash |
 | 2026-10-30 | `otool -L out/build/macos-debug/everygraph_command_kernel_tests`; `file` on the same binary | Only `libc++.1.dylib` and `libSystem.B.dylib`; Mach-O 64-bit arm64 | No dynamic Qt dependency |
 | 2026-10-30 | Scratch negative boundary test with `#include <QString>` | Failed as intended and reported the injected file and line | Scratch tree removed; proves the scan's negative path |
-| 2026-10-31 | `git worktree add out/p1-004-checkpoint feat/p1-004-command-kernel`; `git merge --ff-only fca707a` | Isolated worktree created and fast-forwarded to the governance baseline | No push; shared checkout left on `main` |
+| 2026-10-31 | `git worktree add out/p1-004-checkpoint feat/p1-004-command-kernel`; `git merge --ff-only fca707a`; `git commit` | Isolated worktree created and fast-forwarded to the governance baseline; checkpoint commit `969842a` created with 20 P1-004 files and no push | Local commit only; the shared checkout remains on `main` with its other uncommitted work |
+| 2026-10-31 | `git show --stat 969842a` | 20 files changed, 2,710 insertions, 38 deletions; no vcpkg files, build outputs or secrets | Implementation, tests, guide, board and task record only |
 
 Checks not run and their reasons: Windows execution, CI, TSan, ASan/UBSan combined with the Qt probe, a clean Qt-preset rerun in the isolated worktree, thread/race tests (single-threaded executor), long-running cancellation after commit, persistence, permission/capability grants, idempotency/retry storage, external effects, GoogleTest fixtures/death tests and human review. AC-7 is the only unmet acceptance criterion.
 
@@ -85,7 +86,7 @@ Acceptance decision, accepting role and date: not accepted. AC-1 through AC-6 an
 
 ## Handoff and remaining work
 
-Last verified state: the P1-004 kernel is implemented with 26 passing cases, a no-Qt boundary check, no compiler warnings and no sanitizer diagnostics. All P1-004 CTest entries pass in Debug, Release and ASan/UBSan. The isolated checkpoint worktree is on `feat/p1-004-command-kernel` at `fca707a` plus the local P1-004 commit; the shared checkout is on `main`, its four stash-pop conflicts are resolved to the stashed side, and the `stash@{0}` entry remains. Nothing is pushed.
+Last verified state: the P1-004 kernel is implemented with 26 passing cases, a no-Qt boundary check, no compiler warnings and no sanitizer diagnostics. All P1-004 CTest entries pass in Debug, Release and ASan/UBSan. The isolated checkpoint worktree is on `feat/p1-004-command-kernel` at `fca707a` plus checkpoint commit `969842a`; the shared checkout is on `main`, its four stash-pop conflicts are resolved to the stashed side, and the `stash@{0}` entry remains. Nothing is pushed.
 
 Blockers and unblock actions:
 
@@ -104,3 +105,4 @@ Files or commands needed to resume: [CMakeLists.txt](../../CMakeLists.txt), [gat
 | 2026-10-30 | planned -> in_progress | User authorized implementation, testing, review and necessary fixes within the task scope; branch created locally |
 | 2026-10-30 | in_progress -> in_review | Foundation/application prototype, tests, boundary check and documentation completed; independent review requested |
 | 2026-10-31 | in_review -> blocked | Independent review findings were resolved and rechecked, but AC-7 cannot pass while committed P0 records link to the absent research artifact; the task remains blocked pending the owning documentation repair |
+| 2026-10-31 | Blocked checkpoint committed | User pause instruction authorized a local checkpoint commit; `969842a` contains the P1-004 implementation, tests, guide, board and record; no push |
