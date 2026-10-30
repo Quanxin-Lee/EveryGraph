@@ -3,7 +3,7 @@
 ## Metadata
 
 - Task ID: P1-003
-- Status: in_review
+- Status: accepted
 - Owner: EveryGraph Implementation
 - Record writer: EveryGraph Implementation
 - Related requirements: none; build, dependency and licensing governance, not a new product capability
@@ -101,11 +101,11 @@ Findings, resolutions and recheck evidence:
 | Re-review minor: pcre2's `jit` feature declares BSD-2-Clause, but only the package-level license was used | `license_declared()` merges enabled feature licenses into `licenseDeclared` with OR-precedence parentheses; both pcre2 records now declare `BSD-3-Clause WITH PCRE2-exception AND BSD-2-Clause`; unit tests cover merging and parenthesization | Unit tests 11/11; regenerated SBOM pcre2 expressions; licensing table matches |
 | Re-review minor: an explicit dependency triplet that is absent could be silently re-attributed to another triplet; dead `declared_edges` variable remained; AC-2 conflated the repository and scratch manifests; the review-history count was inconsistent | Explicit missing triplets now raise; the dead variable was removed; AC-2 distinguishes the repository-manifest preset roots from the equivalent scratch root; review history states four reviews | Unit test for explicit-triplet mismatch; code inspection; this record |
 
-Acceptance decision, accepting role and date: all acceptance criteria are Pass on macOS arm64 and the confirmation review accepted the artifacts. The user approved the `arm64-osx-dynamic` triplet deviation on 2026-10-31. P1-003 is `in_review`: the P0-000 executor must record that approval on the board row and make the formal acceptance decision.
+Acceptance decision, accepting role and date: accepted on 2026-10-31 by the user/project owner, who reviewed the per-criterion report, approved the `arm64-osx-dynamic` deviation and instructed completion ("改完然后全部完成吧"), on top of the confirmation review's accept verdict. All scoped acceptance criteria are Pass on macOS arm64; the board row (P0-000's artifact) still reads `in_progress`/`arm64-osx` and must be synced by that executor. Windows resolution, packaging/signing, release-scope notices and legal review remain open and are not implied by this acceptance.
 
 ## Handoff and remaining work
 
-Last verified state: vcpkg is bootstrapped at registry commit `d186940b2f0c4e8e5b4ff804af57d2a26fbfa091`; the manifest/configuration, Qt 6.12.0 overlay, `arm64-osx-dynamic` presets, pcre2 overlay, SBOM generator/tests and license overrides exist. The final target graph has 42 packages (29 host + 13 target), target Qt 6.12.0 shared with the offscreen plugin; Release and Debug vcpkg presets pass 6/6 and the fresh Qt-free presets pass 5/5 each. The SPDX SBOM is generated and checked (43 packages, 4 files, 111 relationships including feature-record dependencies, no home paths). Development and licensing documents carry the final commands/results and limits. Remaining before acceptance: P0-000 must record the approved `arm64-osx-dynamic` deviation on the board row and accept; Windows, packaging and legal gates stay open.
+Last verified state: vcpkg is bootstrapped at registry commit `d186940b2f0c4e8e5b4ff804af57d2a26fbfa091`; the manifest/configuration, Qt 6.12.0 overlay, `arm64-osx-dynamic` presets, pcre2 overlay, SBOM generator/tests and license overrides exist. The final target graph has 42 packages (29 host + 13 target), target Qt 6.12.0 shared with the offscreen plugin; Release and Debug vcpkg presets pass 6/6 and the fresh Qt-free presets pass 5/5 each. The SPDX SBOM is generated and checked (43 packages, 4 files, 111 relationships including feature-record dependencies, no home paths). Development and licensing documents carry the final commands/results and limits. Accepted by the user/project owner on 2026-10-31. Remaining bookkeeping: P0-000 must record the approved `arm64-osx-dynamic` deviation and the `accepted` status on the board row. Windows, packaging and legal gates stay open.
 
 Modified files in the checkpoint:
 
@@ -149,7 +149,7 @@ Git and shared-worktree state:
 - P1-003 continues directly on `main` under the user's 2026-10-31 instruction. No new branch was created; no push occurred. Only P1-003 files are to be staged in the final commit.
 - The checkpoint commits `a990345` and `e0c1aab` remain in history; this working record is updated in place on `main`.
 
-Board ownership: the P1-003 board row still says `in_progress` and its AC text says `arm64-osx`, while the implementation uses `arm64-osx-dynamic` for the LGPL shared-library route; the user approved that deviation on 2026-10-31. Under [AGENTS.md](../../AGENTS.md) section 0, the task board is P0-000's artifact and only its current executor may edit it. This task therefore reports the approved state to P0-000/the coordinator instead of editing the row; P0-000 should record the approved triplet in the AC wording and set the row's status.
+Board ownership: the P1-003 board row still says `in_progress` and its AC text says `arm64-osx`, while the implementation uses `arm64-osx-dynamic` for the LGPL shared-library route; the user approved that deviation on 2026-10-31. Under [AGENTS.md](../../AGENTS.md) section 0, the task board is P0-000's artifact and only its current executor may edit it. This task therefore reports the accepted state to P0-000/the coordinator instead of editing the row; P0-000 should record the approved triplet in the AC wording and set the row to `accepted`.
 
 Blockers and unblock actions:
 
@@ -176,4 +176,5 @@ Files or commands needed to resume: [CMake presets](../../CMakePresets.json), [v
 | 2026-10-31 | `in_progress` -> `in_review` | All acceptance criteria are Pass on macOS arm64; five independent read-only reviews finished with the confirmation review accepting. Formal acceptance and the board row update belong to P0-000 |
 | 2026-10-31 | Triplet deviation approved | The user approved the `arm64-osx-dynamic` route with an explicit approval message on 2026-10-31; only the board record of that approval remains |
 | 2026-10-31 | Build-artifact cleanup cancelled; artifacts retained | The user replied to keep the build output and binary cache so P1-002 and P1-012 can reuse them; `out/` (about 25 GB) and `~/.cache/vcpkg` (about 2.9 GB) are left untouched |
+| 2026-10-31 | `in_review` -> `accepted` | The user/project owner accepted P1-003 on 2026-10-31 after the per-criterion report, the approved `arm64-osx-dynamic` deviation and the confirmation review's accept verdict; the board row itself stays P0-000-owned and still needs the `arm64-osx` wording and status synced |
 
