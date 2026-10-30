@@ -6,8 +6,8 @@
 
 | Gap | Finding | Status | Residual unknown |
 |---|---|---|---|
-| Fitting functions | The public Origin Help appendix 32.1 states that all available built-in curve-fitting functions are listed there. It contains 239 numbered function pages in 22 categories; its category tables contain 231 unique names; per-function pages carry equations, parameters, bounds and categories. Vendor count statements remain inconsistent: more than 170, close to 200, more than 200 and 200+. | Membership gap closed at the numbered-page level; count conflict narrowed but not vendor-reconciled; 2026b release pin open | Ten numbered pages are absent from the category tables; the Origin versus OriginPro function split is unpublished; no versioned 2026b help artifact was found |
-| Peak functions | The 1D Peak Analyzer table lists 28 named functions: 7 bold Pro-only entries and 21 shared with curve fitting. The surface-fitting table lists 22 names. Over 25 is the 1D Peak Analyzer scope; over 20 surface functions is the surface scope. | Membership and the 25-versus-20 scope conflict closed; surface 21-versus-22 and 2026b pin open | The OriginPro guide says 21 surface models; no surface-peak-only subset is published; no versioned 2026b help artifact |
+| Fitting functions | The public Origin Help appendix 32.1 states that all available built-in curve-fitting functions are listed there. It contains 239 numbered function pages in 22 categories; its category tables contain 231 unique names; per-function pages carry equations, parameters, bounds and categories. Vendor count statements remain inconsistent: more than 170, close to 200, more than 200 and 200+. | Page/name enumeration resolved; completeness not claimed; count conflict narrowed but not vendor-reconciled; 2026b release pin open | Ten numbered pages are absent from the category tables; the Origin versus OriginPro function split is unpublished; no versioned 2026b help artifact was found |
+| Peak functions | The 1D Peak Analyzer table lists 28 named functions: 7 bold Pro-only entries and 21 shared with curve fitting. The surface-fitting table lists 22 names. Over 25 is the 1D Peak Analyzer scope; over 20 surface functions is the surface scope. | Name evidence and the 25-versus-20 scope conflict resolved; completeness not claimed; surface 21-versus-22 and 2026b pin open | The OriginPro guide says 21 surface models; no surface-peak-only subset is published; no versioned 2026b help artifact |
 | Graph types | The P0-003 73 named rows are exactly the Graph Gallery's 68 specific filters plus five examples. They are not a partial inventory of the 100+ Plot-menu types. The current product page enumerates 111 graph labels, including duplicate pairs and two explicitly App-labelled tools. The 100+ claim is a built-in-plus-extended and Plot-menu aggregate. | The prior 27-entry-gap inference is withdrawn; the claim is corrected; App classification is partial | No unique counting rule; most labels are unlabelled for App status; the 2026b attribution of Individual Value Chart is unverified |
 | Graph export formats | The export help sentence asserts 17 image formats but its table lists 16 distinct formats. The current publishing guide lists 15 because Adobe Illustrator is hidden. The X-Function text says 14 while its option list contains 16 values. No checked official page names a seventeenth graph image format. | The seventeenth-format gap is closed as a vendor documentation error; the claim is corrected to 16 documented and 15 currently listed | Current 64-bit visible set is 13 or 14, not runtime-verified; the register still says 17 until a separately authorized register revision |
 | Catalog roll-up | The six catalog gates and EG-ADD-015 remain open. No vendor count is an acceptance threshold and no parity claim is available. | Open | Every gate requires its own fixtures, version matrix and review |
@@ -26,7 +26,7 @@ The four gaps are resolved in different degrees: fitting and peak membership are
 
 ### 2.2 Retrieval and counting method
 
-All sources are public vendor HTML pages retrieved with an ordinary HTTP client on 2026-10-30 UTC. The documentation site returned HTTP 200, server `GitHub.com`, `Last-Modified: Mon, 26 Oct 2026 09:00:17 GMT`, and response `Date: Fri, 30 Oct 2026 16:03:20 GMT` for the catalog pages. The product and gallery pages returned HTTP 200 from `Microsoft-IIS/10.0` with response dates in the same minute. The local date at verification was 2026-10-31.
+All sources are public vendor HTML pages retrieved with an ordinary HTTP client on 2026-10-30 UTC. The source register has 27 entries but 26 unique URLs because F10 and G5 are the same 2026b page. The documentation site returned HTTP 200, server `GitHub.com`, `Last-Modified: Mon, 26 Oct 2026` (08:55-09:00 UTC, varying by page), and response `Date: Fri, 30 Oct 2026 16:03:20 GMT` for the catalog pages. The product and gallery pages returned HTTP 200 from `Microsoft-IIS/10.0` with response dates in the same minute. The local date at verification was 2026-10-31.
 
 Counts in this appendix are extraction results, not vendor-published totals. The method was:
 
@@ -68,7 +68,7 @@ All rows were retrieved on 2026-10-30 UTC, with HTTP 200 unless stated. `Live he
 | F7 | [32.1.125 Lorentz](https://docs.originlab.com/origin-help/lorentz-fitfunc/) | Live help; no release banner | Equation, four parameters and multiple category memberships | One sampled function |
 | F8 | [32.3.8 Gauss2D](https://docs.originlab.com/origin-help/gauss2d-fitfunc/) | Live help; no release banner | Surface equation and six parameters; supports the 2D Gaussian example | One sampled surface function |
 | F9 | [OriginPro user guide](https://docs.originlab.com/user-guide/originpro/) | Live guide; no release banner | 21 built-in surface fitting models including Gauss2D | Conflicts with the 22-entry surface table in F4/P4; not a per-function edition split |
-| F10 | [Origin 2026b Feature Highlights](https://www.originlab.com/2026b) | Release 2026b page | 2026b release identity; Fit ODE and Fit Convolution apps; updated Fitting Function Library | No built-in function count and no catalog change list |
+| F10 | [Origin 2026b Feature Highlights](https://www.originlab.com/2026b) | Release 2026b page | 2026b release identity; no fitting-function count or built-in catalog change listed in the highlights | Highlights are not exhaustive; the page does not document a change to the 32.1 library |
 | F11 | [User Defined Fitting Function tutorial](https://docs.originlab.com/tutorials/userdef-fitfunc/) | Live tutorial; no release banner | The phrase 200+ built-in fitting functions | Tutorial copy; no list or count basis |
 | P2 | [Peak Analysis](https://www.originlab.com/index.aspx?go=Products/Origin/DataAnalysis/PeakAnalysis) | Live product page; no release banner | Surface Peak Fitting PRO uses over 20 built-in functions | No names or surface-peak-only subset |
 | P3 | [32.4 Peak Analyzer Functions](https://docs.originlab.com/origin-help/peak-analyzer-functions/) | Live help appendix 32.4; Last-Modified 2026-10-26 | 28 named 1D Peak Analyzer functions; 7 bold Pro-only entries; 21 shared names | No vendor total; no surface-peak subset; live and unversioned |
@@ -126,11 +126,11 @@ The current help, tutorial and appendix are mutually compatible at a 200-plus le
 
 The 32.1 appendix carries no per-function Pro marker. Pro-only status is documented at the workflow and feature level, for example surface fitting, implicit fitting, compare models and the Peak Analyzer Fit Peaks page; it is not a per-function edition column. A per-function Origin versus OriginPro split remains unknown.
 
-The appendix is live help with a 2026-10-26 build and no release banner. The 2026b feature page names Fit ODE and Fit Convolution apps and an updated Fitting Function Library, not a change to the built-in 32.1 library. The exact binding of the live appendix to an installed 2026b build is an inference. This is the explicit version-pin gap retained under AC-1.
+The appendix is live help with a 2026-10-26 build and no release banner. The 2026b feature highlights contain no fitting-function count and no documented change to the built-in 32.1 library. The exact binding of the live appendix to an installed 2026b build is an inference. This is the explicit version-pin gap retained under AC-1.
 
 ### 4.5 Impact on the fitting gap
 
-The "no public catalog exists" premise is closed: a lawful public appendix enumerates the library and its per-function equations and parameters. The full catalog is not copied into this repository; the vendor pages remain the reference. The membership gap is closed at the function-page level. The count-basis conflict, the 10 uncategorized pages, the per-function edition split and the 2026b release pin remain open.
+The "no public catalog exists" premise is resolved: a lawful public appendix enumerates the library and its per-function equations and parameters. The full catalog is not copied into this repository; the vendor pages remain the reference. The membership evidence is resolved at the function-page level; completeness of the 239-page list is not claimed. The count-basis conflict, the 10 uncategorized pages, the per-function edition split and the 2026b release pin remain open.
 
 ## 5. Peak function catalog: ORG-PEAK-005
 
@@ -163,7 +163,7 @@ The 25-plus and 20-plus claims describe different scopes: 1D Peak Analyzer fitti
 
 ### 5.4 Version identity and impact
 
-P3 and P4 are live help appendices with 2026-10-26 builds and no release banner. The exact 2026b binding is an inference. The peak membership gap is closed at the name and parameter level; the surface count, the surface-peak subset and the version pin remain open.
+P3 and P4 are live help appendices with 2026-10-26 builds and no release banner. The exact 2026b binding is an inference. The peak name evidence is resolved; completeness is not claimed. The surface count, the surface-peak subset and the version pin remain open.
 
 ## 6. Graph type catalog: ORG-GRAPH-001
 
@@ -174,11 +174,11 @@ The [P0-003 evidence](capability-catalog-decomposition.md) section 5 records 73 
 - the Graph Gallery's 68 specific graph-type filters; plus
 - five additional examples: Cause and Effect diagram, Frequency Chart, Stem-and-Leaf, Individual Value Chart and Treemap.
 
-The gallery select has 73 options in total: three navigation entries (`Overview`, `Search`, `All`), 68 specific filters, and two aggregate labels (`Analysis`, `Advanced Statistical Graphs`). The set comparison of the 68 specific filters against the 73 P0-003 names produced 68 matches; the five examples are the only additions. The 73 rows are a gallery taxonomy, not 73 entries from a 100-plus Plot-menu inventory. The at-least-27 gap inference is therefore withdrawn. The umbrella claim still requires its own evidence; the prior comparison does not establish a 27-type gap.
+The gallery select has 73 options in total: three navigation entries (`Overview`, `Search`, `All`), 68 specific filters, and two aggregate labels (`Analysis`, `Advanced Statistical Graphs`). The set comparison of the 68 specific filters against the 73 P0-003 names produced 68 matches after normalizing the ampersand in `Pie & Doughnut Chart` to `and`; exact-string comparison produced 67 of 68. The five examples are the only additions. The 73 rows are a gallery taxonomy, not 73 entries from a 100-plus Plot-menu inventory. The at-least-27 gap inference is therefore withdrawn. The umbrella claim still requires its own evidence; the prior comparison does not establish a 27-type gap.
 
 ### 6.2 The current product enumeration
 
-The product page has 111 list items under the `Graph Types` heading. Two duplicate pairs are visible: `Treemap Plot` and `Treemap`; `Heat Map with Dendrogram` and `Heatmap with Dendrogram`. Two entries are explicitly App tools in the Help page: `Correlation Plot` and `Paired Comparison Plot`. After removing the two duplicate pairs and the two explicit App tools, 107 labels remain. That arithmetic is an extraction aid, not a vendor counting rule: many entries are compound labels covering several variants, for example "Column & Bar Charts: Basic, Stacked, Grouped", "Scatter Plot (with X,Y Error Bar, Column Scatter, Drop Lines, Color Map, Size Map)" and "3D Symbol/Trajectory/Line/Vector Plot".
+The product page has 111 list items under the `Graph Types` heading. Two duplicate pairs are visible: `Treemap Plot` and `Treemap`; `Heat Map with Dendrogram` and `Heatmap with Dendrogram`. Two entries are explicitly App tools in the Help page: `Correlation Plot` and `Paired Comparison Plot`. Removing one label from each duplicate pair and the two explicit App tools leaves 107 labels (111 minus four). That arithmetic is an extraction aid, not a vendor counting rule: many entries are compound labels covering several variants, for example "Column & Bar Charts: Basic, Stacked, Grouped", "Scatter Plot (with X,Y Error Bar, Column Scatter, Drop Lines, Color Map, Size Map)" and "3D Symbol/Trajectory/Line/Vector Plot".
 
 The product page separately lists 65 extended templates, with `Double-Y Stacked Columns` appearing twice, so 64 unique extended-template labels. It states: "In addition to built-in graph types, Origin also provides extended templates which can be found and installed from the OriginLab Website using the Template Center." Extended templates are not the same class as built-in Plot-menu types.
 
@@ -193,7 +193,7 @@ The vendor uses four non-equivalent formulations:
 | Built-in templates | G3 | "With Origin, you can create over 100 graph types using Origin's built-in graph templates." |
 | Plot menu access | G3 | "All graph types are accessible from the Plot menu." |
 
-The Help page's Plot-menu tables include App tools: it labels `Correlation Plot` and `Paired Comparison Plot` as APP tools and states that the app must be installed. The product page's `Graph Types` list includes those same two names. The product page's 111 labels therefore mix built-in, extended and App-dependent entries. No page states whether the count includes Apps, extended templates, style variants, compound labels, report-sheet charts or dialog commands. The 100-plus claim is credible as a label or variant count; it is not a certified count of 100-plus distinct built-in graph types.
+The Help page's Plot-menu tables include App tools: it labels `Correlation Plot` and `Paired Comparison Plot` as APP tools and states that the app must be installed. The product page's `Graph Types` list includes those same two names. The product page's 111 labels therefore mix built-in-looking and explicitly App-labeled entries; the 65 extended templates are a separate list. No page states whether the count includes Apps, extended templates, style variants, compound labels, report-sheet charts or dialog commands. The 100-plus claim is credible as a label or variant count; it is not a certified count of 100-plus distinct built-in graph types.
 
 The arithmetic is consistent with this reading. The 73-row gallery taxonomy plus 21 clear additions is about 94 at a family level, below 100; reaching 100 requires counting variants, compound labels or extended templates. That is an inference from the observed lists, not a vendor statement. The claim should not be used as a distinct-built-in-type threshold.
 
@@ -201,29 +201,29 @@ The arithmetic is consistent with this reading. The 73-row gallery taxonomy plus
 
 The following current product-page or release-note names have no named row in the P0-003 73-row list. This is a source-backed list, not a complete membership list:
 
-| Named type | Evidence | Classification note |
-|---|---|---|
-| CDF Plot | F1; G6 uses `Normal CDF Plot` for 2025b | Built-in-looking; no explicit App label |
-| Multi-Vari Chart | F1 | Built-in-looking |
-| Forest Plot | F1 | Built-in-looking |
-| Poincare Plot | F1 | Built-in-looking |
-| Voronoi Diagram | F1 | Built-in-looking |
-| Paired Comparison Plot | F1; G3 | Explicit App tool in Help |
-| Tile Grid Map Plot | F1; 2024 release note | Built-in-looking; added in 2024 |
-| Means Plot | F1 | Built-in-looking |
-| Venn Diagram | F1 | Built-in-looking |
-| Andrews Plot | F1 | Built-in-looking |
-| Manhattan Plot for GWAS | F1 | Built-in-looking |
-| Soil and Rocks Classification Diagrams | F1 | Built-in-looking |
-| Interaction Plot | F1; G6 | 2025b addition; App status unstated |
-| Main Effects Plot | F1; G6 | 2025b addition; App status unstated |
-| Run Chart | F1; G6 | 2025b addition; App status unstated |
-| Symmetry Plot | F1; G6 | 2025b addition; App status unstated |
-| Decision Tree | G4 | 2026 graph type and 2026 App; App delivery is an inference |
-| Grouped Histogram | G4 | 2026 addition |
-| Grouped Pareto Chart | G4 | 2026 addition |
-| Grouped Scatter Plot | G4 | 2026 addition |
-| Conclusion Charts | G4 | 2026 addition in t-test report sheets |
+| Named type | Evidence, version and retrieval | Rights | Uncertainty | Classification note |
+|---|---|---|---|---|
+| CDF Plot | F1 live product page, 2026b navigation; retrieved 2026-10-30. G6 uses `Normal CDF Plot` for 2025b. | `R-OWN` | `U2` | Built-in-looking; no explicit App label |
+| Multi-Vari Chart | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Forest Plot | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Poincare Plot | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Voronoi Diagram | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Paired Comparison Plot | F1 live product page, 2026b navigation; G3 live Help build 2026-10-26; retrieved 2026-10-30 | `R-OWN` | `U4` | Explicit App tool in Help; App dependency gated |
+| Tile Grid Map Plot | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Means Plot | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Venn Diagram | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Andrews Plot | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Manhattan Plot for GWAS | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Soil and Rocks Classification Diagrams | F1 live product page, 2026b navigation; retrieved 2026-10-30 | `R-OWN` | `U2` | Built-in-looking |
+| Interaction Plot | F1 live product page, 2026b navigation; G6 2025b release, 19 June 2025; retrieved 2026-10-30 | `R-OWN` | `U2` | 2025b addition; App status unstated |
+| Main Effects Plot | F1 live product page, 2026b navigation; G6 2025b release, 19 June 2025; retrieved 2026-10-30 | `R-OWN` | `U2` | 2025b addition; App status unstated |
+| Run Chart | F1 live product page, 2026b navigation; G6 2025b release, 19 June 2025; retrieved 2026-10-30 | `R-OWN` | `U2` | 2025b addition; App status unstated |
+| Symmetry Plot | F1 live product page, 2026b navigation; G6 2025b release, 19 June 2025; retrieved 2026-10-30 | `R-OWN` | `U2` | 2025b addition; App status unstated |
+| Decision Tree | G4 2026 release page; retrieved 2026-10-30 | `R-OWN` | `U2` | 2026 graph type and 2026 App; App delivery is an inference |
+| Grouped Histogram | G4 2026 release page; retrieved 2026-10-30 | `R-OWN` | `U2` | 2026 addition |
+| Grouped Pareto Chart | G4 2026 release page; retrieved 2026-10-30 | `R-OWN` | `U2` | 2026 addition |
+| Grouped Scatter Plot | G4 2026 release page; retrieved 2026-10-30 | `R-OWN` | `U2` | 2026 addition |
+| Conclusion Charts in t-test Report Sheets | G4 2026 release page; retrieved 2026-10-30 | `R-OWN` | `U2` | 2026 addition in t-test report sheets |
 
 The list is not exhaustive. It shows that the 73 rows are not a near-complete enumeration of the product page. It does not prove that every listed name is a distinct built-in type; several are variants, App tools or report outputs.
 
@@ -231,10 +231,10 @@ The list is not exhaustive. It shows that the 73 rows are not a near-complete en
 
 | Evidence class | Examples | Status |
 |---|---|---|
-| Explicit App tool in Help | `Correlation Plot`, `Paired Comparison Plot` | Documented |
-| Explicit App in Help | `Graph Maker App` is pre-installed and launched from the Plot menu | Documented |
-| Co-listed as graph type and App | `Decision Tree`, `Stem and Leaf Plot` in the 2026 release page | Strong inference of App delivery; not an explicit per-type statement |
-| Unlabelled product entries | Most of the 111 labels | Unknown |
+| Explicit App tool in Help | `Correlation Plot`, `Paired Comparison Plot` | Documented; 2 of the 111 product labels |
+| Explicit App in Help | `Graph Maker App` is pre-installed and launched from the Plot menu | Documented; not one of the 111 labels |
+| Co-listed as graph type and App | `Decision Tree`, `Stem and Leaf Plot` in the 2026 release page | 2 named 2026 examples; strong inference of App delivery, not an explicit per-type statement |
+| Unlabelled product entries | The remaining product labels, including the 107 after duplicate and explicit-App removal | Unknown; no complete built-in/App marker set |
 | Extended templates | 65 website template entries, 64 unique labels | Separate class; not built-in; not App-labelled |
 
 The P0-003 `D-GATE` marks for Chord, Sunburst, Network, Sankey and similar entries remain appropriate. They are not upgraded to built-in status by this evidence. The vendor pages do not provide a complete built-in versus App matrix.
@@ -313,10 +313,10 @@ These are proposed revisions to the P0-003 control rows, not changes to the auth
 | Child ID | P0-003 status | P0-005 revised evidence | Source, version and retrieval | Rights | Uncertainty | Gate effect |
 |---|---|---|---|---|---|---|
 | `EG-CAT-FIT-001` | Claim-only unenumerated library | Catalog located: 239 numbered 32.1 pages; 22 categories; 231 unique category-table names; per-function equations and parameters; count claims 170, close to 200, 200-plus and 239 | F4, live help build 2026-10-26; retrieved 2026-10-30; F1, F2, F3 and F11 for the claims | `R-VENDOR` | `U2` for membership; count basis and version pin remain `U3` | `EG-CAT-GATE-003` partially closed; count, edition split and version pin remain open |
-| `EG-CAT-FIT-002` | 2D Gaussian caption example | Per-function Gauss2D page confirms a six-parameter surface equation; the OriginPro guide says 21 surface models | F8 and F9; live help/guide; retrieved 2026-10-30 | `R-OPEN` for the mathematical form; vendor page citation only | `U2` | Supports the example; does not establish the selectable name or edition |
+| `EG-CAT-FIT-002` | 2D Gaussian caption example | Per-function Gauss2D page confirms a six-parameter surface equation; the OriginPro guide says 21 surface models | F8 live help build 2026-10-26 and F9 live OriginPro guide; retrieved 2026-10-30; 2026b current release inferred, exact binding unknown | `R-OPEN` for the mathematical form; vendor page citation only | `U2` | Supports the example; does not establish the selectable name or edition |
 | `EG-CAT-PEAK-001` | Claim-only unenumerated library | 1D Peak Analyzer table has 28 names, 7 bold Pro-only and 21 shared; surface table has 22 names; over 25 is 1D and over 20 is surface | P3 and P4, live help build 2026-10-26; P2, P5, P6 and F9; retrieved 2026-10-30 | `R-VENDOR` | `U2` for membership; surface 21-versus-22 and version pin remain `U3` | `EG-CAT-GATE-004` partially closed; surface subset and version pin remain open |
 | `EG-CAT-EXPORT-017` | Claim-only seventeenth format | No seventeenth documented; 16-row table and 15-format guide; retain the ID as a claim-correction row, not a format | E1, E2 and E3; live help/guide/reference build 2026-10-26; retrieved 2026-10-30 | `R-VENDOR` for the claim; documented format rights vary | `U3`; no named format; current 64-bit visible set untested | `EG-CAT-GATE-005` corrected; runtime and fixtures remain open |
-| `EG-CAT-GRAPH-074` | Claim-only unenumerated types up to 100-plus | 73 P0-003 rows are 68 gallery filters plus five examples; product page has 111 labels; 100-plus is built-in-plus-extended and Plot-menu aggregate; 21 named additions identified | F1, G2, G3, G4, G5 and G6; retrieved 2026-10-30 | `R-OWN` for EveryGraph scenes; App-dependent types remain gated | `U3`; no unique counting rule; App classification partial | `EG-CAT-GATE-002` claim basis corrected; exact membership remains open |
+| `EG-CAT-GRAPH-074` | Claim-only unenumerated types up to 100-plus | 73 P0-003 rows are 68 gallery filters plus five examples; product page has 111 labels; 100-plus is built-in-plus-extended and Plot-menu aggregate; 21 named additions identified | F1 live product page with 2026b navigation and G2 live gallery, retrieved 2026-10-30; G3 live Help build 2026-10-26; G4 2026 release page; G5 2026b release page; G6 2025b release, 19 June 2025; all retrieved 2026-10-30 | `R-OWN` for EveryGraph scenes; App-dependent types remain gated | `U3`; no unique counting rule; App classification partial | `EG-CAT-GATE-002` claim basis corrected; exact membership remains open |
 
 The gate status is:
 
@@ -381,14 +381,14 @@ Working directory: `/Users/leo/Documents/General/EveryGraph`. Platform: macOS 27
 
 | Check | Result | Evidence and limits |
 |---|---|---|
-| Fetch 27 public vendor pages | HTTP 200 for all fetched sources | Response dates 2026-10-30 16:03 UTC; docs Last-Modified 2026-10-26; live pages may change |
+| Fetch 27 source entries (26 unique URLs) | HTTP 200 for all fetched sources | F10 and G5 are the same 2026b page; response dates 2026-10-30 16:03 UTC; docs Last-Modified 2026-10-26; live pages may change |
 | Parse F4 sidebar and category tables | 239 numbered pages; 22 categories; 307 category cells; 231 unique strings; 10 sidebar-only names; 2 table-only strings | Parser-based count; the vendor publishes no total; names are listed in section 4.2 |
 | Parse P3 and P4 tables | 28 peak entries with 7 bold; 22 surface entries | Table-cell count; no surface-peak subset |
 | Parse G2 select and F1 graph list | 68 specific gallery filters; 111 product labels; 65 extended templates | Select options and list items; duplicates and App labels as recorded in section 6 |
 | Parse E1, E2 and E3 | 16 format rows; 15 guide formats; 14 sentence versus 16 options | Table and option count; no runtime verification |
-| Compare P0-003 graph names with G2 | 68 of 68 gallery filters matched; five examples added | Set comparison after normalization; this is the basis for withdrawing the 27-gap inference |
+| Compare P0-003 graph names with G2 | 68 of 68 gallery filters matched after ampersand normalization; 67 exact; five examples added | Set comparison; this is the basis for withdrawing the 27-gap inference |
 | `python3 tools/validate_planning.py` | Run after this appendix and the record update; result recorded in the P0-005 record | The validator checks local links, fences and English policy; it does not check external URLs or vendor counts |
-| `shasum -a 256 origin-feature-inventory.md datagraph-feature-inventory.md docs/planning/feature-traceability.csv docs/planning/functional-scope.md tools/validate_planning.py` | To be recorded in the P0-005 record | Confirms the protected files were not changed by this task |
+| `shasum -a 256 origin-feature-inventory.md datagraph-feature-inventory.md docs/planning/feature-traceability.csv docs/planning/functional-scope.md tools/validate_planning.py` | Recorded in the P0-005 record; inventory hashes match the validator constants | Confirms the protected files were not changed by this task |
 
 Checks not run and their reasons:
 
