@@ -10,7 +10,7 @@
 - Dependencies: P1-001 (accepted)
 - Created: 2026-10-30
 - Updated: 2026-10-31
-- Branch / worktree / base revision: checkpoint branch `feat/p1-003-vcpkg-graph` from `fca707a`, committed in the isolated worktree `out/p1-003-checkpoint`. The shared worktree is on `main` at `747809e` with an unresolved stash apply and was left untouched. The checkpoint commit hash is recorded in the following record commit; no push occurred.
+- Branch / worktree / base revision: checkpoint branch `feat/p1-003-vcpkg-graph` from `fca707a`, committed in the isolated worktree `out/p1-003-checkpoint`. The shared worktree is on `main` at `747809e` with an unresolved stash apply and was left untouched. Checkpoint commit `a990345f488e837d62037b7c34369c46ed1760a2`; no push occurred.
 - Authorization: user granted the vcpkg/network scope on 2026-10-30; the decision is recorded in [P0-006](p0-006-extra-agent-verification.md) (metadata, contributions and "Recommended first task" sections) and the user instructed this session to execute P1-003. Covers vcpkg bootstrap and package-source/binary downloads, `vcpkg.json`, optional `vcpkg-configuration.json`, CMake preset/CMakeLists dependency wiring, engineering-document updates, an `docs/engineering/sbom/` artifact, and a clean-state configure/build/test. The user authorized a checkpoint commit on 2026-10-31. Push, publication and signing remain unauthorized; Windows resolution and legal approval remain out of scope.
 
 ## Scope and acceptance
@@ -37,7 +37,7 @@ Out of scope: inventing package versions or a registry baseline before actual re
 | 2026-10-30 | EveryGraph Lead / planner | Created the task and recorded the absent package manager and temporary tooling; no dependency change started | [Takeover audit](p0-002-takeover-state-verification.md) and [board](../planning/task-board.csv) |
 | 2026-10-30 | EveryGraph Implementation / implementer | Started the authorized vcpkg route; bootstrapped vcpkg from `microsoft/vcpkg` at `d186940b2f0c4e8e5b4ff804af57d2a26fbfa091`, selected the immutable baseline, and began clean-state resolution of the Qt 6.12.0 graph. | This record and the working-tree evidence below |
 | 2026-10-31 | EveryGraph Implementation / implementer | Added `vcpkg.json`, `vcpkg-configuration.json`, the Qt 6.12.0 overlay under `cmake/vcpkg-overlay-ports/qtbase/`, the `arm64-osx-dynamic` CMake presets, the SPDX generator and license overrides; built static Qt 6.12.0 successfully; the dynamic build stopped at an `lz4` download error | Manifest, overlay, presets, SBOM files and the dynamic-build log listed below |
-| 2026-10-31 | EveryGraph Implementation / checkpoint writer | Committed the P1-003 checkpoint on `feat/p1-003-vcpkg-graph` from `fca707a` without touching the conflicted `main` worktree, the index or `stash@{0}` | Checkpoint commit referenced in the Handoff section |
+| 2026-10-31 | EveryGraph Implementation / checkpoint writer | Committed the P1-003 checkpoint on `feat/p1-003-vcpkg-graph` from `fca707a` without touching the conflicted `main` worktree, the index or `stash@{0}` | Commit `a990345f488e837d62037b7c34369c46ed1760a2` |
 
 The task is in progress and paused at a checkpoint. The registry's latest `qtbase` is 6.11.2 while P1-001 qualified Qt 6.12.0; the overlay preserves 6.12.0. The static graph proves the overlay recipe builds Qt; the required dynamic graph and all probe/SBOM/doc evidence remain unverified.
 
@@ -102,7 +102,7 @@ Background task status: the dynamic build task `bca6z4ka5` ended with exit 1 at 
 Git and shared-worktree state:
 
 - The shared worktree is on `main` at `747809e` with an unresolved stash apply (`stash@{0}`, commit `f6008b7`, a Qoder branch-switch autosave). `CMakeLists.txt`, `CMakePresets.json`, `docs/engineering/development.md` and `docs/planning/task-board.csv` contain conflict markers. This task did not resolve, reset, restore or commit those paths; the stash and index are preserved.
-- The P1-003 checkpoint was committed from a clean detached worktree at `fca707a` on branch `feat/p1-003-vcpkg-graph`; the checkpoint commit is recorded in the following record commit. No push occurred.
+- The P1-003 checkpoint was committed from a clean worktree at `fca707a` on branch `feat/p1-003-vcpkg-graph`; the implementation commit is `a990345f488e837d62037b7c34369c46ed1760a2` and this record update is the follow-up commit. No push occurred.
 - The checkpoint commit contains only the files listed above; it does not contain the concurrent P1-004 modules/tests, the P0-002/P0-003 record edits or the other agents' board allocations.
 
 Blockers and unblock actions:
