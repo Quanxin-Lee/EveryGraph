@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "child_document": {
+    "path": "docs/planning/catalog-children.csv",
+    "encoding": "utf-8",
+    "row_terminator": "LF",
+    "columns": [
+      "child_id",
+      "catalog_parent",
+      "register_family",
+      "member_type",
+      "source_name",
+      "named_entry",
+      "evidence_code",
+      "source_file",
+      "source_line",
+      "source_url",
+      "source_checked",
+      "primary_anchor",
+      "source_excerpt",
+      "source_excerpt_sha256",
+      "variant_parameters",
+      "prerequisites",
+      "rights_status",
+      "delivery_class",
+      "fixture_plan",
+      "expected_output",
+      "uncertainty",
+      "membership_status",
+      "support_claim"
+    ],
+    "english_exempt_columns": [
+      "source_name",
+      "source_excerpt"
+    ],
+    "sha256": "a2c95d4fa565103a3315ea4734d29f8f09fd379760569c73826fc2cb0d9ba997",
+    "retired_child_ids": []
+  },
+  "register": {
+    "path": "docs/planning/feature-traceability.csv",
+    "rows": 428,
+    "sha256": "f2db6f3cfd2d3c8b560cd15d6d5e41a5dc47115d3d59ed8f5622963f12782a53",
+    "parents": [
+      "ORG-IO-001",
+      "ORG-GRAPH-001",
+      "ORG-FIT-004",
+      "ORG-PEAK-005",
+      "ORG-EXPORT-001",
+      "EG-ADD-014",
+      "EG-ADD-015"
+    ],
+    "parent_status": "unresolved"
+  },
+  "protected_inputs": {
+    "origin-feature-inventory.md": "fd22138468ea7798ea858c86d5217a2bcd0685ff38f5622ae62fae29db9d0ff8",
+    "datagraph-feature-inventory.md": "f5e6876c38cbc90505546ae19dd7786ed45b3a4e9779032de19ad8f6b9ad62fb",
+    "docs/planning/functional-scope.md": "93918a9b0d0cf170c8906e0a3d433574d6551fa0aa508d112d97a3d2c6991fd7"
+  },
+  "local_sources": {
+    "S1": "origin-feature-inventory.md",
+    "S2": "datagraph-feature-inventory.md",
+    "S9": "docs/planning/functional-scope.md",
+    "S10": "docs/planning/feature-traceability.csv"
+  },
+  "external_sources": {
+    "S3": {
+      "url": "https://docs.originlab.com/origin-help/expgraph-to-image",
+      "sha256": "6c00b9aecf38af0a60285b9bbaa7d009f2059a96305647fd14d33311fc8de848",
+      "checked": "2026-10-31"
+    },
+    "S4": {
+      "url": "https://docs.originlab.com/user-guide/import-data/",
+      "sha256": "dfb157029be057e42855e69c6c8595159228785e72fcbefc212f242aa26e3464",
+      "checked": "2026-10-31"
+    },
+    "S5": {
+      "url": "https://www.originlab.com/Origin",
+      "sha256": "083c62c7b040ba347538a2443102603b224c15f049596a5841132ebf71df7cc8",
+      "checked": "2026-10-31",
+      "reference_only": true,
+      "reference_reason": "Retrieved and digested by P0-004 to verify a cited claim; no row anchors on it"
+    },
+    "S6": {
+      "url": "https://www.originlab.com/GraphGallery",
+      "sha256": "688376434b4f36d4d18950908c5d11099002cb8222dd8ad1d0e6c035a8d82d73",
+      "checked": "2026-10-31"
+    },
+    "S7": {
+      "url": "https://www.originlab.com/index.aspx?go=Products/Origin/DataAnalysis/CurveFitting",
+      "sha256": "b3084582d45a78258a907b2ba23dcd0dbd8d2d09655e599a60cf64dd3b1e9eac",
+      "checked": "2026-10-31",
+      "reference_only": true,
+      "reference_reason": "Retrieved and digested by P0-004 to verify a cited claim; no row anchors on it"
+    },
+    "S8": {
+      "url": "https://www.originlab.com/index.aspx?go=Products/Origin/DataAnalysis/PeakAnalysis",
+      "sha256": "59153446dbb7a85df3a51597a33f1472e9b0563dea39a49f082bd9e435a65d28",
+      "checked": "2026-10-31",
+      "reference_only": true,
+      "reference_reason": "Retrieved and digested by P0-004 to verify a cited claim; no row anchors on it"
+    },
+    "F1": {
+      "url": "https://www.originlab.com/origin",
+      "sha256": "a9e0997fee9b03bd58ab64a19ee63548f542446a791af053bf368be1c3e02d4b",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors"
+    },
+    "F4": {
+      "url": "https://docs.originlab.com/origin-help/curve-fitting-function/",
+      "sha256": "a5a0550910b0cb6cb7646d3bbc8dacb4704e29a619321134d97602dd982311bd",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors"
+    },
+    "F8": {
+      "url": "https://docs.originlab.com/origin-help/gauss2d-fitfunc/",
+      "sha256": "426b49a9dddbbd76b09b18084e921fed16ee577fb47a210b96fea599c2d809ba",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors"
+    },
+    "P3": {
+      "url": "https://docs.originlab.com/origin-help/peak-analyzer-functions/",
+      "sha256": "2d065dd3d30dc1e2dcc175e63ce22c024ce56c55cc7c216a6e406b054ee1cf24",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors"
+    },
+    "P4": {
+      "url": "https://docs.originlab.com/origin-help/non-linear-surface-fitting-fitfunc/",
+      "sha256": "802d2825148196110009746b643b1a16dccc0e147d662862a81f140e8234f5cc",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors",
+      "reference_only": true,
+      "reference_reason": "Retrieved and digested by P0-004 to verify a cited claim; no row anchors on it"
+    },
+    "G3": {
+      "url": "https://docs.originlab.com/user-guide/graphing/",
+      "sha256": "5a6522e84606145a1755e9c4d29a3ffcc755ec41cc357ec4a3a593168c3e3ed5",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors"
+    },
+    "G4": {
+      "url": "https://www.originlab.com/2026",
+      "sha256": "7c773d2d5c164bfd7500de1b212ab0a2f939f7e5a53f50ef072aec3dc7cc1bb5",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors"
+    },
+    "G6": {
+      "url": "https://www.originlab.com/index.aspx?go=COMPANY/NEWSANDEVENTS/PRESSROOM&pid=5474",
+      "sha256": "8b4bffef055085c549099219bd811bf3cbb693c63f159998300dd65c03d9ae99",
+      "checked": "2026-10-31",
+      "retrieved_by": "P0-004 for the P0-005 evidence this register mirrors",
+      "reference_only": true,
+      "reference_reason": "Retrieved and digested by P0-004 to verify a cited claim; no row anchors on it"
+    }
+  },
+  "counts": {
+    "TOTAL_ROWS": 172,
+    "IO_FORMAT_FAMILIES_MIN": 34,
+    "IO_SOURCE_ADAPTERS": 2,
+    "GRAPH_NAMED_MIN": 94,
+    "GRAPH_CLAIM_ONLY": 1,
+    "FIT_NAMED_MIN": 1,
+    "FIT_CLAIM_ONLY": 1,
+    "PEAK_NAMED_MIN": 0,
+    "PEAK_CLAIM_ONLY": 1,
+    "EXPORT_NAMED": 16,
+    "EXPORT_CLAIM_ONLY": 1,
+    "COMPAT_NAMED": 14,
+    "GATE_ROWS": 7
+  },
+  "vendor_count_tokens": [
+    "30+",
+    "100+",
+    "200",
+    "25+",
+    "17"
+  ],
+  "p0_003_declared": {
+    "IO_FORMAT_FAMILIES_MIN": 34,
+    "IO_SOURCE_ADAPTERS": 2,
+    "GRAPH_NAMED_MIN": 73,
+    "GRAPH_CLAIM_ONLY": 1,
+    "FIT_NAMED_MIN": 1,
+    "FIT_CLAIM_ONLY": 1,
+    "PEAK_NAMED_MIN": 0,
+    "PEAK_CLAIM_ONLY": 1,
+    "EXPORT_NAMED": 16,
+    "EXPORT_CLAIM_ONLY": 1,
+    "COMPAT_NAMED": 14,
+    "GATE_ROWS": 7
+  },
+  "evidence_documents": {
+    "P0-003": "docs/research/capability-catalog-decomposition.md",
+    "P0-005": "docs/research/catalog-evidence-gaps-2026b.md"
+  },
+  "p0_005": {
+    "graph_additions": 21,
+    "revised_control_rows": [
+      "EG-CAT-FIT-001",
+      "EG-CAT-FIT-002",
+      "EG-CAT-PEAK-001",
+      "EG-CAT-EXPORT-017",
+      "EG-CAT-GRAPH-074"
+    ],
+    "declared_floors": {
+      "FIT_NUMBERED_PAGES": 239,
+      "FIT_CATEGORY_COUNT": 22,
+      "FIT_CATEGORY_UNIQUE_MIN": 231,
+      "FIT_UNCATEGORIZED_PAGES": 10,
+      "PEAK_1D_NAMED": 28,
+      "PEAK_1D_PRO_ONLY": 7,
+      "PEAK_SURFACE_NAMED": 22,
+      "PEAK_SURFACE_VENDOR_CLAIM": 21,
+      "GRAPH_GALLERY_FILTERS": 68,
+      "GRAPH_PRODUCT_LABELS": 111,
+      "GRAPH_EXTENDED_TEMPLATES": 65,
+      "EXPORT_NAMED": 16,
+      "EXPORT_CURRENT_GUIDE": 15
+    },
+    "unenforced_note": "These are P0-005 section 10 evidence floors for vendor catalog pages. The register carries no per-function fitting or peak rows yet, so the checks compare them against the document only and never against row counts or an acceptance threshold."
+  },
+  "notice": "docs/planning/catalog-children.csv is an evidence index. Each row records that a name or a vendor claim exists in the cited source on the recorded date. A row does not implement, schedule or promise a capability, and support_claim is none on every row. The seven catalog parents and EG-ADD-015 stay unresolved in the feature register until their closure conditions are met, and no vendor count is an acceptance threshold.",
+  "verified_inputs_checked": "2026-10-31",
+  "local_anchor_note": "Local anchors verify against the preserved inventory and scope digests above and carry this same verification date; the contract file itself is not pinned, so a coordinated edit of the contract and the register remains a human review control"
+}
