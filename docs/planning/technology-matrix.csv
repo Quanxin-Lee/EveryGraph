@@ -1,0 +1,16 @@
+criterion,weight,cpp_qt_widgets,rust_egui,rust_slint,rust_tauri,rust_core_qt,cs_avalonia,cpp_qt_quick
+actual_runtime_performance,10,3,3,3,3,3,3,3
+large_data_architecture,10,5,5,5,4,5,4,5
+ui_delivery_efficiency,12,5,3,3,4,4,4,4
+macos_support,8,4,3,3,3,4,4,4
+windows_support,8,5,4,4,4,5,4,5
+gpu_ecosystem,6,4,4,4,3,4,4,5
+scientific_ecosystem,10,5,3,3,3,4,3,5
+python_integration,6,5,4,4,4,4,3,5
+plugin_integration,5,5,4,4,4,4,4,5
+memory_concurrency_safety,8,2,5,5,5,4,4,2
+maintenance_cost,7,4,3,3,3,2,4,3
+license_flexibility,4,4,5,2,5,4,4,4
+learning_cost,2,3,3,3,4,2,4,3
+community_activity,2,5,4,3,5,4,4,5
+extensibility,2,5,4,4,4,5,4,5

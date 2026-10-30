@@ -1,0 +1,13 @@
+/out/
+/build/
+/CMakeUserPresets.json
+/compile_commands.json
+/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+Thumbs.db
+/.idea/
+/.vscode/
+/.vs/
