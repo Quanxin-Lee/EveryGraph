@@ -9,6 +9,7 @@
       "version>=": "6.12.0",
       "default-features": false,
       "features": [
+        "freetype",
         "gui",
         "widgets"
       ]

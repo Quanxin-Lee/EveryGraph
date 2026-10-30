@@ -151,9 +151,23 @@ if(BUILD_TESTING)
 
     if(EVERYGRAPH_ENABLE_QT_PROBE)
         add_test(NAME qt_probe_smoke COMMAND everygraph_qt_probe --smoke-test)
-        set_tests_properties(qt_probe_smoke PROPERTIES
-            ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
-            TIMEOUT 30
-        )
+        if(VCPKG_INSTALLED_DIR AND APPLE)
+            if(CMAKE_BUILD_TYPE MATCHES "Debug")
+                set(everygraph_qt_plugin_dir
+                    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/Qt6/plugins")
+            else()
+                set(everygraph_qt_plugin_dir
+                    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Qt6/plugins")
+            endif()
+            set_tests_properties(qt_probe_smoke PROPERTIES
+                ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_PLUGIN_PATH=${everygraph_qt_plugin_dir}"
+                TIMEOUT 30
+            )
+        else()
+            set_tests_properties(qt_probe_smoke PROPERTIES
+                ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+                TIMEOUT 30
+            )
+        endif()
     endif()
 endif()

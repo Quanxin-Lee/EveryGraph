@@ -1,5 +1,5 @@
 {
-  "scope": "License evidence for resolved packages whose vcpkg port manifest does not declare a license. Values come from installed share/<package>/copyright files and the Qt source LICENSES directory. This is a qualification inventory, not a legal conclusion.",
+  "scope": "License evidence for resolved packages whose vcpkg port manifest does not declare a license, plus component notes for vendored code. Values come from installed share/<package>/copyright files, the Qt source LICENSES directory and the pinned sljit source archive. This is a qualification inventory, not a legal conclusion.",
   "packages": {
     "double-conversion": {
       "license": "BSD-3-Clause",
@@ -10,6 +10,11 @@
       "license": "CC0-1.0",
       "evidence": "installed share/libb2/copyright contains CC0 1.0 Universal; the port manifest declares no license",
       "kind": "runtime"
+    },
+    "icu": {
+      "license": "Unicode-3.0",
+      "evidence": "installed share/icu/copyright starts with UNICODE LICENSE V3; the port manifest declares the non-SPDX label ICU",
+      "kind": "build-tool"
     },
     "opengl": {
       "license": "NOASSERTION",
@@ -31,5 +36,8 @@
       "evidence": "installed share/vcpkg-make/copyright states that cmake scripts are MIT and bundled GNU Automake scripts are GPL-2.0-or-later",
       "kind": "build-tool"
     }
+  },
+  "component_notes": {
+    "pcre2": "vendored sljit is BSD-2-Clause (sljit LICENSE in the pinned source archive); the installed pcre2 copyright only references deps/sljit/LICENSE and does not include that text, so the release notice bundle must add it"
   }
 }

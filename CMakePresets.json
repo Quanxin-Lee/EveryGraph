@@ -42,7 +42,8 @@
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_MANIFEST_DIR": "${sourceDir}",
         "VCPKG_TARGET_TRIPLET": "arm64-osx-dynamic",
-        "VCPKG_HOST_TRIPLET": "arm64-osx"
+        "VCPKG_HOST_TRIPLET": "arm64-osx",
+        "VCPKG_APPLOCAL_DEPS": "OFF"
       }
     },
     {

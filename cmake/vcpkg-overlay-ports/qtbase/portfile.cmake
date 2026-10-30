@@ -341,6 +341,9 @@ set(TOOL_NAMES
         macdeployqt
         macdeployqt6
         androiddeployqt6
+        harmonydeployqt
+        harmonydeployqt6
+        harmonyostestrunner
         syncqt
         tracepointgen
         qtwaylandscanner

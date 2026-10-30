@@ -2,7 +2,7 @@
 
 ## Scope and evidence boundary
 
-This scaffold builds `everygraph_toolchain_probe`, a dependency-free C++20 standard-library executable. P1-004 adds the dependency-free `everygraph_foundation` and `everygraph_application` static libraries and the `everygraph_command_kernel_tests` executable; they implement a command, revision, transaction, undo/redo and event contract over a fake in-memory document, not a product domain model, persistence layer, GUI or wire protocol. An opt-in `everygraph_qt_probe` target adds a minimal Qt Widgets workbench qualification probe; it is not EveryGraph, a GUI prototype, a scientific implementation, or a benchmark. No dependency-manager bootstrap, package lockfile, or business module is part of this work.
+This scaffold builds `everygraph_toolchain_probe`, a dependency-free C++20 standard-library executable. P1-004 adds the dependency-free `everygraph_foundation` and `everygraph_application` static libraries and the `everygraph_command_kernel_tests` executable; they implement a command, revision, transaction, undo/redo and event contract over a fake in-memory document, not a product domain model, persistence layer, GUI or wire protocol. An opt-in `everygraph_qt_probe` target adds a minimal Qt Widgets workbench qualification probe; it is not EveryGraph, a GUI prototype, a scientific implementation, or a benchmark. P1-003 adds a vcpkg manifest with an immutable baseline, a removable Qt 6.12.0 overlay, an `arm64-osx-dynamic` preset route and an initial SBOM generator; its section records the pinned graph and verification limits. No product business module exists.
 
 The probe checks `std::span`, an owning vector snapshot surviving mutation and destruction of its source, move-owned data in `std::jthread`, stop-token observation, and joining before reading worker results. A latch makes stop observation deterministic without timing assumptions. Explicit return-code checks remain active in Release; assertions are not used as tests.
 
@@ -291,6 +291,100 @@ The negative path was exercised with a scratch tree containing `#include <QStrin
 - Listener exceptions are contained without diagnostics. Allocation failures during request validation or metadata access can still propagate before a commit is staged; commit-time allocations are staged before the live document and tombstone maps are swapped, so a failed commit leaves the committed state unchanged.
 - The test harness is a small custom executable with explicit return-code checks and one CTest entry, not GoogleTest with discovery, fixtures or death tests. GoogleTest remains a future pinned dependency under P1-003.
 - No Windows build, CI run, sanitizer-plus-Qt combination or thread-sanitizer run is claimed. `macos-debug-qt` and `macos-release-qt` are local qualification runs, not release packaging.
+
+## Pinned native dependency graph and initial SBOM (P1-003)
+
+P1-003 replaces the temporary Homebrew-only dependency route with a vcpkg manifest, an immutable registry baseline and a local Qt 6.12.0 overlay for macOS arm64. This is a qualification graph for the Qt probe, not a product dependency set, a packaging result or a Windows qualification. The Homebrew section above remains historical P1-001 evidence.
+
+### Pin, overlay and triplet
+
+| Item | Value |
+| --- | --- |
+| vcpkg tool | `2026-09-26-51bf87ca6e9bf3e622d84ff323bd202ab1ca0c0b` |
+| Registry baseline | `d186940b2f0c4e8e5b4ff804af57d2a26fbfa091` (immutable commit) |
+| Target triplet | `arm64-osx-dynamic` (shared libraries) |
+| Host triplet | `arm64-osx` (build tools only) |
+| Qt | 6.12.0, local overlay `cmake/vcpkg-overlay-ports/qtbase/` |
+| Qt features | `freetype`, `gui`, `widgets`; default features disabled |
+| Qt source | `qtbase-everywhere-src-6.12.0.tar.xz`, SHA-512 `87b3bd96244e03ea6145e00d088cb1e0cfaa64a575bfe32c4ec5f0227bc7872a3777ccf29c8e54e567a6ea809a8ee894e88e659d14d96655b0730455d9869d7a` |
+| Manifest files | `vcpkg.json`, `vcpkg-configuration.json` |
+
+The curated registry contains `qtbase` 6.11.2, not the P1-001-qualified 6.12.0. The overlay is a copy of the registry port at the pinned baseline; four files are modified: the port version, `cmake/qt_port_details.cmake`, `port.data.cmake` (source URL/SHA-512/filename) and `portfile.cmake`. The obsolete `use_inotify_on_freebsd.patch` is deleted because Qt 6.12.0 already contains that change, and the portfile adds Qt 6.12.0's harmony tools to `TOOL_NAMES` because the generated host tools config exports them; without that, a native target Qt configure fails on missing tools. Remove the overlay and re-pin when the curated registry ships Qt 6.12.
+
+A second small overlay, `cmake/vcpkg-overlay-ports/pcre2/`, is a copy of the registry pcre2 10.49#2 port. The GitHub API gitlink lookup and its unused head-version branch are removed and replaced by the pinned sljit commit `de0259c7aaf36aa40cba8014f3fad3edde9307f9`; the pinned-version path, PCRE2 JIT, the version, features, patches and the sljit SHA-512 are unchanged. It exists because this host cannot reach `api.github.com`. The commit-to-PCRE2-tag link was not independently re-checked because GitHub is unavailable; it is bound by the registry sljit SHA-512. The pcre2, libb2, md4c and sljit source archives were seeded from a GitHub mirror (`gh-proxy.com`) after verifying the vcpkg SHA-512 pins; they are build inputs under the ignored `out/` tree, not committed. Remove both workarounds when direct GitHub access is available and the registry pcre2 port can be used directly.
+
+`arm64-osx` is vcpkg's static triplet. The project policy selects shared Qt for the LGPL replacement route, so the target uses the community `arm64-osx-dynamic` triplet; host tools remain `arm64-osx`.
+
+The `freetype` feature is enabled because Qt builds its `offscreen` QPA platform plugin only when `QT_FEATURE_freetype` is on, and the existing probe smoke test requires the offscreen platform for headless runs. The feature adds `freetype`, `brotli`, `bzip2` and `libpng` to the target graph.
+
+The vcpkg presets set `VCPKG_APPLOCAL_DEPS=OFF`: applocal copies Qt libraries into the probe bundle but not the platform plugins, so the build-tree probe keeps referencing the pinned install root instead. `qt_probe_smoke` sets `QT_PLUGIN_PATH` to the pinned Qt plugin directory (and `QT_QPA_PLATFORM=offscreen`). Self-contained bundle deployment, plugin copying and signing belong to P1-012, not this qualification route.
+
+### Prerequisites and bootstrap
+
+vcpkg needs a C++ toolchain plus `pkg-config` and GNU autotools for some ports. On this host those were absent, so `pkgconf` 3.0.3, GNU m4 1.4.19, autoconf 2.72, automake 1.17, GNU libtool 2.5.4 and autoconf-archive 2024.10.16 were built in the ignored `out/` tree and added to `PATH`/`ACLOCAL_PATH`. A normal developer should install the equivalent system packages (for example `brew install pkg-config autoconf automake libtool autoconf-archive`) instead. vcpkg downloaded its own CMake 4.4.4 for port builds; the project still configures with CMake 3.31.6. Direct GitHub and the GitHub API were unavailable on this host; the workaround and source seeding are described above rather than silently bypassed.
+
+```sh
+git clone https://github.com/microsoft/vcpkg.git out/vcpkg
+git -C out/vcpkg checkout d186940b2f0c4e8e5b4ff804af57d2a26fbfa091
+out/vcpkg/bootstrap-vcpkg.sh -disableMetrics
+export VCPKG_ROOT="$PWD/out/vcpkg"
+```
+
+`out/vcpkg` is ignored by Git. The baseline commit, not the mutable registry HEAD, defines the dependency graph.
+
+### Resolve, build and test
+
+Run from the repository root:
+
+```sh
+export PATH="$PWD/.venv/bin:$PATH"
+export VCPKG_ROOT="$PWD/out/vcpkg"
+
+cmake --preset macos-debug-qt-vcpkg
+cmake --build --preset macos-debug-qt-vcpkg
+ctest --preset macos-debug-qt-vcpkg
+
+cmake --preset macos-release-qt-vcpkg
+cmake --build --preset macos-release-qt-vcpkg
+ctest --preset macos-release-qt-vcpkg
+```
+
+The presets select the vcpkg toolchain, set `VCPKG_MANIFEST_DIR` to the source root and use `arm64-osx-dynamic`/`arm64-osx` as target/host triplets. `vcpkg-configuration.json` supplies the overlay port. The toolchain resolves the manifest at configure time and installs into `out/build/<preset>/vcpkg_installed`.
+
+### Resolved graph, licenses and SBOM
+
+The resolved package versions and license evidence are generated into `docs/engineering/sbom/everygraph-macos-arm64-qt.spdx.json` by the command below; `docs/engineering/sbom/license-overrides.json` records the evidence for packages whose vcpkg manifest declares no license. Generate the SBOM after the Release build:
+
+```sh
+python3 docs/engineering/sbom/generate_sbom.py \
+  --install-root out/build/macos-release-qt-vcpkg/vcpkg_installed \
+  --probe out/build/macos-release-qt-vcpkg/everygraph_qt_probe.app/Contents/MacOS/everygraph_qt_probe \
+  --vcpkg-root "$PWD/out/vcpkg" \
+  --triplet arm64-osx-dynamic \
+  --baseline d186940b2f0c4e8e5b4ff804af57d2a26fbfa091 \
+  --vcpkg-tool-version 2026-09-26-51bf87ca6e9bf3e622d84ff323bd202ab1ca0c0b
+```
+
+The generator reads the actual `vcpkg/status` (base and feature records), the per-package file lists and the probe's Mach-O linkage. Feature-record `Depends` entries are attributed to their package and deduplicated; enabled features that declare a license (for example pcre2's `jit`) are merged into `licenseDeclared`. It fails if a declared dependency cannot be resolved, if a linked vcpkg-owned library has no package owner, or if a status version differs from the version embedded in the package's vcpkg file-list filename where present. It includes target `arm64-osx-dynamic` packages and host `arm64-osx` build tools, marks host tools in comments, and excludes macOS system libraries. vcpkg packages are package-level; linked artifacts are standalone file entries with the owning package named in the comment. The output is a qualification SBOM, not a release notice bundle or legal approval; see `docs/engineering/sbom/README.md`.
+
+The generator unit tests run with `python3 -m unittest discover -s docs/engineering/sbom -p 'test_generate_sbom.py' -v`.
+
+### P1-003 result on 2026-10-31
+
+Environment: macOS 27.0.1 build 26A434, arm64; AppleClang 21.0.0.21000334; macOS SDK 27.0; deployment target 14.4; CMake 3.31.6 and Ninja 1.11.1.4 from `.venv`; vcpkg tool `2026-09-26-51bf87ca6e9bf3e622d84ff323bd202ab1ca0c0b` at baseline `d186940b2f0c4e8e5b4ff804af57d2a26fbfa091`; locally built pkgconf/autotools in the ignored `out/` tree as described above; direct GitHub and the GitHub API unavailable, with the seeded SHA-512-verified sources and the pcre2 overlay.
+
+| Check | Exact command | Result |
+| --- | --- | --- |
+| Repository manifest resolution | `out/vcpkg/vcpkg install --dry-run --triplet=arm64-osx-dynamic --x-install-root=out/vcpkg-612-test/repo-dryrun2` | Exit 0; 42 packages planned; `qtbase` 6.12.0 and `pcre2` 10.49#2 resolve from the two overlay ports; `version>= 6.12.0` satisfied |
+| Target graph build | `out/vcpkg/vcpkg install --x-manifest-root=out/vcpkg-612-test/minimal --triplet=arm64-osx-dynamic --overlay-ports=$PWD/cmake/vcpkg-overlay-ports --x-install-root=out/vcpkg-612-test/dyn-installed` | Exit 0; 42 installed (29 host `arm64-osx` + 13 target `arm64-osx-dynamic`); target Qt 6.12.0 shared; `libqoffscreen.dylib` present; 6.7 min for the `freetype` rebuild |
+| Release preset | `cmake --preset macos-release-qt-vcpkg`; `cmake --build --preset macos-release-qt-vcpkg`; `ctest --preset macos-release-qt-vcpkg` | Configure and build passed; CTest 6/6, including `qt_probe_smoke` on the offscreen platform |
+| Debug preset | `cmake --preset macos-debug-qt-vcpkg`; `cmake --build --preset macos-debug-qt-vcpkg`; `ctest --preset macos-debug-qt-vcpkg` | Configure and build passed; CTest 6/6, including the debug-plugin offscreen smoke test |
+| Qt-free regression | Fresh `cmake --preset macos-debug`, `macos-release`, `macos-sanitize` with build and `ctest` | 5/5 in each preset |
+| SBOM | `python3 docs/engineering/sbom/generate_sbom.py ...` (command above) | Wrote the SPDX 2.3 document: 43 packages (29 host + 13 target + probe), 4 files (probe plus the three directly linked Qt dylibs), 111 relationships including feature-record dependencies; no home-directory paths; file-list versions cross-checked |
+
+Limits: Windows is not resolved or executed; the SBOM is qualification-scoped and not a release notice bundle or legal approval. `VCPKG_APPLOCAL_DEPS=OFF` means the build-tree probe references the pinned install root rather than a self-contained bundle; bundle deployment, signing and notarization belong to P1-012. Host `arm64-osx` tools are build-time only and are not distributed. Direct GitHub access was unavailable, so the pcre2 overlay and mirror-seeded sources remain removable workarounds.
+
+The P1-003 task record holds the detailed evidence, review history and acceptance state.
 
 ## Windows configuration only: not executed
 

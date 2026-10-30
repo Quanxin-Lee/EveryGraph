@@ -1,0 +1,1502 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "everygraph-macos-arm64-qt-arm64-osx-dynamic",
+  "documentNamespace": "https://spdx.org/spdxdocs/everygraph-macos-arm64-qt-arm64-osx-dynamic-2026-10-30T191305Z",
+  "creationInfo": {
+    "created": "2026-10-30T19:13:05Z",
+    "creators": [
+      "Tool: docs/engineering/sbom/generate_sbom.py"
+    ],
+    "comment": "Generated from the resolved vcpkg status file and the built probe's Mach-O linkage. vcpkg baseline d186940b2f0c4e8e5b4ff804af57d2a26fbfa091; vcpkg tool 2026-09-26-51bf87ca6e9bf3e622d84ff323bd202ab1ca0c0b; triplet arm64-osx-dynamic. Not a release SBOM and not a legal approval."
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-egl-registry-arm64-osx-dynamic",
+      "name": "egl-registry",
+      "versionInfo": "2025-05-27",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/egl-registry@2025-05-27?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI 2245ec6bb4ab12dfe444f3ca666356ad3bc249561cd21110081b48b41562e871; architecture: arm64-osx-dynamic; dependencies: none; homepage: https://github.com/KhronosGroup/EGL-Registry"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-opengl-registry-arm64-osx-dynamic",
+      "name": "opengl-registry",
+      "versionInfo": "2026-08-03",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/opengl-registry@2026-08-03?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI fb2424eb9220367d5cb8e2d68b14b582f66cba42b937b9557d1472e6a8775712; architecture: arm64-osx-dynamic; dependencies: egl-registry; homepage: https://github.com/KhronosGroup/OpenGL-Registry; class: header-registry; license evidence: installed share/opengl-registry/copyright states that files use different per-file licenses; no single expression is asserted"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-opengl-arm64-osx-dynamic",
+      "name": "opengl",
+      "versionInfo": "2022-12-04#3",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/opengl@2022-12-04?triplet=arm64-osx-dynamic&port_version=3"
+        }
+      ],
+      "comment": "vcpkg ABI 444cc72c3061a3923d7e4be5498baf8168032cff1cc61aff0c92432d62a23d72; architecture: arm64-osx-dynamic; dependencies: opengl-registry; class: system-framework-wrapper; license evidence: vcpkg wrapper for the macOS OpenGL framework; no package license text is installed and system framework terms apply"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx",
+      "name": "vcpkg-cmake-config",
+      "versionInfo": "2026-07-21",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/vcpkg-cmake-config@2026-07-21?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 28c71d00862591163ad59d6cf67c1d856b4956a37112aa643f9d6a466c5ea348; architecture: arm64-osx; dependencies: none"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-vcpkg-cmake-arm64-osx",
+      "name": "vcpkg-cmake",
+      "versionInfo": "2025-08-07",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/vcpkg-cmake@2025-08-07?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 4ac346d3a89fa2e170cc15335e2187123ee23179f8975ba32bd53ca1626da6a0; architecture: arm64-osx; dependencies: none"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-double-conversion-arm64-osx-dynamic",
+      "name": "double-conversion",
+      "versionInfo": "3.4.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/double-conversion@3.4.0?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI c7d5b94fc20075ec0e1ab11fd9f614593dce0b346272cb6875ceabbc86e3e655; architecture: arm64-osx-dynamic; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx; homepage: https://github.com/google/double-conversion; class: runtime; license evidence: installed share/double-conversion/copyright contains the V8 project BSD 3-clause text; the port manifest declares no license"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-zlib-arm64-osx-dynamic",
+      "name": "zlib",
+      "versionInfo": "1.3.2#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Zlib",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/zlib@1.3.2?triplet=arm64-osx-dynamic&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI f24b1748fa89d0a2e586e7fead04b093fd3df8e29d3fc4126fda08335ed3d052; architecture: arm64-osx-dynamic; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx; homepage: https://www.zlib.net/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-zstd-arm64-osx",
+      "name": "zstd",
+      "versionInfo": "1.5.7",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause OR GPL-2.0-only",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/zstd@1.5.7?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 86f21ce2a772e79b0651f9163daa6b623f494ae10d87ded5965d04773237e6f0; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://facebook.github.io/zstd/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-sqlite3-arm64-osx",
+      "name": "sqlite3",
+      "versionInfo": "3.54.1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "blessing",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/sqlite3@3.54.1?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 73aeb6c106660ca1084ab7d8e3f9e55d69349bbf4ecfef28f870e55758d41db7; architecture: arm64-osx; features: json1; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://sqlite.org"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-zlib-arm64-osx",
+      "name": "zlib",
+      "versionInfo": "1.3.2#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Zlib",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/zlib@1.3.2?triplet=arm64-osx&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI e12b5a2ceb8a9268f16d2a3ecc8401a7daa7ff921a8d55afc7b9b8aceeb19446; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://www.zlib.net/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx",
+      "name": "vcpkg-cmake-get-vars",
+      "versionInfo": "2025-05-29",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/vcpkg-cmake-get-vars@2025-05-29?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 0005f8cfbd9859f1e217ca4b1b1c2c643604e942ad2b19e38225101244091a90; architecture: arm64-osx; dependencies: vcpkg-cmake"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-openssl-arm64-osx",
+      "name": "openssl",
+      "versionInfo": "3.6.5#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/openssl@3.6.5?triplet=arm64-osx&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI 454ad25681c4938525c1e824a726d8dedeeea97a24b9b9b2046f188af90fb91c; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config, vcpkg-cmake-get-vars; homepage: https://www.openssl.org"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-lz4-arm64-osx",
+      "name": "lz4",
+      "versionInfo": "1.10.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-2-Clause",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/lz4@1.10.0?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 495a98049f5ae072b680df416193fa5892ec94c9c4215cdac8f260f878a85cc0; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://github.com/lz4/lz4"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-vcpkg-tool-meson-arm64-osx",
+      "name": "vcpkg-tool-meson",
+      "versionInfo": "1.12.1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0 AND MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/vcpkg-tool-meson@1.12.1?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 0ec8c606a151d3f0e21befadbd080866eef18be9ca4db3d580051d5608081e09; architecture: arm64-osx; dependencies: vcpkg-cmake-get-vars; homepage: https://github.com/mesonbuild/meson"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libpq-arm64-osx",
+      "name": "libpq",
+      "versionInfo": "18.4#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "PostgreSQL",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libpq@18.4?triplet=arm64-osx&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI eaec318a59488ba10e0b9e674ef523cf49c7e80095bc8ecdd824b3ba05abd3ad; architecture: arm64-osx; features: lz4, openssl, zlib; dependencies: vcpkg-cmake-get-vars, vcpkg-tool-meson; homepage: https://www.postgresql.org/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libpng-arm64-osx",
+      "name": "libpng",
+      "versionInfo": "1.6.59",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "libpng-2.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libpng@1.6.59?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI a3bdefdfcfb56b2d75415b566599adb81683d1c169e8b990db49f5b161eaea94; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config, zlib; homepage: https://github.com/pnggroup/libpng"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-pcre2-arm64-osx",
+      "name": "pcre2",
+      "versionInfo": "10.49#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause WITH PCRE2-exception AND BSD-2-Clause",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/pcre2@10.49?triplet=arm64-osx&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI 0d98f6b914df27023c1bbc4b25c00d54f2f0801f0afc72a68b99e1ad1cecd772; architecture: arm64-osx; features: jit, platform-default-features; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://github.com/PCRE2Project/pcre2; component note: vendored sljit is BSD-2-Clause (sljit LICENSE in the pinned source archive); the installed pcre2 copyright only references deps/sljit/LICENSE and does not include that text, so the release notice bundle must add it"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-egl-registry-arm64-osx",
+      "name": "egl-registry",
+      "versionInfo": "2025-05-27",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Apache-2.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/egl-registry@2025-05-27?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI bb976c6307054bafb4a658e734ba4ec2e05c2df00e204a8ababd4053ac1f5fe0; architecture: arm64-osx; dependencies: none; homepage: https://github.com/KhronosGroup/EGL-Registry"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-opengl-registry-arm64-osx",
+      "name": "opengl-registry",
+      "versionInfo": "2026-08-03",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/opengl-registry@2026-08-03?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 087de63e45936b2bee01e53d6d29e41378ca897eae8fb137a6e798b995a5a2c8; architecture: arm64-osx; dependencies: egl-registry; homepage: https://github.com/KhronosGroup/OpenGL-Registry; class: header-registry; license evidence: installed share/opengl-registry/copyright states that files use different per-file licenses; no single expression is asserted"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-opengl-arm64-osx",
+      "name": "opengl",
+      "versionInfo": "2022-12-04#3",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/opengl@2022-12-04?triplet=arm64-osx&port_version=3"
+        }
+      ],
+      "comment": "vcpkg ABI daac3a8446720d8e97928c29666da92be72ceb0c36dae737e0ee676f38f583d7; architecture: arm64-osx; dependencies: opengl-registry; class: system-framework-wrapper; license evidence: vcpkg wrapper for the macOS OpenGL framework; no package license text is installed and system framework terms apply"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libspng-arm64-osx",
+      "name": "libspng",
+      "versionInfo": "0.7.4#1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-2-Clause AND libpng-2.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libspng@0.7.4?triplet=arm64-osx&port_version=1"
+        }
+      ],
+      "comment": "vcpkg ABI 5b1d31f0e3787b9173fe467917490e389137b26b7132b531597eb5e3d448b53e; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config, zlib; homepage: https://github.com/randy408/libspng"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libjpeg-turbo-arm64-osx",
+      "name": "libjpeg-turbo",
+      "versionInfo": "3.2.0#1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause AND IJG",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libjpeg-turbo@3.2.0?triplet=arm64-osx&port_version=1"
+        }
+      ],
+      "comment": "vcpkg ABI b8e3b5cb02273648e44d52d81b6fdc8526b07b279309271dd9c4b7268505a79e; architecture: arm64-osx; dependencies: libspng, vcpkg-cmake, vcpkg-cmake-config, zlib; homepage: https://libjpeg-turbo.org/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-vcpkg-make-arm64-osx",
+      "name": "vcpkg-make",
+      "versionInfo": "2026-07-09#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT AND GPL-2.0-or-later",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/vcpkg-make@2026-07-09?triplet=arm64-osx&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI 1b5630c3ca85f21e3199d1d384f4a4e8121a8e9d85d73193323f5e6d560d5055; architecture: arm64-osx; dependencies: vcpkg-cmake-get-vars; class: build-tool; license evidence: installed share/vcpkg-make/copyright states that cmake scripts are MIT and bundled GNU Automake scripts are GPL-2.0-or-later"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-icu-arm64-osx",
+      "name": "icu",
+      "versionInfo": "79.1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "Unicode-3.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/icu@79.1?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 79e9d28a9dbf06a2e8b66473390afd3020f048e1d9ce8c667d848dcb4632631c; architecture: arm64-osx; features: tools; dependencies: vcpkg-cmake-get-vars, vcpkg-make; homepage: https://icu.unicode.org/home; class: build-tool; license evidence: installed share/icu/copyright starts with UNICODE LICENSE V3; the port manifest declares the non-SPDX label ICU"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-bzip2-arm64-osx",
+      "name": "bzip2",
+      "versionInfo": "1.0.8#6",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "bzip2-1.0.6",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/bzip2@1.0.8?triplet=arm64-osx&port_version=6"
+        }
+      ],
+      "comment": "vcpkg ABI 39cdb2de9665743f263211ac78bc2f272583e2831f849b72f95d74601f2651d1; architecture: arm64-osx; features: tool; dependencies: vcpkg-cmake; homepage: https://sourceware.org/bzip2/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-brotli-arm64-osx",
+      "name": "brotli",
+      "versionInfo": "1.2.1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/brotli@1.2.1?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 7de183393c5d15379c33cde01fbe9054cb6f450c7b52ad7990e623e59861cb6f; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://github.com/google/brotli"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-freetype-arm64-osx",
+      "name": "freetype",
+      "versionInfo": "2.14.3",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "FTL OR GPL-2.0-or-later",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/freetype@2.14.3?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 49c7dea746531bbad809887790e4ccd25f594084b63ee2b81718de53a817ff0c; architecture: arm64-osx; features: brotli, bzip2, png, zlib; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://www.freetype.org/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-harfbuzz-arm64-osx",
+      "name": "harfbuzz",
+      "versionInfo": "14.6.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT-Modern-Variant AND MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/harfbuzz@14.6.0?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 8a626d6d0094aa06bb2bb460ad67f23b2e140a10c5941dd729549524769983ee; architecture: arm64-osx; features: freetype; dependencies: vcpkg-tool-meson; homepage: https://github.com/harfbuzz/harfbuzz"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-double-conversion-arm64-osx",
+      "name": "double-conversion",
+      "versionInfo": "3.4.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/double-conversion@3.4.0?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI 7b613d3f16312be85aaeca7ab821ead4e1156f915795c1e6775fb944235a92f7; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://github.com/google/double-conversion; class: runtime; license evidence: installed share/double-conversion/copyright contains the V8 project BSD 3-clause text; the port manifest declares no license"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-expat-arm64-osx",
+      "name": "expat",
+      "versionInfo": "2.9.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT AND CC0-1.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/expat@2.9.0?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI a0ef772e740d1d75ce3c24a2ea29749db3b1a89ade2f80f12de1d87dd4489d36; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://github.com/libexpat/libexpat"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-dbus-arm64-osx",
+      "name": "dbus",
+      "versionInfo": "1.16.2#5",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "AFL-2.1 OR GPL-2.0-or-later",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/dbus@1.16.2?triplet=arm64-osx&port_version=5"
+        }
+      ],
+      "comment": "vcpkg ABI c3268f44b1eb246095e3998997ca13a76586c888cfb053f969c4176a8dec76bd; architecture: arm64-osx; dependencies: expat, vcpkg-cmake, vcpkg-cmake-config; homepage: https://gitlab.freedesktop.org/dbus/dbus"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-md4c-arm64-osx",
+      "name": "md4c",
+      "versionInfo": "0.6.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/md4c@0.6.0?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI b27c36e841393d7d81ddd8222c2933e1ea391d521e604991abb11fb030d27cfb; architecture: arm64-osx; dependencies: vcpkg-cmake, vcpkg-cmake-config; homepage: https://github.com/mity/md4c"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libb2-arm64-osx",
+      "name": "libb2",
+      "versionInfo": "0.98.1#7",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "CC0-1.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libb2@0.98.1?triplet=arm64-osx&port_version=7"
+        }
+      ],
+      "comment": "vcpkg ABI c55f3a0320332a496dfcb48ac980d319faca2bd8acabac4cf36812fe8e0a85a2; architecture: arm64-osx; dependencies: vcpkg-make; homepage: https://github.com/BLAKE2/libb2; class: runtime; license evidence: installed share/libb2/copyright contains CC0 1.0 Universal; the port manifest declares no license"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-qtbase-arm64-osx",
+      "name": "qtbase",
+      "versionInfo": "6.12.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/qtbase@6.12.0?triplet=arm64-osx"
+        }
+      ],
+      "comment": "vcpkg ABI a802b8e9f0327066ae8168d61ca9ba00a39a4410b3b10f0248c78e212ead3ddd; architecture: arm64-osx; features: async-io, brotli, concurrent, cups, dbus, dnslookup, doubleconversion, freetype, future, gui, harfbuzz, icu, jpeg, network, opengl, openssl, pcre2, png, sessionmanager, sql, sql-psql, sql-sqlite, testlib, thread, widgets, zstd; dependencies: libb2, md4c, pcre2, vcpkg-cmake, vcpkg-cmake-config, zlib; homepage: https://www.qt.io/; class: runtime; license evidence: qtbase-everywhere-src-6.12.0 REUSE.toml and LICENSES directory; bundled third-party licenses are listed separately in LICENSES; the port manifest declares no license"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-pcre2-arm64-osx-dynamic",
+      "name": "pcre2",
+      "versionInfo": "10.49#2",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause WITH PCRE2-exception AND BSD-2-Clause",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/pcre2@10.49?triplet=arm64-osx-dynamic&port_version=2"
+        }
+      ],
+      "comment": "vcpkg ABI ed8d0cbc44450b58c6db2fdf4afc470c93f65f68adb2750eccfe2199db916ee1; architecture: arm64-osx-dynamic; features: jit, platform-default-features; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx; homepage: https://github.com/PCRE2Project/pcre2; component note: vendored sljit is BSD-2-Clause (sljit LICENSE in the pinned source archive); the installed pcre2 copyright only references deps/sljit/LICENSE and does not include that text, so the release notice bundle must add it"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-md4c-arm64-osx-dynamic",
+      "name": "md4c",
+      "versionInfo": "0.6.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/md4c@0.6.0?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI 31d828ace992a5c13d1aa7b856a69c60198b54b8a1e3e64523bfe2e2f635702d; architecture: arm64-osx-dynamic; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx; homepage: https://github.com/mity/md4c"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libb2-arm64-osx-dynamic",
+      "name": "libb2",
+      "versionInfo": "0.98.1#7",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "CC0-1.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libb2@0.98.1?triplet=arm64-osx-dynamic&port_version=7"
+        }
+      ],
+      "comment": "vcpkg ABI 02cf9fdb25f61d6e0059e11a1b68fa760e2a19cc8adebd3c7af87c3e0d8fd2ef; architecture: arm64-osx-dynamic; dependencies: vcpkg-make:arm64-osx; homepage: https://github.com/BLAKE2/libb2; class: runtime; license evidence: installed share/libb2/copyright contains CC0 1.0 Universal; the port manifest declares no license"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "name": "qtbase",
+      "versionInfo": "6.12.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/qtbase@6.12.0?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI d1857640976a5b0ee42bf5d16250684d13d80c2f4b0818482142882ede72adda; architecture: arm64-osx-dynamic; features: cups, doubleconversion, freetype, gui, opengl, thread, widgets; dependencies: libb2, md4c, pcre2, qtbase:arm64-osx, vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx, zlib; homepage: https://www.qt.io/; class: runtime; license evidence: qtbase-everywhere-src-6.12.0 REUSE.toml and LICENSES directory; bundled third-party licenses are listed separately in LICENSES; the port manifest declares no license"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-libpng-arm64-osx-dynamic",
+      "name": "libpng",
+      "versionInfo": "1.6.59",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "libpng-2.0",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/libpng@1.6.59?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI e9f078ac96e675311e730b8a636f0cb2dfd4259b2e071cf3afd90ab9aa72288f; architecture: arm64-osx-dynamic; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx, zlib; homepage: https://github.com/pnggroup/libpng"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-bzip2-arm64-osx-dynamic",
+      "name": "bzip2",
+      "versionInfo": "1.0.8#6",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "bzip2-1.0.6",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/bzip2@1.0.8?triplet=arm64-osx-dynamic&port_version=6"
+        }
+      ],
+      "comment": "vcpkg ABI d759c1a582bffe1428edaac68ff107563900c7541df7ed5cdcb77cc6eb9f7dd6; architecture: arm64-osx-dynamic; features: tool; dependencies: vcpkg-cmake:arm64-osx; homepage: https://sourceware.org/bzip2/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-brotli-arm64-osx-dynamic",
+      "name": "brotli",
+      "versionInfo": "1.2.1",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/brotli@1.2.1?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI bbb50315b557c50bb128b4bd1032807f803ae8ee57c9a28ac7fa2f1cad0e7c60; architecture: arm64-osx-dynamic; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx; homepage: https://github.com/google/brotli"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "name": "freetype",
+      "versionInfo": "2.14.3",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "FTL OR GPL-2.0-or-later",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/freetype@2.14.3?triplet=arm64-osx-dynamic"
+        }
+      ],
+      "comment": "vcpkg ABI a983e2c32edc929dcef8484fc493694c13e6de8436305951cfb7a192c803e8e0; architecture: arm64-osx-dynamic; features: brotli, bzip2, png, zlib; dependencies: vcpkg-cmake:arm64-osx, vcpkg-cmake-config:arm64-osx; homepage: https://www.freetype.org/"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-everygraph-qt-probe",
+      "name": "everygraph-qt-probe",
+      "versionInfo": "0.0.0",
+      "supplier": "NOASSERTION",
+      "originator": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": true,
+      "packageVerificationCode": {
+        "packageVerificationCodeValue": "f39a9d137aa4c55ab2c9a0967ff3c509d3fe7971"
+      },
+      "hasFiles": [
+        "SPDXRef-File-everygraph-qt-probe"
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "Local qualification probe built from tools/qt_probe/main.cpp; EveryGraph-owned source is intended for Apache-2.0 but the release license and notices are not yet published."
+    }
+  ],
+  "files": [
+    {
+      "SPDXID": "SPDXRef-File-everygraph-qt-probe",
+      "fileName": "./out/build/macos-release-qt-vcpkg/everygraph_qt_probe.app/Contents/MacOS/everygraph_qt_probe",
+      "checksums": [
+        {
+          "algorithm": "SHA1",
+          "checksumValue": "72903b5cb46096be0c3a4dc2fc8801f032b2e564"
+        },
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "fb24f747fe94669ccefce9270691f62ed6880b85e84b7d02e0036cd48121364d"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "Built qualification probe; not a release artifact."
+    },
+    {
+      "SPDXID": "SPDXRef-File-qtbase-arm64-osx-dynamic-lib-libQt6Widgets.6.12.0.dylib",
+      "fileName": "arm64-osx-dynamic/lib/libQt6Widgets.6.12.0.dylib",
+      "checksums": [
+        {
+          "algorithm": "SHA1",
+          "checksumValue": "49d6dc3a9c85379986d0b4bc3f5379643ebc8ff8"
+        },
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "2f75af735f9a57498dff41cbf35908bc3d2b461c2283d1f6f14692a77050739e"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "Linked by the built probe; owning vcpkg package: qtbase; path is relative to the vcpkg install root."
+    },
+    {
+      "SPDXID": "SPDXRef-File-qtbase-arm64-osx-dynamic-lib-libQt6Gui.6.12.0.dylib",
+      "fileName": "arm64-osx-dynamic/lib/libQt6Gui.6.12.0.dylib",
+      "checksums": [
+        {
+          "algorithm": "SHA1",
+          "checksumValue": "18b9bf0c1f661f22e8e6d6b1c03b6730d946f8ce"
+        },
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "d46d79980a8b89585824ce0218d397e7e280289763d5ecc7504ab9aceab64705"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "Linked by the built probe; owning vcpkg package: qtbase; path is relative to the vcpkg install root."
+    },
+    {
+      "SPDXID": "SPDXRef-File-qtbase-arm64-osx-dynamic-lib-libQt6Core.6.12.0.dylib",
+      "fileName": "arm64-osx-dynamic/lib/libQt6Core.6.12.0.dylib",
+      "checksums": [
+        {
+          "algorithm": "SHA1",
+          "checksumValue": "a6a615eb589965a48136da86c2b302b59727c885"
+        },
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "ec26e65c52c7ee71c4f228404024b7e6202bff667415cc006d22cddfded3b8d0"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "Linked by the built probe; owning vcpkg package: qtbase; path is relative to the vcpkg install root."
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-Package-opengl-registry-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-egl-registry-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-opengl-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-opengl-registry-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-double-conversion-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-double-conversion-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zlib-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zlib-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zstd-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zstd-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-sqlite3-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-sqlite3-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zlib-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zlib-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-openssl-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-openssl-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-openssl-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-lz4-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-lz4-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-vcpkg-tool-meson-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpq-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpq-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-tool-meson-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpq-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-lz4-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpq-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-openssl-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpq-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpng-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpng-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpng-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-pcre2-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-pcre2-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-opengl-registry-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-egl-registry-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-opengl-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-opengl-registry-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libspng-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libspng-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libspng-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libjpeg-turbo-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libspng-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libjpeg-turbo-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libjpeg-turbo-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libjpeg-turbo-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-vcpkg-make-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-icu-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-get-vars-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-icu-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-make-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-bzip2-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-brotli-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-brotli-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-brotli-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-bzip2-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libpng-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-harfbuzz-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-tool-meson-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-harfbuzz-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-freetype-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-double-conversion-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-double-conversion-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-expat-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-expat-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-dbus-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-expat-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-dbus-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-dbus-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-md4c-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-md4c-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libb2-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-make-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libb2-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-md4c-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-pcre2-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-brotli-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-dbus-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-double-conversion-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-freetype-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-opengl-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-harfbuzz-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-icu-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libjpeg-turbo-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-openssl-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libpng-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libpq-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-sqlite3-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zstd-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-pcre2-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-pcre2-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-md4c-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-md4c-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libb2-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-make-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libb2-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-md4c-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-pcre2-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-qtbase-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-double-conversion-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-opengl-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-qtbase-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-freetype-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpng-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpng-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-libpng-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-bzip2-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-brotli-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-brotli-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-vcpkg-cmake-config-arm64-osx"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-brotli-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-bzip2-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-libpng-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-freetype-arm64-osx-dynamic",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-zlib-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-everygraph-qt-probe"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-everygraph-qt-probe",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-qtbase-arm64-osx-dynamic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-everygraph-qt-probe",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-File-everygraph-qt-probe"
+    }
+  ]
+}
