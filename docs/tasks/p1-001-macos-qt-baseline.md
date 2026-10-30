@@ -10,7 +10,7 @@
 - Dependencies: P0-001 (accepted)
 - Created: 2026-10-30
 - Updated: 2026-10-30
-- Branch / base revision: `feat/p1-001-qt-baseline`, based on `main` at `747809e`. The earlier record statement that no Git repository existed is obsolete; the repository and an `origin` remote now exist.
+- Branch / base revision: `feat/p1-001-qt-baseline`, based on `main` at `747809e`; implementation committed as `d226fa3`. The earlier record statement that no Git repository existed is obsolete; the repository and an `origin` remote now exist. No push was performed.
 - Authorization: implementation authorized 2026-10-30 for the Homebrew Qt route, build-file changes, documentation updates and a local commit on the feature branch. No push, remote publication, signing identity, notarization, Windows execution or business feature implementation was authorized or performed.
 
 ## Scope and acceptance
@@ -91,7 +91,7 @@ Blockers and unblock actions:
 - P1-002 remains blocked on a Windows host or authorized CI; no Windows evidence exists.
 - Release qualification must cover hardened runtime, Developer ID signing, notarization, license notices, corresponding-source access, complete SBOM and clean-machine testing.
 
-Next task / concrete next action: commit the accepted P1-001 changes on `feat/p1-001-qt-baseline`; then P1-003 may start. P1-002 stays blocked.
+Next task / concrete next action: P1-003 may start (P1-001 is accepted); P1-002 stays blocked pending a Windows host or authorized CI.
 
 Files or commands needed to resume: [CMakeLists.txt](../../CMakeLists.txt), [CMakePresets.json](../../CMakePresets.json), [development guide](../engineering/development.md), [licensing policy](../engineering/licensing-and-dependencies.md), `python3 tools/validate_planning.py`, and the `macos-debug-qt` / `macos-release-qt` presets with `QT_ROOT` set.
 
