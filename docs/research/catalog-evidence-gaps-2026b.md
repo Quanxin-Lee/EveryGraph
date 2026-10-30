@@ -247,6 +247,8 @@ G4 lists ten new graph types in 2026: Cause-and-Effect Diagram, Frequency Chart,
 
 The graph gap is corrected rather than closed. The P0-003 73-row count is a gallery taxonomy, not a partial 100-plus inventory; the prior 27-entry-gap statement is withdrawn. The current product page provides 111 labels and the Help page provides a stale built-in-template description. The 100-plus claim is credible as a label count and as a built-in-plus-extended aggregate, but it is not a certified distinct-built-in-type count. The exact membership, the unique counting rule, the App classification of most entries and the 2026b attribution remain open.
 
+**Acceptance scope note (2026-10-31).** The user confirmed narrowing AC-3 to require a vendor-evidenced built-in/App distinction where labels exist, with the unlabelled remainder recorded as an explicit unknown. This appendix therefore distinguishes the four labels with documented App evidence and does not claim a complete built-in/App classification. The narrowing is a scope decision recorded in the [P0-005 record](../tasks/p0-005-catalog-evidence-gaps.md), not new vendor evidence.
+
 ## 7. Graph export catalog: ORG-EXPORT-001
 
 ### 7.1 The documented formats
