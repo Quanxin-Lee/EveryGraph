@@ -2,45 +2,44 @@
 
 ## Scope and evidence boundary
 
-This scaffold builds `everygraph_toolchain_probe`, a dependency-free C++20 standard-library executable. An opt-in `everygraph_qt_probe` target adds a minimal Qt Widgets workbench qualification probe; it is not EveryGraph, a GUI prototype, a scientific implementation, or a benchmark. No dependency-manager bootstrap, package lockfile, or business module is part of this work.
+This scaffold builds `everygraph_toolchain_probe`, a dependency-free C++20 standard-library executable. P1-004 adds the dependency-free `everygraph_foundation` and `everygraph_application` static libraries and the `everygraph_command_kernel_tests` executable; they implement a command, revision, transaction, undo/redo and event contract over a fake in-memory document, not a product domain model, persistence layer, GUI or wire protocol. An opt-in `everygraph_qt_probe` target adds a minimal Qt Widgets workbench qualification probe; it is not EveryGraph, a GUI prototype, a scientific implementation, or a benchmark. No dependency-manager bootstrap, package lockfile, or business module is part of this work.
 
-The toolchain probe checks `std::span`, an owning vector snapshot surviving mutation and destruction of its source, move-owned data in `std::jthread`, stop-token observation, and joining before reading worker results. A latch makes stop observation deterministic without timing assumptions. Explicit return-code checks remain active in Release; assertions are not used as tests.
+The probe checks `std::span`, an owning vector snapshot surviving mutation and destruction of its source, move-owned data in `std::jthread`, stop-token observation, and joining before reading worker results. A latch makes stop observation deterministic without timing assumptions. Explicit return-code checks remain active in Release; assertions are not used as tests.
 
 ## Verified local environment
 
-P1-001 re-observed the implementation host on 2026-10-30; the values below are current and supersede the earlier Phase-0 observation. They describe this host only, not a supported-configuration table:
+Observed on the implementation host, not inferred from a compatibility table:
 
 | Item | Observed value |
 | --- | --- |
-| OS | macOS 27.0.1, build 26A434 |
-| Host and probe binaries | arm64; Mach-O 64-bit arm64 executables |
-| Selected developer directory | `/Library/Developer/CommandLineTools` (CLT 27.0.0.0, not Xcode.app) |
+| OS | macOS 27.2, build 26B123 |
+| Host and all three output binaries | arm64; Mach-O 64-bit arm64 executables |
+| Selected developer directory | `/Applications/Xcode.app/Contents/Developer` |
 | Compiler | AppleClang 21.0.0 (`clang-2100.3.34.2`); CMake identifies `21.0.0.21000334` |
-| Compiler used by presets | `/usr/bin/clang++` |
+| Compiler used by presets | `/usr/bin/clang++`, using the selected Xcode toolchain |
 | SDK | macOS 27.0 |
-| Deployment target | 14.4; confirmed in the probe binaries and the Qt 6.12.0 frameworks |
+| Deployment target | 14.4; also confirmed in the Debug binary's `LC_BUILD_VERSION` |
 | CMake | 3.31.6; project minimum 3.28 |
 | Ninja pip distribution | 1.11.1.4 |
 | `ninja --version` | `1.11.1.git.kitware.jobserver-1` |
-| Tool environment | repository-local `.venv` (ignored), Python 3.13.9, pinned `cmake==3.31.6` and `ninja==1.11.1.4` |
-| Local Python | `python3` on PATH is Anaconda 3.13.9; planning validation requires an interpreter >= 3.10 |
-| CMake-discovered Python | `/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14` (Homebrew Python 3.14.2) |
-| Qt used by the probe presets | Homebrew `qtbase` 6.12.0_2 at `/opt/homebrew/opt/qtbase` |
+| Tool environment | `/tmp/everygraph-phase0-tools`, isolated Python virtual environment |
+| Local Python | 3.14.6; planning validation requires an interpreter >= 3.10 |
+| CMake-discovered Python | `/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14` |
 | clang-format / clang-tidy | Not found on PATH; configuration supplied, checks not executed |
 
-The tool environment is created with Python's `venv` and pip distributions `cmake==3.31.6` and `ninja==1.11.1.4`:
+The existing environment was provisioned with Python's `venv` and pip distributions `cmake==3.31.6` and `ninja==1.11.1.4`. The scaffold reused it by prefixing PATH; it installed no additional tools or libraries. The pip distribution version and the Ninja executable's reported version are deliberately recorded separately. Reproducing the provisioning method on a fresh host would use the following; these installation commands were not rerun during scaffold verification:
 
 ```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install cmake==3.31.6 ninja==1.11.1.4
+python3 -m venv /tmp/everygraph-phase0-tools
+/tmp/everygraph-phase0-tools/bin/python -m pip install cmake==3.31.6 ninja==1.11.1.4
 ```
 
-The venv is ignored by Git and is not an application dependency lock. The pip distribution version and the Ninja executable's reported version are deliberately recorded separately. Local Python 3.13.9 is separate from the unexecuted CI choice of Python 3.13 and from the CMake-discovered Homebrew 3.14.2 interpreter.
+This temporary environment is not an application dependency lock and may disappear after host cleanup. Local Python 3.14.6 verification is separate from the unexecuted CI choice of Python 3.13.
 
 Version self-checks used locally:
 
 ```sh
-export PATH="$PWD/.venv/bin:$PATH"
+export PATH="/tmp/everygraph-phase0-tools/bin:$PATH"
 sw_vers
 uname -m
 xcode-select -p
@@ -60,7 +59,7 @@ Run from the repository root (`/Users/leo/Documents/General/EveryGraph` on the v
 The following commands were executed successfully:
 
 ```sh
-export PATH="$PWD/.venv/bin:$PATH"
+export PATH="/tmp/everygraph-phase0-tools/bin:$PATH"
 cmake --list-presets=all
 
 cmake --preset macos-debug
@@ -88,7 +87,7 @@ ctest --preset macos-debug -N
 
 The conflict guard was also exercised with `cmake --preset macos-sanitize -DEVERYGRAPH_ENABLE_TSAN=ON`: configuration failed as intended with the message that ASan/UBSan and TSan cannot be combined. The initial diagnostic-check helper failed because CMake wrapped that message across lines; normalizing whitespace made the helper pass. The normal `macos-sanitize` configure/build/test commands were rerun, restoring `EVERYGRAPH_ENABLE_TSAN=OFF` and passing the probe again. No actual probe configure/build/test failure occurred. TSan itself was not built or run.
 
-A successful run on macOS 27.0.1 with a deployment target of 14.4 is not evidence of execution on macOS 14.4, other macOS releases, Intel Macs, or Windows. These are toolchain checks, not application, numerical-accuracy, throughput, or memory-scaling results.
+A successful run on macOS 27.2 with a deployment target of 14.4 is not evidence of execution on macOS 14.4, other macOS releases, Intel Macs, or Windows. These are toolchain checks, not application, numerical-accuracy, throughput, or memory-scaling results.
 
 ## Full planning and toolchain validation
 
@@ -97,8 +96,11 @@ CMake requires `Python3` >= 3.10 with the `Interpreter` component. When `BUILD_T
 - `toolchain_probe`: the compiled C++ probe, with a 30-second timeout.
 - `planning_validation`: the Python interpreter running `tools/validate_planning.py` from the source root, with a 60-second timeout.
 - `planning_validator_tests`: six standard-library unittest cases for validator behavior, with a 60-second timeout.
+- `command_kernel_tests`: the dependency-free command/transaction prototype executable, with a 60-second timeout.
+- `module_boundary_check`: a CMake script that rejects Qt includes and Qt type tokens in `modules/foundation` and `modules/application`, with a 30-second timeout.
+- `qt_probe_smoke`: only in Qt presets; the offscreen Qt Widgets probe with a 30-second timeout.
 
-The initial compiler-only runs used the anchored selection above. After completing the documents and adding the actual validator, the final review reran configure/build and the following unfiltered suites; each passed 3/3 tests:
+The initial compiler-only runs used the anchored selection above. Before P1-004, the final review reran configure/build and the unfiltered suites; each passed 3/3. After P1-004, the Qt-free suites report 5/5 and the two Qt presets report 6/6; details and exact commands are in the kernel section below.
 
 ```sh
 ctest --preset macos-debug
@@ -163,6 +165,8 @@ The Qt presets set `EVERYGRAPH_ENABLE_QT_PROBE=ON` and `CMAKE_PREFIX_PATH=$env{Q
 | macos-release | CTest 3/3 passed |
 | macos-sanitize | CTest 3/3 passed with ASan + UBSan |
 
+These are the historical P1-001 counts. After P1-004 added the kernel CTest entries, the expected Qt-preset total is 6/6 and the Qt-free total is 5/5 when the shared planning validator is green. The current tree is temporarily red only in `planning_validation` because already-committed P0 records link to an absent research artifact; see the kernel section below for the current results and the external blocker.
+
 `qt_probe_smoke` runs `everygraph_qt_probe --smoke-test` with `QT_QPA_PLATFORM=offscreen`. The probe verifies that a window and central widget exist, that the window is visible, and that the platform plugin is `offscreen`, then quits through a zero-delay timer. It does not require a logged-in GUI session and does not assert on wall-clock timing. Typical observed duration was 0.8 s after the first run; the first run took about 5 s while font caches were populated. The probe prints `qt_probe: Qt 6.12.0, platform offscreen, central widget present` and exits 0. The offscreen plugin also prints `This plugin does not support propagateSizeHints()` and a font-alias timing note; neither is a test failure.
 
 ### Dynamic linkage, deployment and LGPL replacement
@@ -211,6 +215,83 @@ This demonstrates local replacement of an LGPL Qt library without relinking the 
 - The Homebrew Qt binary is not a project-built Qt and its transitive closure is not yet an approved release SBOM. P1-003 and release qualification still own the dependency graph, notices, corresponding source and clean-machine checks.
 - `macdeployqt` did not deploy the offscreen platform plugin automatically; a real test/CI packaging flow must deploy the plugins it needs explicitly.
 
+## Command and transaction kernel prototype (P1-004)
+
+`everygraph_foundation` and `everygraph_application` are C++20 static libraries with no GUI toolkit, network, persistence or third-party dependency. The application prototype uses a fake in-memory document and is not a product Project/Workbook/Graph model, a SQLite/Arrow store, a numerical engine, a wire protocol, a permission system or a user interface. It exists so the Qt shell, Python, CLI and future AI clients can consume one command/transaction contract instead of inventing their own mutation path. It does not complete EG-ADD-001 or P1.
+
+### Targets and contract
+
+| Target / test | Purpose |
+| --- | --- |
+| `everygraph_foundation` | Stable `ObjectId`, revision/transaction/event IDs and structured `ErrorCode` values; standard library only |
+| `everygraph_application` | Command envelope, versioned registry, fake document transaction, revision checks, gateway, undo/redo, sequenced events, repeat/reopen metadata and cancellation; links foundation only |
+| `everygraph_command_kernel_tests` | Dependency-free C++ test executable containing 26 cases; no GoogleTest |
+| `module_boundary_check` | CTest architecture check for Qt includes and type tokens in both module trees |
+
+Public headers live under `modules/foundation/include/everygraph/foundation/` and `modules/application/include/everygraph/application/`; implementations live in the matching `src/` directories. The gateway is a single-threaded application-executor prototype. A command receives a private `CommandTransaction` candidate; only the gateway commits it, and the live document is swapped once. The prototype enforces:
+
+- Command IDs use dotted lowercase `namespace.verb` names. Unknown commands, duplicate registrations, unsupported schema versions, malformed arguments, invalid envelopes and external-effect registrations return stable structured error codes.
+- Declared read and write revisions must exactly match current revisions before execution; a stale read or write returns `revision_conflict` without staging or publishing anything. The gateway revalidates the expected revisions again immediately before commit.
+- A handler may change only objects in its declared write set; undeclared writes are rejected before commit. A read-only command that attempts a write is rejected.
+- A successful changed command creates one undo entry, increments every changed object's revision, updates the monotonic event sequence once and publishes one event containing the changed IDs, revisions and change kinds. A no-change command publishes no event, revision or undo entry.
+- Property no-op detection uses canonical value equality: all NaN representations compare equal, positive and negative zero are distinct, and other values compare by type and value. This keeps no-op events and revision bumps consistent with the canonical parameter representation.
+- Undo and redo apply the stored before/after content through the same executor, assign fresh revisions rather than reusing old numbers, publish their own sequenced events and do not add undo entries. A new edit clears the redo branch. Retired object IDs keep a tombstone revision so recreation does not reuse a revision number.
+- Event listeners are invoked after the state change; listener exceptions are contained, and a listener that calls back into the gateway receives `reentrant_mutation` instead of mutating the document reentrantly. A handler is also guarded against reentrant gateway calls, so an inner attempt cannot commit a candidate that the outer command then overwrites.
+- Every successful changed command records immutable parameter metadata. `recorded_command()` returns a request with the recorded command, schema version and copied arguments, plus current expected revisions for the original read/write IDs. `repeat_last()` re-executes only commands marked repeatable; repeated idempotent edits produce no additional result, revision, event or undo entry.
+- `std::stop_token` is checked before dispatch and before commit. A canceled handler candidate is discarded with `canceled`; it publishes no event or revision.
+
+### Commands and results
+
+Run from the repository root:
+
+```sh
+export PATH="$PWD/.venv/bin:$PATH"
+
+cmake --preset macos-debug
+cmake --build --preset macos-debug
+ctest --preset macos-debug
+
+cmake --preset macos-release
+cmake --build --preset macos-release
+ctest --preset macos-release
+
+cmake --preset macos-sanitize
+cmake --build --preset macos-sanitize
+ctest --preset macos-sanitize
+```
+
+| Preset | Configure/build | CTest result |
+| --- | --- | --- |
+| macos-debug | Passed; no compiler warnings | 4/5 passed; all P1-004 entries passed; only `planning_validation` failed on absent P0 research links |
+| macos-release | Passed; no compiler warnings | 4/5 passed; all P1-004 entries passed; only `planning_validation` failed on absent P0 research links |
+| macos-sanitize | Passed with ASan + UBSan | 4/5 passed; all P1-004 entries passed; no sanitizer diagnostics; only `planning_validation` failed on absent P0 research links |
+
+These isolated-checkpoint runs used the P1-004 branch at `fca707a`. The Qt presets were not rerun in the isolated checkpoint; in the earlier shared worktree they reported 5/6 with the kernel tests and `qt_probe_smoke` passing and only `planning_validation` failing on a branch-mismatch link. `everygraph_command_kernel_tests` does not link Qt in any preset. `otool -L` on the Debug test executable lists only `/usr/lib/libc++.1.dylib` and `/usr/lib/libSystem.B.dylib`; `file` reports a Mach-O arm64 executable.
+
+Current-tree caveat, 2026-10-31: the committed P0-004, P0-005 and P0-006 records link to `docs/research/capability-catalog-decomposition.md`, which is absent from this branch. The planning validator therefore fails in every preset, while every P1-004 test passes. Those records belong to the P0 documentation tasks and are not edited by P1-004. P1-004's AC-7 cannot be marked met until the owning task supplies the research artifact or corrects the links and the three presets are rerun green.
+
+The 26 cases cover registry rejection (unknown, duplicate, invalid ID, unsupported version, malformed arguments, external effect), stale read/write revisions, a multi-object create/update transaction, single undo entry and event sequencing, undo/redo state and fresh revisions, redo-branch clearing, empty history, pre-dispatch and mid-handler cancellation, stop-after-handler-before-commit, handler exceptions, rejected candidates, undeclared writes, handler reentrancy, NaN and signed-zero no-op behavior, read-only effect enforcement, listener exception containment, listener reentrancy, repeat with no duplicate result, non-repeatable rejection, immutable reopen metadata and envelope validation.
+
+### Architecture boundary check
+
+Two independent checks keep the GUI-independent modules free of Qt:
+
+1. CMake configure time calls `everygraph_assert_no_qt_linkage()` for both targets and fails if a direct or exported link dependency matches `Qt<digits>::`.
+2. The `module_boundary_check` CTest scans every `.hpp`, `.h`, `.cpp` and `.cc` file in the two module trees for Qt includes and `Q`-prefixed type tokens.
+
+The negative path was exercised with a scratch tree containing `#include <QString>`; the check failed and reported the offending file and line. The check does not prove the absence of every transitive non-Qt dependency and does not replace compiler-enforced layering; it is a scoped guard for this prototype.
+
+### Prototype limits
+
+- The executor is synchronous and single-threaded. Stop tokens are checked at command boundaries; no worker, task handle, progress stream or serialized command queue exists (P1-005 owns that contract).
+- The document is a fake `std::map`; every command and history operation copies it. There is no Project/Workbook domain, immutable chunk store, SQLite/Arrow persistence, query service, pagination or snapshot leasing.
+- Command effects are limited to reversible in-memory document edits. External writes, network transfer, capability grants, confirmation receipts, idempotency/retry caches, result modes, per-effect receipts and partial-completion reporting are not implemented.
+- Cancellation after commit is not tested because the prototype has no long-running work or external effects. Undo history is capped at 128 entries by default; discarded entries and their memory budget are not surfaced. Tombstone revisions are retained for the gateway lifetime.
+- Undo and redo do not rewrite the last-action record; it continues to describe the most recent changed command. `repeat_last()` is a contract-level reproduction, not the final Origin-style recalculation semantics with new selections or parameters.
+- Listener exceptions are contained without diagnostics. Allocation failures during request validation or metadata access can still propagate before a commit is staged; commit-time allocations are staged before the live document and tombstone maps are swapped, so a failed commit leaves the committed state unchanged.
+- The test harness is a small custom executable with explicit return-code checks and one CTest entry, not GoogleTest with discovery, fixtures or death tests. GoogleTest remains a future pinned dependency under P1-003.
+- No Windows build, CI run, sanitizer-plus-Qt combination or thread-sanitizer run is claimed. `macos-debug-qt` and `macos-release-qt` are local qualification runs, not release packaging.
+
 ## Windows configuration only: not executed
 
 The Windows-only configure presets select Ninja and `cl`; `architecture: { value: x64, strategy: external }` requires an already initialized x64 compiler environment. It does not cause Ninja to select an architecture. Use Visual Studio 2022 with the C++ desktop toolchain and Windows SDK, and its x64 Native Tools developer command prompt. Ensure CMake 3.31.6, the Ninja 1.11.1.4 pip distribution, and Python >= 3.10 are available there.
@@ -251,16 +332,16 @@ The macOS job requests **`macos-14-xlarge`**, the ARM64 larger-runner label in t
 
 Actions are pinned to the supplied verified commits: checkout v4 at `11d5960a326750d5838078e36cf38b85af677262` and setup-python v5 at `a26af69be951a213d495a4c3e4e4022e16d87065`. Permissions are restricted to `contents: read`; checkout does not persist credentials. The workflow contains no explicit secrets, write permissions, artifact uploads, publishing, signing, or app packaging. Matrix values interpolated into commands are fixed in the workflow, not event-controlled data.
 
-No workflow was dispatched. This is CI configuration, not CI success evidence. The local repository has an `origin` remote and a baseline commit, but no CI run has been observed.
+No repository/remote was initialized and no workflow was dispatched. This is CI configuration, not CI success evidence.
 
-## Future dependencies and release work: selected direction, partially qualified
+## Future dependencies and release work: selected direction, not installed or locked
 
-The planned application baseline is **C++20 with Qt 6.12.0, dynamically linked LGPL-eligible Qt Core/Gui/Widgets**. P1-001 installed Homebrew `qtbase` 6.12.0_2 and proved a minimal Qt Widgets probe on macOS arm64, including local deployment and an LGPL replacement experiment. That qualifies the probe route only: it is not the final dependency lock, not a Windows result, and not a blanket license grant for every Qt module. Before packaging, audit selected modules and transitive features, preserve notices and source/offer obligations as applicable, and verify replacement/relinking rights and signing interactions. See the separate [GUI and license evidence](../research/gui-and-license-evidence.md) and [technology evaluation](../planning/technology-evaluation.md).
+The planned application baseline is **C++20 with Qt 6.12.0, dynamically linked LGPL-eligible Qt Core/Gui/Widgets**. This is a future dependency selection, not a Qt installation, verified application build, or blanket license grant for every Qt module. Before packaging, audit selected modules and transitive features, preserve notices and source/offer obligations as applicable, and verify replacement/relinking rights and signing interactions. See the separate [GUI and license evidence](../research/gui-and-license-evidence.md) and [technology evaluation](../planning/technology-evaluation.md).
 
 Planned library directions include Arrow C++ arrays/IPC and Parquet interchange, Eigen, SQLite, approved Ceres least-squares functionality, pocketfft, and selected Boost.Math. Python scientific workers may use NumPy/SciPy and other qualified packages. None was installed or linked by this scaffold; compatible releases, enabled features, ABI/CRT combinations, numerical behavior, licenses, and transitive closure still require real selection and tests. Qt Charts/Graphs/DataVisualization, Qt WebEngine, KDE Frameworks, and FFTW are not baseline dependencies.
 
-Prefer **vcpkg manifest mode with a tested pinned registry baseline**, explicit features, and validated arm64 macOS/x64 Windows triplets. A baseline pins registry resolution; compiler/SDK versions, feature closure, and binary provenance must also be recorded. **Conan 2 is an alternative**, using qualified recipes, profiles, and a tested lockfile if that route is deliberately selected; do not mix two managers for the same native dependency graph. The Homebrew `qtbase` bottle is a P1-001 qualification route, not a second dependency authority: P1-003 must pin the native graph before business modules depend on Qt. No vcpkg manifest/baseline or Conan lockfile should be fabricated before package selection and both-platform builds establish what actually works.
+Prefer **vcpkg manifest mode with a tested pinned registry baseline**, explicit features, and validated arm64 macOS/x64 Windows triplets. A baseline pins registry resolution; compiler/SDK versions, feature closure, and binary provenance must also be recorded. **Conan 2 is an alternative**, using qualified recipes, profiles, and a tested lockfile if that route is deliberately selected; do not mix two managers for the same native dependency graph. No vcpkg manifest/baseline or Conan lockfile should be fabricated before package selection and both-platform builds establish what actually works.
 
-Future unit tests should use GoogleTest for native core code and Qt Test for Qt adapters when those targets exist. Scientific worker tests should use pytest with deterministic fixtures and numerical tolerances. Those frameworks and test suites do not exist in this probe-only build and have no pass count here.
+Future unit tests should use GoogleTest for native core code and Qt Test for Qt adapters when those targets exist. Scientific worker tests should use pytest with deterministic fixtures and numerical tolerances. GoogleTest and Qt Test are not present in this build. P1-004 deliberately uses a small dependency-free CTest executable with explicit return-code checks as a temporary harness and records the migration point; it is not a GoogleTest pass count.
 
-macOS application bundling, dependency deployment, code signing, hardened runtime, notarization/stapling, and clean-machine verification are release plans only. P1-001 produced a local ad-hoc signed probe bundle solely for the deployment and replacement experiment. No Developer ID signing, hardened runtime, notarization, installer or release artifact was produced. Windows packaging, DLL deployment, Authenticode signing, and clean-machine verification are likewise plans only.
+macOS application bundling, dependency deployment, code signing, hardened runtime, notarization/stapling, and clean-machine verification are release plans only. Windows packaging, DLL deployment, Authenticode signing, and clean-machine verification are likewise plans only. No app bundle, installer, signing identity, notarization submission, or signed artifact was produced.
