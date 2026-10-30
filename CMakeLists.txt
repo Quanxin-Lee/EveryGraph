@@ -4,7 +4,6 @@ project(EveryGraphPhase0 LANGUAGES CXX)
 
 option(EVERYGRAPH_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(EVERYGRAPH_ENABLE_TSAN "Enable ThreadSanitizer separately from ASan and UBSan" OFF)
-option(EVERYGRAPH_ENABLE_QT_PROBE "Build the Qt Widgets qualification probe and offscreen smoke test" OFF)
 
 if(EVERYGRAPH_ENABLE_SANITIZERS AND EVERYGRAPH_ENABLE_TSAN)
     message(FATAL_ERROR "ASan/UBSan and TSan must use separate build directories and cannot be combined.")

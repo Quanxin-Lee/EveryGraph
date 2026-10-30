@@ -165,7 +165,7 @@ The Qt presets set `EVERYGRAPH_ENABLE_QT_PROBE=ON` and `CMAKE_PREFIX_PATH=$env{Q
 | macos-release | CTest 3/3 passed |
 | macos-sanitize | CTest 3/3 passed with ASan + UBSan |
 
-These are the historical P1-001 counts. After P1-004 added the kernel CTest entries, the Qt-preset total is 6/6 and the Qt-free total is 5/5. The consolidated `main` tree was rerun green on 2026-10-31 after the research appendix and the P0-006 record were committed; see the kernel section below for the current results.
+These are the historical P1-001 counts. After P1-004 added the kernel CTest entries, the expected Qt-preset total is 6/6 and the Qt-free total is 5/5 when the shared planning validator is green. The current tree is temporarily red only in `planning_validation` because already-committed P0 records link to an absent research artifact; see the kernel section below for the current results and the external blocker.
 
 `qt_probe_smoke` runs `everygraph_qt_probe --smoke-test` with `QT_QPA_PLATFORM=offscreen`. The probe verifies that a window and central widget exist, that the window is visible, and that the platform plugin is `offscreen`, then quits through a zero-delay timer. It does not require a logged-in GUI session and does not assert on wall-clock timing. Typical observed duration was 0.8 s after the first run; the first run took about 5 s while font caches were populated. The probe prints `qt_probe: Qt 6.12.0, platform offscreen, central widget present` and exits 0. The offscreen plugin also prints `This plugin does not support propagateSizeHints()` and a font-alias timing note; neither is a test failure.
 
@@ -262,13 +262,13 @@ ctest --preset macos-sanitize
 
 | Preset | Configure/build | CTest result |
 | --- | --- | --- |
-| macos-debug | Passed; no compiler warnings | 5/5 passed, including `planning_validation` |
-| macos-release | Passed; no compiler warnings | 5/5 passed, including `planning_validation` |
-| macos-sanitize | Passed with ASan + UBSan | 5/5 passed, including `planning_validation`; no sanitizer diagnostics |
+| macos-debug | Passed; no compiler warnings | 4/5 passed; all P1-004 entries passed; only `planning_validation` failed on absent P0 research links |
+| macos-release | Passed; no compiler warnings | 4/5 passed; all P1-004 entries passed; only `planning_validation` failed on absent P0 research links |
+| macos-sanitize | Passed with ASan + UBSan | 4/5 passed; all P1-004 entries passed; no sanitizer diagnostics; only `planning_validation` failed on absent P0 research links |
 
-The Qt presets were also rerun because P1-004 changed the shared CMake target list: `macos-debug-qt` and `macos-release-qt` each reported 6/6, with the kernel tests and `qt_probe_smoke` passing. `everygraph_command_kernel_tests` does not link Qt in any preset. `otool -L` on the Debug test executable lists only `/usr/lib/libc++.1.dylib` and `/usr/lib/libSystem.B.dylib`; `file` reports a Mach-O arm64 executable.
+These isolated-checkpoint runs used the P1-004 branch at `fca707a`. The Qt presets were not rerun in the isolated checkpoint; in the earlier shared worktree they reported 5/6 with the kernel tests and `qt_probe_smoke` passing and only `planning_validation` failing on a branch-mismatch link. `everygraph_command_kernel_tests` does not link Qt in any preset. `otool -L` on the Debug test executable lists only `/usr/lib/libc++.1.dylib` and `/usr/lib/libSystem.B.dylib`; `file` reports a Mach-O arm64 executable.
 
-Consolidation rerun, 2026-10-31: the P1-004 checkpoint originally recorded 4/5 for the Qt-free presets and 5/6 for the Qt presets because `planning_validation` failed on a missing research appendix and P0-006 record. Those files are now committed on `main`, and the P1-001, P1-003 and P1-004 branches were integrated. The five presets were rerun with the exact commands above and the results in the table; the earlier failures were external documentation failures, not kernel failures. The vcpkg presets remain unverified because the `arm64-osx-dynamic` graph did not finish; see the P1-003 record.
+Current-tree caveat, 2026-10-31: the committed P0-004, P0-005 and P0-006 records link to `docs/research/capability-catalog-decomposition.md`, which is absent from this branch. The planning validator therefore fails in every preset, while every P1-004 test passes. Those records belong to the P0 documentation tasks and are not edited by P1-004. P1-004's AC-7 cannot be marked met until the owning task supplies the research artifact or corrects the links and the three presets are rerun green.
 
 The 26 cases cover registry rejection (unknown, duplicate, invalid ID, unsupported version, malformed arguments, external effect), stale read/write revisions, a multi-object create/update transaction, single undo entry and event sequencing, undo/redo state and fresh revisions, redo-branch clearing, empty history, pre-dispatch and mid-handler cancellation, stop-after-handler-before-commit, handler exceptions, rejected candidates, undeclared writes, handler reentrancy, NaN and signed-zero no-op behavior, read-only effect enforcement, listener exception containment, listener reentrancy, repeat with no duplicate result, non-repeatable rejection, immutable reopen metadata and envelope validation.
 
