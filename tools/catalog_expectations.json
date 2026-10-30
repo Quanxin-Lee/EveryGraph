@@ -54,7 +54,7 @@
   "protected_inputs": {
     "origin-feature-inventory.md": "fd22138468ea7798ea858c86d5217a2bcd0685ff38f5622ae62fae29db9d0ff8",
     "datagraph-feature-inventory.md": "f5e6876c38cbc90505546ae19dd7786ed45b3a4e9779032de19ad8f6b9ad62fb",
-    "docs/planning/functional-scope.md": "93918a9b0d0cf170c8906e0a3d433574d6551fa0aa508d112d97a3d2c6991fd7"
+    "docs/planning/functional-scope.md": "eb9a91041b0bd71fc1cce39a5fb966a44d3a6644d298ba63176f99f09b6aea69"
   },
   "local_sources": {
     "S1": "origin-feature-inventory.md",
