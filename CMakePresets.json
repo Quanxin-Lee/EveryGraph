@@ -58,6 +58,24 @@
       }
     },
     {
+      "name": "macos-debug-qt",
+      "displayName": "macOS arm64 Debug with Qt Widgets probe (QT_ROOT must point at the Qt prefix)",
+      "inherits": "macos-debug",
+      "cacheVariables": {
+        "EVERYGRAPH_ENABLE_QT_PROBE": "ON",
+        "CMAKE_PREFIX_PATH": "$env{QT_ROOT}"
+      }
+    },
+    {
+      "name": "macos-release-qt",
+      "displayName": "macOS arm64 Release with Qt Widgets probe (QT_ROOT must point at the Qt prefix)",
+      "inherits": "macos-release",
+      "cacheVariables": {
+        "EVERYGRAPH_ENABLE_QT_PROBE": "ON",
+        "CMAKE_PREFIX_PATH": "$env{QT_ROOT}"
+      }
+    },
+    {
       "name": "windows-base",
       "hidden": true,
       "inherits": "base",
@@ -95,6 +113,8 @@
     { "name": "macos-debug", "configurePreset": "macos-debug" },
     { "name": "macos-release", "configurePreset": "macos-release" },
     { "name": "macos-sanitize", "configurePreset": "macos-sanitize" },
+    { "name": "macos-debug-qt", "configurePreset": "macos-debug-qt" },
+    { "name": "macos-release-qt", "configurePreset": "macos-release-qt" },
     { "name": "windows-debug", "configurePreset": "windows-debug" },
     { "name": "windows-release", "configurePreset": "windows-release" }
   ],
@@ -114,6 +134,18 @@
     {
       "name": "macos-sanitize",
       "configurePreset": "macos-sanitize",
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error" }
+    },
+    {
+      "name": "macos-debug-qt",
+      "configurePreset": "macos-debug-qt",
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error" }
+    },
+    {
+      "name": "macos-release-qt",
+      "configurePreset": "macos-release-qt",
       "output": { "outputOnFailure": true },
       "execution": { "noTestsAction": "error" }
     },
