@@ -10,7 +10,7 @@
 - Dependencies: P0-003;P0-005
 - Created: 2026-10-31
 - Updated: 2026-10-31
-- Branch / worktree / base revision: `main`. Current HEAD `6b59fa5`. The executor's in-progress record state was included by P0-000's snapshot commit `0277df4`; the executor did not create or amend that commit. The register is still uncommitted. No new branch or worktree was created.
+- Branch / worktree / base revision: `main`. The register and this record were committed as `c07ed6d`; this follow-up commit records the link. The executor's earlier in-progress record state was included by P0-000's snapshot commit `0277df4`; the executor did not create or amend that commit. No new branch or worktree was created.
 - Authorization: the user requested execution of P0-013 on 2026-10-31 in the existing `main` worktree, without creating another branch, and authorized assigning research, implementation and independent review work. Authorized scope: create `docs/research/compatibility-rights-and-specifications.md` and edit this record only. Citation-only retrieval of lawful public vendor documentation is authorized; no SDK/manual/EULA acceptance, no account creation, no purchase. The task board is P0-000-owned and read-only to this task under AGENTS.md section 0; the register, catalog children, inventories, functional scope, architecture documents, other task records and product code are read-only. No dependency change, Windows execution, Git commit, push or publication is authorized. External legal review is an open dependency, not performed here.
 
 ## Scope and acceptance
@@ -43,6 +43,7 @@ All five criteria pass as of register version `2026-10-31.2`. The round-2 indepe
 | 2026-10-31 | EveryGraph Research / executor | Applied the round-1 fixes: completed this record's evidence; corrected the Prism `.prism` open-format evidence and added S-CR-72; normalized `EG-CAT-COMPAT-013`; corrected the CR-25 roll-up; renamed the gate-level unknown; corrected the DataGraph spelling and added the missing legal question; corrected the MAT-file access description; issued register version `2026-10-31.2` | This record; register version `2026-10-31.2` |
 | 2026-10-31 | Independent review subagent / read-only reviewer | Round 2 rechecked F-01 to F-08, re-ran the validator and structural checks, confirmed no scope breach or acceptance claim, and recommended acceptance; edited no file | Review round 2, below |
 | 2026-10-31 | EveryGraph Research / executor | Refreshed the git snapshot, recorded round 2 and accepted P0-013 with retained limitations; did not edit the board | This record |
+| 2026-10-31 | EveryGraph Research / executor | Committed the register and record as `c07ed6d` on `main` at the user's explicit commit authorization; no push | Git log `c07ed6d` |
 
 The register is new and this record is the only other file changed by P0-013. No product code, build configuration, dependency lock, register row, catalog child, board row or platform claim was produced by this task.
 
@@ -90,7 +91,7 @@ Acceptance decision, accepting role and date: **accepted by EveryGraph Research 
 
 ## Handoff and remaining work
 
-Last verified state: register version `2026-10-31.2` exists with 27 unresolved family records and 72 sources; the validator and structural checks pass; only this task's two files are changed by this task. The register is uncommitted. The board row `P0-013` is `in_progress` and was last updated by P0-000 on 2026-10-31; P0-013 did not edit it. The task is accepted in this record.
+Last verified state: register version `2026-10-31.2` exists with 27 unresolved family records and 72 sources; the validator and structural checks pass. The register and record are committed in `c07ed6d`; this record update is the follow-up commit. The board row `P0-013` is `in_progress` and was last updated by P0-000 on 2026-10-31; P0-013 did not edit it. The task is accepted in this record.
 
 Blockers and unblock actions: no blocker for the register itself. Every compatibility family remains blocked on two owner actions: (1) an external legal-review position on rights, and (2) lawful specification or vendor documentation for the `SPEC-NONE` and `SPEC-PARTIAL` families. The P0-000 executor must update the board row to `accepted`; P0-013 cannot do so under AGENTS.md section 0. Committing or pushing this task's files also requires explicit user authorization.
 
@@ -106,3 +107,4 @@ Files or commands needed to resume: [register](../research/compatibility-rights-
 | 2026-10-31 | planned -> in_progress | The user requested execution of P0-013 on 2026-10-31 in the existing `main` worktree, without a new branch, and authorized the research, implementation and independent review work within the allowed files. |
 | 2026-10-31 | Register `2026-10-31.1` -> `2026-10-31.2` | Round-1 review corrections; no rights status, version scope, fixture plan or axis status changed, but the evidence text and source register were corrected. |
 | 2026-10-31 | in_progress -> accepted | All five acceptance criteria pass, round-2 independent review recommended acceptance, and the retained limitations are recorded. The board row update remains P0-000-owned. |
+| 2026-10-31 | Commit `c07ed6d` on `main` | The user explicitly authorized the commit; no push was authorized or performed. |
