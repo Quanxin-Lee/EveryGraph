@@ -1,6 +1,6 @@
 # Phase-0 Validation Report
 
-Review date: 2026-10-30. This report covers delivered planning/configuration artifacts, not an implemented desktop application.
+Review date: 2026-10-30. This report covers delivered planning/configuration artifacts, not an implemented desktop application. Platform sequencing follows [ADR-0005](../decisions/ADR-0005-platform-sequencing.md): macOS 14.4+ Apple Silicon is the only active qualification target for the current phase; Windows x64 is a deferred later target whose platform interfaces remain in the architecture. This report makes no Windows implementation, evidence, packaging or support claim.
 
 ## 1. Initial workspace and preservation
 
@@ -33,10 +33,10 @@ A separate full-document consistency review identified three concrete contract g
 | Validator unit tests | Six tests passed for valid/invalid coverage, source mismatch, delivery claims, phase/classification, matrix bounds, links/fences/language |
 | Full planning checker | Passed after this report was created: preserved inputs, 428 trace rows, local links, source anchors, language/fences and matrix totals |
 | Full CTest including planning/unit tests | macos-debug, macos-release and macos-sanitize each configured/built and passed 3/3 tests: toolchain_probe, planning_validation, planning_validator_tests |
-| Windows presets | Real configuration exists; not executed on Windows |
+| Windows presets and qualification | Real configuration exists; not executed on Windows, which is a deferred later target under ADR-0005; no Windows build, evidence or support claim |
 | GitHub Actions | Local pinned/least-privilege workflow exists; no remote repository or workflow execution |
 | Qt/Arrow/Eigen/SQLite application integration | Not installed, linked or tested by the compiler-only scaffold |
-| Minimum macOS 14.4 / Windows 10/11 runtime | Not tested; deployment target and documented support do not prove runtime compatibility |
+| Minimum macOS 14.4 runtime | Not tested; the deployment target and documented support do not prove runtime compatibility. Windows 10/11 remains deferred and untested |
 | Clang-format / Clang-Tidy / TSan | Configurations/policy exist; tools or runtime checks not executed |
 | Mermaid | Diagrams authored for the contracts; no renderer execution claimed |
 | Scientific correctness/performance | Test protocol supplied; no application measurement or numerical result claimed |
@@ -45,8 +45,8 @@ The validator checks preserved hashes, original-ID coverage, unique IDs, source 
 
 ## 4. Required next gates
 
-- Qualify Qt 6.12.0 and the complete dependency/feature/CRT graph on both platforms; establish a real immutable package baseline.
-- Decide Windows 10/Qt maintenance horizon and qualify exact minimum/current OS builds.
+- Qualify Qt 6.12.0 and the complete dependency/feature graph on macOS Apple Silicon; establish a real immutable package baseline. Windows x64 qualification is deferred under ADR-0005 and resumes only on a Windows x64 host or authorized CI.
+- Qualify the exact macOS minimum/current OS builds; the Windows 10/Qt maintenance horizon is a decision for the later Windows gate.
 - Configure a real Git/GitHub repository only when authorized, then run CI; current ARM larger-runner configuration needs availability/billing approval or an approved alternative.
 - Decompose unnamed feature/method/format catalogs and close proprietary SDK/license/file/language compatibility questions.
 - Implement and validate actual numerical/rendering/storage contracts, including reference results, large-data workloads and interrupted-save recovery.
@@ -57,7 +57,7 @@ These are next-stage implementation/release gates, not hidden successes. The Pha
 
 ## 5. Delivered files
 
-37 source/configuration/document deliverables, including 26 Markdown documents, two CSV registers and seven Mermaid diagrams. Generated build outputs and OS metadata are excluded from this count.
+38 source/configuration/document deliverables, including 27 Markdown documents, two CSV registers and seven Mermaid diagrams. Generated build outputs and OS metadata are excluded from this count. The list includes ADR-0005 from P0-008; task records and task-specific artifacts added later are tracked on the task board rather than duplicated here.
 
 ### Root standards and configuration
 
@@ -97,6 +97,7 @@ These are next-stage implementation/release gates, not hidden successes. The Pha
 - [ADR-0002-gui-framework.md](../decisions/ADR-0002-gui-framework.md)
 - [ADR-0003-application-architecture.md](../decisions/ADR-0003-application-architecture.md)
 - [ADR-0004-data-storage.md](../decisions/ADR-0004-data-storage.md)
+- [ADR-0005-platform-sequencing.md](../decisions/ADR-0005-platform-sequencing.md)
 
 ### Research, engineering and checks
 

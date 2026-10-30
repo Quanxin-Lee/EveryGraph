@@ -1,6 +1,6 @@
 # EveryGraph
 
-EveryGraph is a planned open-source, local-first scientific data analysis, visualization and publication-graphics desktop application for macOS Apple Silicon and Windows x64.
+EveryGraph is a planned open-source, local-first scientific data analysis, visualization and publication-graphics desktop application for macOS Apple Silicon, with Windows x64 as a deferred later target.
 
 **Current state:** Phase-0 architecture, research, standards and minimal toolchain validation. There is no desktop business application yet. The two supplied feature inventories remain unchanged. All 339 original IDs, 71 release-detail children and 18 additional capabilities are tracked; a populated plan is not a claim of implemented feature parity.
 
@@ -13,7 +13,7 @@ EveryGraph is a planned open-source, local-first scientific data analysis, visua
 - **One command API for UI, Python, CLI and AI**, provider-neutral AI with permissions and auditable actions.
 - **Apache-2.0 policy for project-owned source**, subject to formal release licensing and dependency obligations.
 
-Initial product qualification targets: macOS 14.4+ arm64, Windows 10 22H2 x64 and serviced Windows 11 x64. These are not tested release claims. Qt's final Windows 10 branch and platform security servicing are explicit risks.
+Qualification sequencing ([ADR-0005](docs/decisions/ADR-0005-platform-sequencing.md)): macOS 14.4+ arm64 is the only active qualification target for the current phase. Windows 10 22H2 x64 and serviced Windows 11 x64 are deferred later targets; their platform interfaces remain in the architecture, but no Windows implementation, evidence, packaging or support claim is authorized until a Windows x64 host or authorized CI qualifies it. No qualification target is a tested release claim. Qt's final Windows 10 branch and platform security servicing are explicit risks for the later Windows gate.
 
 ## Start here
 
@@ -31,7 +31,7 @@ Initial product qualification targets: macOS 14.4+ arm64, Windows 10 22H2 x64 an
 
 [Data model](docs/architecture/data-model.md) · [Rendering](docs/architecture/rendering-architecture.md) · [Concurrency/dataflow](docs/architecture/concurrency-model.md) · [AI](docs/architecture/ai-architecture.md) · [Plugins](docs/architecture/plugin-architecture.md) · [Project format](docs/architecture/project-file-format.md)
 
-[ADR-0001 Language](docs/decisions/ADR-0001-language-selection.md) · [ADR-0002 GUI](docs/decisions/ADR-0002-gui-framework.md) · [ADR-0003 Modules](docs/decisions/ADR-0003-application-architecture.md) · [ADR-0004 Storage](docs/decisions/ADR-0004-data-storage.md)
+[ADR-0001 Language](docs/decisions/ADR-0001-language-selection.md) · [ADR-0002 GUI](docs/decisions/ADR-0002-gui-framework.md) · [ADR-0003 Modules](docs/decisions/ADR-0003-application-architecture.md) · [ADR-0004 Storage](docs/decisions/ADR-0004-data-storage.md) · [ADR-0005 Platform sequencing](docs/decisions/ADR-0005-platform-sequencing.md)
 
 ## Phase-0 checks
 
@@ -44,7 +44,7 @@ cmake --build --preset macos-debug
 ctest --preset macos-debug
 ```
 
-Release/sanitizer and Windows presets are documented separately with their verification status. These commands validate the compiler and planning artifacts only, not a Qt application. Runtime dependency locks, signed app packages, scientific benchmarks and minimum-platform tests remain subsequent gates.
+Release/sanitizer presets are documented separately with their verification status; the Windows presets exist but are deferred and unexecuted under ADR-0005. These commands validate the compiler and planning artifacts only, not a Qt application. Runtime dependency locks, signed app packages, scientific benchmarks and minimum-platform tests remain subsequent gates.
 
 ## Preserved inputs and research
 
