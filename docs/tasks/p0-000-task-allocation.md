@@ -42,6 +42,9 @@ Out of scope: product implementation, executing another task, accepting another 
 | 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Read the live board and all task records; inventoried three branches, two checkpoint worktrees and two stashes; merged P1-001, P1-003 and P1-004 into `main`; integrated the newest worktree records and research documents; deleted the merged branches, worktrees and stashes; reran the validator, board checks and five macOS presets; updated the P0-000 row and this record | Commits `fca707a`, `c5ad88b`, `7b6646b`, `26f391e`, `7e4bc8e`; [board](../planning/task-board.csv); this record |
 | 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Ownership correction: reverted unauthorized edits to the P1-003/P1-004 records and restored the P1-004 build and guide files to their owner versions before P0-000 execution | Revert `7e4bc8e`; file hashes match the branch tips |
 | 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Added the exclusive task-ownership rule as section 0 of AGENTS.md at the user's direct request; no other task record or artifact was edited | [AGENTS.md](../../AGENTS.md); this record |
+| 2026-10-31 | User / project owner | Confirmed narrowing P0-005 AC-3 to vendor-evidenced built-in/App labels, with the unlabelled remainder recorded as an explicit unknown | Direct user instruction |
+| 2026-10-31 | EveryGraph Research / P0-005 executor | Updated and committed the P0-005 acceptance record under the narrowed AC-3; validator passes with 48 documents and no CJK | `12f1adc`; [P0-005](p0-005-catalog-evidence-gaps.md) |
+| 2026-10-31 | EveryGraph Coordination / current P0-000 executor | Verified the P0-005 acceptance evidence and updated the board row to `accepted`; did not edit the P0-005 record | [Board](../planning/task-board.csv) |
 
 The P0-006 batch (P0-004, P0-005, P1-005 to P1-010) was allocated before P0-000 was established. It is recognized as the initial batch. Future allocations, including new P1/P2/P3 task IDs, must go through P0-000.
 
@@ -59,6 +62,7 @@ Working directory: `/Users/leo/Documents/General/EveryGraph`. Environment: macOS
 | 2026-10-31 | `QT_ROOT="$(brew --prefix qtbase)" cmake --preset macos-debug-qt` and `macos-release-qt`, with build and `ctest` | Each 6/6 passed, including `command_kernel_tests` and `qt_probe_smoke` | Final tree after ownership restoration |
 | 2026-10-31 | `git branch -a`; `git worktree list`; `git stash list`; `git status --short` | Only `main`; no extra worktrees; no stashes; clean working tree | `main` is ahead of `origin/main` and was not pushed |
 | 2026-10-31 | MD5 comparison of the P1-003/P1-004 records and P1-004 build/guide files against their branch tips | Exact match | Confirms no residual edits to other owners' files |
+| 2026-10-31 | `python3 tools/validate_planning.py` after the P0-005 acceptance | Passed: 339 original IDs; 428 traced requirements; 48 documents; no CJK | P0-005 record/evidence; concurrent P1-003 changes remained uncommitted and outside P0-000 |
 
 Checks not run and their reasons: the vcpkg `arm64-osx-dynamic` graph, Windows execution, CI, push/remote publication, and independent review of the consolidation. P0-000 is coordination, not a product capability or acceptance of another task.
 
@@ -70,9 +74,9 @@ Reviewed files / revision: the task board, this record, the three branch tips, t
 
 Findings, resolutions and recheck evidence:
 
-- P1-004 remains `blocked` in its owner's record even though its AC-7 external documentation blocker was removed by this consolidation: the research appendix and P0-006 record are now committed, `planning_validation` passes and all five macOS presets pass. P0-000 did not copy the research file into P1-004's branch and did not edit its record; the file is on `main`, and the P1-004 executor must rerun and update its own record.
-- P1-003 remains `in_progress`; its shared-worktree/stash blocker is resolved by this consolidation, but its record still describes the earlier conflict. Its dynamic graph and SBOM work remain open.
-- P0-005 remains `in_progress`; its worktree-conflict and commit blockers are resolved and the validator now passes, but its record still describes the earlier checkpoint. Its evidence review remains open.
+- P1-004 was accepted by its owner on 2026-10-31 after AC-7 reran green on the consolidated tree (`77c3693`). P0-000 did not edit its record. A residual build-file finding remains: the P1-004 `CMakeLists.txt` lacks the P1-001 `EVERYGRAPH_ENABLE_QT_PROBE` option declaration; the Qt presets pass because they set the cache variable.
+- P1-003 remains `in_progress`; its shared-worktree/stash blocker is resolved, and its owner has uncommitted SBOM and development-guide changes. Its dynamic graph and SBOM evidence remain open.
+- P0-005 was accepted by EveryGraph Research on 2026-10-31 under the user-authorized AC-3 narrowing (`12f1adc`); the unlabelled graph remainder and the other catalog gaps are explicit. P0-000 updated the board row to `accepted` and did not edit the P0-005 record.
 - The P1-004 branch's `CMakeLists.txt` lacks the `EVERYGRAPH_ENABLE_QT_PROBE` option declaration present in P1-001. The Qt presets still pass because they set the cache variable, but the default option is undefined outside the presets. The P1-004 owner should restore it; P0-000 did not edit the file.
 - The P1-004 version of `docs/engineering/development.md` still says `planning_validation` is red because P0-006 is absent. That caveat is stale on `main`; its owner should update it.
 - The consolidation briefly edited the P1-003/P1-004 records and P1-004 build/guide files. The user prohibited editing other owners' files; the edits were reverted in `7e4bc8e`, and the final hashes match the branch versions.
@@ -83,14 +87,14 @@ Acceptance decision, accepting role and date: P0-000 remains `in_progress` as a 
 
 Last verified state: `main` contains all three task branches and the newest worktree records; the worktree is clean, no extra branch or stash remains, and the validator, board checks and all five macOS presets pass. The pre-cleanup backup is outside the repository at `/tmp/everygraph-20261031-precleanup-tree.tar.gz` and `/tmp/everygraph-20261031-precleanup-refs.bundle`.
 
-Current board states: P0-001, P0-002, P0-003, P0-006 and P1-001 are accepted; P0-000, P0-005 and P1-003 are in progress; P0-004 and P1-005 are planned; P1-002, P1-004, P1-006, P1-007, P1-008, P1-009 and P1-010 are blocked. These states match the owners' current records, including the stale blockers noted above.
+Current board states: P0-001, P0-002, P0-003, P0-005, P0-006, P1-001 and P1-004 are accepted; P0-000 and P1-003 are in progress; P0-004 and P1-005 are planned; P1-002, P1-006, P1-007, P1-008, P1-009 and P1-010 are blocked.
 
 Owner actions before further progress:
 
-1. P1-004 owner: revalidate AC-7 against the consolidated tree, update the record and decide acceptance; restore the missing Qt probe option; update the stale development-guide caveat.
-2. P1-003 owner: update the resolved shared-worktree blocker, then continue the dynamic graph, SBOM and documentation evidence.
-3. P0-005 owner: update the resolved worktree-conflict and validator blockers, then dispatch independent review.
-4. P1-005 owner: do not start until P1-004's owner records acceptance.
+1. P1-003 owner: commit its own SBOM and documentation changes; the dynamic graph and SBOM evidence remain open.
+2. P0-005 owner: no further acceptance action; the P0-003 owner still decides whether to retain the pre-rule section 15 append in the P0-003 evidence document.
+3. P1-005 owner: its P1-004 dependency is satisfied, but it must not run concurrently with P1-003 because both write `CMakeLists.txt` and `docs/engineering/development.md`; sequence them or assign a single build-file writer.
+4. P0-004 owner: planned and startable, but before starting it must remove the board and the P0-003 evidence document from its writable scope under AGENTS.md section 0, or obtain an explicit reassignment from the P0-003 owner.
 
 Blockers and unblock actions: P0-000 itself has no blocker. The standing task can be executed by another agent after re-reading the live board and this record. Remote push remains unauthorized.
 
@@ -108,3 +112,5 @@ Files or commands needed to resume: [task board](../planning/task-board.csv), [r
 | 2026-10-31 | Repository and branch consolidation executed; no status change | User directed consolidation of all branches and task state, use of the newest files, and P0-000 execution; push remains unauthorized |
 | 2026-10-31 | Ownership constraint recorded | User prohibited modifying other owners' work files; the brief unauthorized edits were reverted and P0-000 edited only its own record and row |
 | 2026-10-31 | Top-level ownership rule added to AGENTS.md; no task status change | Direct user instruction; the rule makes exclusive task ownership mandatory and prohibits cross-task edits even with user authorization |
+| 2026-10-31 | P1-004 accepted by its owner; no P0-000 edit | AC-7 reran green on the consolidated tree and the owner recorded acceptance in `77c3693` |
+| 2026-10-31 | P0-005 accepted under narrowed AC-3; board row synced | User narrowed AC-3; the P0-005 executor recorded acceptance in `12f1adc`; P0-000 updated the board row and did not edit the record |
