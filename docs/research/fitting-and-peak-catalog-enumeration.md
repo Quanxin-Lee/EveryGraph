@@ -1,6 +1,6 @@
 # Fitting and Peak Catalog Enumeration
 
-Task P0-012 research deliverable. Status: candidate for independent review, 2026-10-31.
+Task P0-012 research deliverable. Status: independent review completed and findings resolved, 2026-10-31.
 
 Parent requirements: `ORG-GRAPH-001`, `ORG-FIT-004`, `ORG-PEAK-005`, `EG-ADD-015`. Evidence base: [P0-003 catalog decomposition](capability-catalog-decomposition.md) and the [P0-005 2026b evidence appendix](catalog-evidence-gaps-2026b.md).
 
@@ -8,17 +8,17 @@ This document proposes stable child IDs and per-function evidence for 239 fittin
 
 ## 1. Result and limits
 
-The enumeration establishes name, source page, parameter names, documented bound expressions, page-category tokens and a proposed child ID for each function. The evidence is the live Origin Help build dated 2026-10-26, retrieved 2026-10-30. The binding to release 2026b is an inference because the Help site has no release banner (`U-25`, P0-005 section 11).
+The enumeration establishes name, source page, parameter names, documented bound expressions where published, page-category tokens where present, and a proposed child ID for each function. The evidence is the live Origin Help build dated 2026-10-26, retrieved 2026-10-30. The binding to release 2026b is an inference because the Help site has no release banner (`U-25`, P0-005 section 11).
 
 | Result | Count | Identifier range |
 |---|---:|---|
 | Fitting functions in appendix 32.1 | 239 | `EG-CAT-FIT-003` through `EG-CAT-FIT-241` |
 | One-dimensional Peak Analyzer functions in appendix 32.4 | 28 | `EG-CAT-PEAK-002` through `EG-CAT-PEAK-029` |
 | Surface-fitting functions in appendix 32.3 | 22 | `EG-CAT-FIT-002` plus `EG-CAT-PEAK-030` through `EG-CAT-PEAK-050` |
-| Total enumerated rows | 289 | 239 fitting, 28 one-dimensional peak, 22 surface |
+| Total enumerated rows | 289 | 239 fitting, 28 one-dimensional peak, 22 surface; 288 new proposed children plus one reused existing row |
 | Unique source pages | 268 | 239 fitting, 7 Pro-only peak, 22 surface |
 
-Every row is a proposed child, not a register row. Rights, delivery, uncertainty, prerequisites, fixture and expected output are declared in sections 3.2 and 3.3 and per-row codes in sections 4, 5 and 6. Every enumerated row has a named Help page and a published parameter list; no per-function row is vendor-claim-only. The aggregate count claims and the surface 21-versus-22 conflict are the vendor-claim residues, recorded in sections 5-8.
+All rows except the reused `EG-CAT-FIT-002` are proposed children, not register rows. Rights, delivery, uncertainty, prerequisites, fixture and expected output are declared in sections 3.2 and 3.3 and per-row codes in sections 4, 5 and 6. Every enumerated row has a named Help page and a published parameter list; no per-function row is vendor-claim-only. The aggregate count claims and the surface 21-versus-22 conflict are the vendor-claim residues, recorded in sections 5-8.
 
 Limits that remain after this enumeration:
 
@@ -34,11 +34,11 @@ Limits that remain after this enumeration:
 
 | ID | Page | Use | Version and retrieval |
 |---|---|---|---|
-| F4 | [32.1 Curve Fitting Functions](https://docs.originlab.com/origin-help/curve-fitting-function/) | 239 numbered fitting pages and 22 category tables | Last-Modified 2026-10-26 09:00 UTC; retrieved 2026-10-30 19:09 UTC |
-| P3 | [32.4 Peak Analyzer Functions](https://docs.originlab.com/origin-help/peak-analyzer-functions/) | 28 one-dimensional names and 7 bold Pro-only markers | Last-Modified 2026-10-26 09:00 UTC; retrieved 2026-10-30 19:09 UTC |
-| P4 | [32.3 Non-linear Surface Fitting](https://docs.originlab.com/origin-help/non-linear-surface-fitting-fitfunc/) | 22 surface names | Last-Modified 2026-10-26 09:00 UTC; retrieved 2026-10-30 19:09 UTC |
-| Pages | 268 unique per-function pages linked in sections 4-6 | Parameter names, bound expressions, page-category tokens | HTTP 200; all 272 responses carried Last-Modified 2026-10-26 09:00:17 or 09:00:18 UTC; retrieved 2026-10-30 19:09-19:11 UTC |
-| F9 | [OriginPro user guide](https://docs.originlab.com/user-guide/originpro/) | Vendor claim of 21 surface models | Retrieved 2026-10-30; used only for the count conflict |
+| F4 | [32.1 Curve Fitting Functions](https://docs.originlab.com/origin-help/curve-fitting-function/) | 239 numbered fitting pages and 22 category tables | Last-Modified 2026-10-26 09:00 UTC; retrieved 2026-10-30 19:11 UTC |
+| P3 | [32.4 Peak Analyzer Functions](https://docs.originlab.com/origin-help/peak-analyzer-functions/) | 28 one-dimensional names and 7 bold Pro-only markers | Last-Modified 2026-10-26 09:00 UTC; retrieved 2026-10-30 19:11 UTC |
+| P4 | [32.3 Non-linear Surface Fitting](https://docs.originlab.com/origin-help/non-linear-surface-fitting-fitfunc/) | 22 surface names | Last-Modified 2026-10-26 09:00 UTC; retrieved 2026-10-30 19:11 UTC |
+| Pages | 268 unique per-function pages linked in sections 4-6 | Parameter names, bound expressions, page-category tokens | HTTP 200; all 272 responses carried Last-Modified 2026-10-26 09:00:17 or 09:00:18 UTC; retrieved 2026-10-30 19:11:17-19:11:41 UTC |
+| F9 | [OriginPro user guide](https://docs.originlab.com/user-guide/originpro/) | Vendor claim of 21 surface models | Not retrieved by P0-012; claim transcribed from P0-005 section 5.2; used only for the count conflict |
 | P0-003 | [Catalog decomposition](capability-catalog-decomposition.md) | Child-ID schema, code meanings, default fields and gate definitions | Accepted 2026-10-30 |
 | P0-005 | [Catalog evidence gaps 2026b](catalog-evidence-gaps-2026b.md) | Count floors, Pro-only markers, rights review, gate status and unknown delta | Accepted 2026-10-31 |
 
@@ -103,6 +103,7 @@ Unless a row or section states an exception, every proposed row uses these value
 | Expected output | `O-TABLE` | Typed table, metadata and an explicit loss report |
 | Support claim | None | Research enumeration only |
 
+The reused `EG-CAT-FIT-002` keeps the existing `fit-function` member type and `RO` code. Whether the 21 new surface rows should be `peak-function` or `fit-function` is left to the register owner, because the existing surface row `Gauss2D` is a fitting child.
 ### 3.3 Prerequisites, codes and exceptions
 
 | Code | Meaning |
@@ -514,7 +515,7 @@ No per-function Pro marker exists for the 21 shared peak rows. No surface-peak-o
 
 ### 6.1 Scope and edition markers
 
-P4 lists 22 surface-fitting names. The vendor guide F9 says 21 built-in surface models and gives `DoseResponse2D` as an example name; P4 uses `DoseResp`. Both counts satisfy the over-20 claim, but the 21-versus-22 difference, the naming difference and the per-function edition split remain open (`U-30`, P0-005 section 5.2).
+P4 lists 22 surface-fitting names. The vendor guide F9 says 21 built-in surface models and gives `DoseResponse2D` as an example name; P4 uses `DoseResp`. Both counts satisfy the over-20 claim, but the 21-versus-22 difference and the naming difference remain open (`U-30`, P0-005 section 5.2). No per-function surface edition column is published.
 
 P0-005 section 5.2 classifies six entries as peak-shaped: `Gauss2D`, `Gaussian2D`, `Lorentz2D`, `Voigt2D`, `Voigt2DMod` and `LogNormal2D`. This is an engineering subset, not a vendor-published surface-peak-only list. The other 16 are general surface models, including clearly non-peak forms such as `Plane`, `Poly2D`, `Polynomial2D`, `Rational2D` and `RationalTaylor`.
 
@@ -524,30 +525,30 @@ Surface fitting is documented as an OriginPro workflow at the feature level; no 
 
 ### 6.2 Per-function enumeration
 
-The bounds are transcribed from the page-level constraint text. Where the 32.3 table has blank bound cells, no bound is inferred. All new rows use `PR-SURF`; `Gauss2D` retains the existing row details and is marked `RO`. Every row uses the shared source version in section 2.1 and the linked page as its source locator.
+The bounds are transcribed from the page-level constraint text. The 32.3 index publishes names only and has no bound columns; where a function page publishes no constraint, `none published` is recorded and no bound is inferred. All new rows use `PR-SURF`; `Gauss2D` retains the existing row details and is marked `RO`. Every row uses the shared source version in section 2.1 and the linked page as its source locator.
 
 | Child ID | Function | Parameters | Bounds | Codes | Note |
 |---|---|---|---|---|---|
-| EG-CAT-PEAK-030 | [Chebyshev2D](https://docs.originlab.com/origin-help/chebyshev2d-fitfunc/) | z0, A1, A2, B1, B2, C1 | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-031 | [Cosine](https://docs.originlab.com/origin-help/cosine-fitfunc/) | z0, A1, A2, B1, B2, C1 | none | RV / DG / U2 |  |
+| EG-CAT-PEAK-030 | [Chebyshev2D](https://docs.originlab.com/origin-help/chebyshev2d-fitfunc/) | z0, A1, A2, B1, B2, C1 | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-031 | [Cosine](https://docs.originlab.com/origin-help/cosine-fitfunc/) | z0, A1, A2, B1, B2, C1 | none published | RV / DG / U2 |  |
 | EG-CAT-PEAK-032 | [DoseResp](https://docs.originlab.com/origin-help/doseresp-surface-fitfunc/) | z0, B, C, D, E, F | x, y > 0; C, E > 0 | RV / DG / U2 | Distinct 32.3 page; 32.1 `DoseResp` is `EG-CAT-FIT-042` with four parameters. |
-| EG-CAT-PEAK-033 | [Exponential2D](https://docs.originlab.com/origin-help/exponential2d-fitfunc/) | z0, B, C, D | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-034 | [Extreme2D](https://docs.originlab.com/origin-help/extreme2d-fitfunc/) | z0, B, C, D, E, F | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-035 | [ExtremeCum](https://docs.originlab.com/origin-help/extremecum-fitfunc/) | z0, B, C, D, E, F, G, H | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-036 | [Fourier2D](https://docs.originlab.com/origin-help/fourier2d-fitfunc/) | z0, a, b, c, d, w1, w2 | none | RV / DG / U2 |  |
+| EG-CAT-PEAK-033 | [Exponential2D](https://docs.originlab.com/origin-help/exponential2d-fitfunc/) | z0, B, C, D | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-034 | [Extreme2D](https://docs.originlab.com/origin-help/extreme2d-fitfunc/) | z0, B, C, D, E, F | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-035 | [ExtremeCum](https://docs.originlab.com/origin-help/extremecum-fitfunc/) | z0, B, C, D, E, F, G, H | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-036 | [Fourier2D](https://docs.originlab.com/origin-help/fourier2d-fitfunc/) | z0, a, b, c, d, w1, w2 | none published | RV / DG / U2 |  |
 | EG-CAT-FIT-002 | [Gauss2D](https://docs.originlab.com/origin-help/gauss2d-fitfunc/) | z0, A, xc, w1, yc, w2 | w1 > 0; w2 > 0 | RO / DG / U2 | Existing `EG-CAT-FIT-002` row; not changed. |
-| EG-CAT-PEAK-037 | [GaussCum](https://docs.originlab.com/origin-help/gausscum-fitfunc/) | z0, B, C, D, E, F | none | RV / DG / U2 |  |
+| EG-CAT-PEAK-037 | [GaussCum](https://docs.originlab.com/origin-help/gausscum-fitfunc/) | z0, B, C, D, E, F | none published | RV / DG / U2 |  |
 | EG-CAT-PEAK-038 | [Gaussian2D](https://docs.originlab.com/origin-help/gaussian2d-fitfunc/) | z0, A, xc, w1, yc, w2, theta | w1 > 0; w2 > 0; 0 <= theta <= 2*pi | RV / DG / U2 |  |
-| EG-CAT-PEAK-039 | [LogisticCum](https://docs.originlab.com/origin-help/logisticcum-fitfunc/) | z0, B, C, D, E, F | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-040 | [LogNormal2D](https://docs.originlab.com/origin-help/lognormal2d-fitfunc/) | z0, B, C, D, E, F, G, H | none | RV / DG / U2 |  |
+| EG-CAT-PEAK-039 | [LogisticCum](https://docs.originlab.com/origin-help/logisticcum-fitfunc/) | z0, B, C, D, E, F | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-040 | [LogNormal2D](https://docs.originlab.com/origin-help/lognormal2d-fitfunc/) | z0, B, C, D, E, F, G, H | none published | RV / DG / U2 |  |
 | EG-CAT-PEAK-041 | [Lorentz2D](https://docs.originlab.com/origin-help/lorentz2d-fitfunc/) | z0, A, xc, w1, yc, w2 | w1 > 0; w2 > 0 | RV / DG / U2 |  |
-| EG-CAT-PEAK-042 | [Parabola2D](https://docs.originlab.com/origin-help/parabola2d-fitfunc/) | z0, a, b, c, d | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-043 | [Plane](https://docs.originlab.com/origin-help/plane-fitfunc/) | z0, a, b | none | RV / DG / U1 | Vendor `Number: 4`; three names listed (`z0`, `a`, `b`). |
-| EG-CAT-PEAK-044 | [Poly2D](https://docs.originlab.com/origin-help/poly2d-fitfunc/) | z0, a, b, c, d, f | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-045 | [Polynomial2D](https://docs.originlab.com/origin-help/polynomial2d-fitfunc/) | z0, A1, A2, A3, A4, A5, B1, B2, B3, B4, B5 | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-046 | [Power2D](https://docs.originlab.com/origin-help/power2d-fitfunc/) | z0, B, C, D, E, F | none | RV / DG / U2 |  |
-| EG-CAT-PEAK-047 | [Rational2D](https://docs.originlab.com/origin-help/rational2d-fitfunc/) | z0, A01, B01, B02, B03, A1, A2, A2, B2, B1, B2 | none | RV / DG / U1 | Vendor `Number: 11`; `A2` and `B2` each appear twice. |
-| EG-CAT-PEAK-048 | [RationalTaylor](https://docs.originlab.com/origin-help/rationaltaylor-fitfunc/) | z0, A01, B01, B02, C02, A1, A2, B1, B2, C2 | none | RV / DG / U2 |  |
+| EG-CAT-PEAK-042 | [Parabola2D](https://docs.originlab.com/origin-help/parabola2d-fitfunc/) | z0, a, b, c, d | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-043 | [Plane](https://docs.originlab.com/origin-help/plane-fitfunc/) | z0, a, b | none published | RV / DG / U1 | Vendor `Number: 4`; three names listed (`z0`, `a`, `b`). |
+| EG-CAT-PEAK-044 | [Poly2D](https://docs.originlab.com/origin-help/poly2d-fitfunc/) | z0, a, b, c, d, f | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-045 | [Polynomial2D](https://docs.originlab.com/origin-help/polynomial2d-fitfunc/) | z0, A1, A2, A3, A4, A5, B1, B2, B3, B4, B5 | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-046 | [Power2D](https://docs.originlab.com/origin-help/power2d-fitfunc/) | z0, B, C, D, E, F | none published | RV / DG / U2 |  |
+| EG-CAT-PEAK-047 | [Rational2D](https://docs.originlab.com/origin-help/rational2d-fitfunc/) | z0, A01, B01, B02, B03, A1, A2, A2, B2, B1, B2 | none published | RV / DG / U1 | Vendor `Number: 11`; `A2` and `B2` each appear twice. |
+| EG-CAT-PEAK-048 | [RationalTaylor](https://docs.originlab.com/origin-help/rationaltaylor-fitfunc/) | z0, A01, B01, B02, C02, A1, A2, B1, B2, C2 | none published | RV / DG / U2 |  |
 | EG-CAT-PEAK-049 | [Voigt2D](https://docs.originlab.com/origin-help/voigt2d-fitfunc/) | z0, A, xc, w1, yc, w2, mu | w1 > 0; w2 > 0; 0 <= mu <= 1 | RV / DG / U2 |  |
 | EG-CAT-PEAK-050 | [Voigt2DMod](https://docs.originlab.com/origin-help/voigt2dmod-fitfunc/) | z0, A, xc, w1, yc, w2, mu | w1 > 0; w2 > 0; 0 <= mu <= 1 | RV / DG / U2 |  |
 
@@ -558,19 +559,19 @@ The bounds are transcribed from the page-level constraint text. Where the 32.3 t
 | `EG-CAT-PEAK-043` `Plane` | `Number: 4` but three names: `z0`, `a`, `b` | `U1`; the fourth parameter is not invented |
 | `EG-CAT-PEAK-047` `Rational2D` | `Number: 11`; `A2` and `B2` each appear twice in the table | `U1`; duplicate names and the missing distinct subscripts are unresolved |
 | 21 of 22 surface pages | No `Category` section | `U2`; only `Voigt2D` publishes `Surface Fitting`, which is not one of the 22 catalog headings |
-| 32.3 table | Lower and upper bound cells are blank for the table-based pages; only `Gauss2D`, `Gaussian2D`, `Lorentz2D`, `DoseResp`, `Voigt2D` and `Voigt2DMod` publish a constraint | Only the published constraint is recorded; no bound is inferred |
+| 32.3 index and function pages | The 32.3 index lists names only and has no bound columns; of the 22 function pages only `Gauss2D`, `Gaussian2D`, `Lorentz2D`, `DoseResp`, `Voigt2D` and `Voigt2DMod` publish a constraint | Only the published constraint is recorded; `none published` means no page constraint and no bound is inferred |
 | F9 versus P4 | 21 models including `DoseResponse2D` versus 22 names including `DoseResp` | `U-30`; no row is added or removed |
 | Surface peak subset | No vendor subset is published | Six-name subset is marked as a P0-005 engineering classification |
 
 ## 7. Gate status and integration ownership
 
-The gate identifiers and their P0-005 status are defined in P0-003 section 10 and P0-005 section 9. The current status and closure conditions are transcribed from P0-005 section 9; no new gate evidence was obtained for the graph, export, compatibility or method/App gates. This task does not change any gate state. The table records the current status, what P0-012 adds, and what remains before closure.
+The gate identifiers and their P0-005 status are defined in P0-003 section 10 and P0-005 section 9. The current status and closure conditions are transcribed from P0-005 section 9; no new gate evidence was obtained for the graph, export, compatibility or method/App gates. The integration-owner column is assigned under the accepted P0-004 register schema and the P0-000 board allocation, not by P0-003 or P0-005. This task does not change any gate state. The table records the current status, what P0-012 adds, and what remains before closure.
 
 | Gate | Current status | P0-012 evidence effect | Remaining closure condition | Integration owner |
 |---|---|---|---|---|
 | `EG-CAT-GATE-002` graph | Open; claim basis corrected by P0-005 | None; P0-012 does not enumerate graph types | Distinct built-in membership or the vendor counting rule; a PLOT scene for every named type | EveryGraph Research, register integration; graph membership needs a separately allocated research task |
-| `EG-CAT-GATE-003` fitting | Open; partially closed by P0-005 | 239 per-function rows, parameters, bounds and page links are now enumerated; the count basis, edition split and 2026b pin remain | Reconcile 170-plus/close-to-200/200-plus/239; resolve the 10 uncategorized pages and the parameter anomalies; add reference fits | EveryGraph Research, register integration |
-| `EG-CAT-GATE-004` peak | Open; partially closed by P0-005 | 28 one-dimensional and 22 surface names, Pro-only markers and parameters are now enumerated; the surface 21-versus-22 conflict, surface subset and 2026b pin remain | Resolve the surface count and subset; decide edition behavior; add mixture and surface tests | EveryGraph Research, register integration |
+| `EG-CAT-GATE-003` fitting | Open; partially closed by P0-005 | 239 per-function rows, parameters, bounds and page links are now enumerated; the count basis, edition split and 2026b pin remain | Reconcile 170-plus/close-to-200/200-plus/239; resolve the 10 uncategorized pages and the parameter anomalies; publish the edition split and pin the 2026b binding; add reference fits | EveryGraph Research, register integration |
+| `EG-CAT-GATE-004` peak | Open; partially closed by P0-005 | 28 one-dimensional and 22 surface names, Pro-only markers and parameters are now enumerated; the surface 21-versus-22 conflict, surface subset and 2026b pin remain | Resolve the surface count and subset; decide and publish edition behavior; pin the 2026b binding; add mixture and surface tests | EveryGraph Research, register integration |
 | `EG-CAT-GATE-005` export | Open; claim corrected by P0-005 | None; P0-012 is fitting and peak only | Record the 16 documented and 15 listed formats, the 64-bit caveat, encoder rights and fixtures | EveryGraph Research, register integration; export research needs a separately allocated task |
 | `EG-CAT-GATE-006` compatibility | Open; unchanged by P0-005 | None | Rights, versions and corpora per compatibility artifact | EveryGraph Research, register integration; compatibility research needs a separately allocated task |
 | `EG-CAT-GATE-007` method/App lists | Open; unchanged by P0-005 | None | Reconcile method/option and App catalogs | EveryGraph Research, register integration; catalog research needs a separately allocated task |
@@ -589,11 +590,11 @@ The P0-003 section 12 and P0-005 section 11 unknown registers remain authoritati
 | `U-01` fitting membership | Page-level membership enumerated | 239 named 32.1 pages; the vendor count basis and unique-model definition remain open |
 | `U-02` fitting categories and edition split | Partially resolved | 22 catalog headings and 3 page-only tokens recorded; per-function Origin versus OriginPro split remains unpublished |
 | `U-03` peak membership and scope | Page-level membership enumerated | 28 one-dimensional and 22 surface names; the surface 21-versus-22, subset and 2026b pin remain open |
-| `U-29` fitting appendix structure | Partially resolved | The 10 sidebar-only pages are identified; the duplicate table typo and cross-appendix name are recorded; parameter-count anomalies remain |
+| `U-29` fitting appendix structure | Open | P0-012 records page-level category and parameter evidence but resolves none of the ten sidebar-only pages, the table typo or the cross-appendix name already recorded in P0-005 section 4.2 |
 | `U-30` surface model count | Open | F9 says 21; P4 lists 22; `DoseResponse2D` versus `DoseResp` remains |
 | `U-34` parameter-count contradictions | New | `SineSqr` `Number: 3` with four names; `Plane` `Number: 4` with three names |
 | `U-35` duplicate surface parameter names | New | `Rational2D` lists `A2` and `B2` twice each; the intended distinct subscripts are not recoverable from the rendered table |
-| `U-36` malformed or unassociated bounds | New | Eight 32.1 pages have malformed bound text; `FraserSuzuki` and `DoniachSunjic` publish `0`/`0` without naming a parameter |
+| `U-36` malformed, unassociated or mismatched bounds | New | Eight 32.1 pages have malformed bound text; `FraserSuzuki` and `DoniachSunjic` publish `0`/`0` without naming a parameter; `Poisson` bounds `r0` while the parameter is `r`; `Power2` bounds `p1` while the parameter is `pl`; `Nonessencial2` bounds `S` while the parameter is `A` |
 | `U-37` page-only category tokens | New | `PFW` (17 pages), `Baseline` (15) and `Enzyme Kinetics2` (6) are page tokens with no catalog heading; `Quick Fit` is a heading with no page token |
 | `U-38` cross-appendix `Bigaussian` | New | The 32.1 Peak Functions table names `Bigaussian`, but only a 32.4 Pro-only page exists |
 | `U-39` catalog typo | New | `:DoubleBoltzmann` is a leading-colon typo for the sidebar page `DoubleBoltzmann` |
@@ -607,10 +608,10 @@ The unknown register does not claim that every page-level parameter is scientifi
 - `docs/planning/catalog-children.csv` is unchanged; no proposed ID is admitted and no existing row is edited.
 - `docs/planning/functional-scope.md`, `tools/validate_planning.py` and `tools/catalog_expectations.json` are unchanged.
 - `origin-feature-inventory.md` and `datagraph-feature-inventory.md` remain unchanged.
-- `docs/planning/task-board.csv` is P0-000-owned; this task does not edit it. The board row remains to be synchronized by P0-000.
+- `docs/planning/task-board.csv` is P0-000-owned; this task did not edit it. The P0-000 board records P0-012 as `accepted` in commit `6bee412`; any later status transition belongs to P0-000.
 - No other task record is edited. No product code, build configuration, dependency or platform claim is added.
 - No gate is closed. No vendor runtime, manual, SDK, FDF file or sample was acquired; no rights decision is made.
-- No Windows execution, Git commit, push or publication occurred.
+- No Windows execution, push or publication occurred. P0-012 made no commit before the user authorized one on 2026-10-31; the authorized commit contains only the two P0-012 files and was not pushed. The two files were first included by another owner's snapshot commit `0277df4`, which also contains unrelated work.
 
 ## 10. Sources
 
@@ -626,7 +627,7 @@ Vendor pages:
 - F4: [32.1 Curve Fitting Functions](https://docs.originlab.com/origin-help/curve-fitting-function/), Last-Modified 2026-10-26, retrieved 2026-10-30.
 - P3: [32.4 Peak Analyzer Functions](https://docs.originlab.com/origin-help/peak-analyzer-functions/), Last-Modified 2026-10-26, retrieved 2026-10-30.
 - P4: [32.3 Non-linear Surface Fitting](https://docs.originlab.com/origin-help/non-linear-surface-fitting-fitfunc/), Last-Modified 2026-10-26, retrieved 2026-10-30.
-- F9: [OriginPro user guide](https://docs.originlab.com/user-guide/originpro/), retrieved 2026-10-30; 21-surface-model claim.
+- F9: [OriginPro user guide](https://docs.originlab.com/user-guide/originpro/), not re-fetched by P0-012; 21-surface-model claim transcribed from P0-005 section 5.2.
 - Representative anomaly pages: [SineSqr](https://docs.originlab.com/origin-help/sinesqr-fitfunc/), [Plane](https://docs.originlab.com/origin-help/plane-fitfunc/), [Rational2D](https://docs.originlab.com/origin-help/rational2d-fitfunc/), [FraserSuzuki](https://docs.originlab.com/origin-help/frasersuzuki-pafunc/), [DoniachSunjic](https://docs.originlab.com/origin-help/doniachsunjic-pafunc/) and [Gauss2D](https://docs.originlab.com/origin-help/gauss2d-fitfunc/).
 - Every per-function page is linked in sections 4, 5 and 6; those links are the complete source list for the 289 rows and 268 unique pages.
 
@@ -638,12 +639,12 @@ Working directory: `/Users/leo/Documents/General/EveryGraph`. Platform: macOS 27
 
 | Check | Result | Evidence and limits |
 |---|---|---|
-| Fetch 268 unique function pages | HTTP 200 for all 268 | 272 cached pages including four index pages; response dates 2026-10-30 19:09-19:11 UTC; all 272 responses carried Last-Modified 2026-10-26 09:00:17 or 09:00:18 UTC |
+| Fetch 268 unique function pages | HTTP 200 for all 268 | 272 cached pages including four index pages; response dates 2026-10-30 19:11:17-19:11:41 UTC; all 272 responses carried Last-Modified 2026-10-26 09:00:17 or 09:00:18 UTC |
 | 32.1 counts | 239 pages, 22 headings, 307 cells, 231 unique, 10 sidebar-only, 2 table-only | Parser-based count; matches P0-005 |
 | 32.4 counts | 28 names, 7 bold Pro-only, 21 shared | Table-cell and bold markup; matches P0-005 |
 | 32.3 counts | 22 names | Table-cell count; matches P0-005 |
 | Identifier allocation | 239 FIT IDs, 28 plus 21 PEAK IDs, no collision | Sequence check; proposed only |
-| Parameter parsing | 922 declared fitting parameters; one fitting count mismatch; one surface count mismatch; one duplicate-name surface row | Structural parse, not scientific validation |
+| Parameter parsing | 922 numbered fitting parameter slots and 923 listed fitting parameter names (`SineSqr` contributes the difference); 149 surface slots and 148 names (`Plane`); one duplicate-name surface row | Structural parse, not scientific validation |
 | `python3 tools/validate_planning.py` | PASS | Result recorded in the P0-012 task record; the validator checks local links, fences, English policy and planning invariants, not vendor URLs or table semantics |
 | Protected files | Unchanged | `git diff --name-only` and hash checks recorded in the task record; this document and the task record are the only P0-012 edits |
 
