@@ -3,14 +3,14 @@
 ## Metadata
 
 - Task ID: P1-004
-- Status: in_review
+- Status: accepted
 - Owner: EveryGraph Implementation
 - Record writer: EveryGraph Implementation
 - Related requirements: EG-ADD-001; ORG-UI-008; ORG-RECALC-007
 - Dependencies: P0-001 (accepted)
 - Created: 2026-10-30
 - Updated: 2026-10-31
-- Branch / worktree / base revision: local `main` at `02648bb` (15 commits ahead of `origin/main`, not pushed), which contains the merged P1-004 checkpoint commits `969842a` (implementation) and `46eb6a4` (record link) via merge `7b6646b`. The former `feat/p1-004-command-kernel` branch and worktree were merged and removed; only `main` remains. This evidence update is committed on `main`; no new branch was created.
+- Branch / worktree / base revision: local `main` at `b28d6f7` (16 commits ahead of `origin/main`, not pushed), which contains the merged P1-004 checkpoint commits `969842a` (implementation) and `46eb6a4` (record link) via merge `7b6646b`, plus evidence commit `b28d6f7`. The former `feat/p1-004-command-kernel` branch and worktree were merged and removed; only `main` remains. This acceptance update is committed on `main`; no new branch was created.
 - Authorization: implementation was authorized by the user on 2026-10-30 within this task's scope. The 2026-10-31 user instruction authorizes rerunning the AC-7 presets on `main`, updating only this task's record and allowed files, and reporting the results. It also requires no new branches, no cross-task edits, no modification of other task records or board rows, and no push; all were followed.
 
 ## Scope and acceptance
@@ -31,7 +31,7 @@ Out of scope: a real Project/Workbook/Graph domain model, SQLite or Arrow persis
 | AC-4 | A transaction groups a multi-object fake edit, commits once, emits monotonic sequenced events and creates one undo entry; undo and redo restore the expected fake state | Met: `demo.edit_pair` creates object 3 and updates objects 1/2 in one transaction; one undo entry, one event with sequence 1 and three changes, revisions 2/2/1; the same gateway observes sequences 1, 2 and 3 across commit, undo and redo; undo restores content with revisions 3/3 and removes object 3; redo restores content with revisions 4/4/2 |
 | AC-5 | Repeat-last-action and reopen-parameters metadata reproduce the recorded command without duplicating its result; the parameter snapshot is immutable after commit | Met: `demo.set_pair` records immutable canonical parameters; `repeat_last()` re-executes with current expected revisions and produces no new result, revision, event or undo entry because the result is unchanged; `demo.edit_pair` is rejected as `not_repeatable`; mutating the original request or a reopened request does not change the recorded snapshot; executing the reopened request with unchanged parameters is also a no-op |
 | AC-6 | The application executor is the only writer; a rejected or canceled candidate publishes no event and no revision | Met: a pre-stopped token, mid-handler cancellation, a handler that stages a change and returns `numerical_failure`, an undeclared write, and a handler exception all leave the document, undo depth and sequence unchanged; a handler that calls back into the gateway receives `reentrant_mutation` and cannot commit an inner candidate; only the gateway swaps a staged candidate into the live document |
-| AC-7 | CTest runs the prototype tests plus the existing suites; `macos-debug`, `macos-release` and `macos-sanitize` pass; no Qt is required by these targets | Met on `main` at `02648bb`: each Qt-free preset passed 5/5 after the P0 research artifact was committed; `command_kernel_tests` passed 26/26 directly in Debug, Release and ASan/UBSan; `planning_validation` PASS with 339 original IDs, 428 traced requirements and 48 documents in the final working tree (47 committed plus one concurrent untracked SBOM README); Qt presets also passed 6/6 each. No Qt is linked by the kernel targets |
+| AC-7 | CTest runs the prototype tests plus the existing suites; `macos-debug`, `macos-release` and `macos-sanitize` pass; no Qt is required by these targets | Met on `main` at `b28d6f7`: each Qt-free preset passed 5/5 after the P0 research artifact was committed; `command_kernel_tests` passed 26/26 directly in Debug, Release and ASan/UBSan; `planning_validation` PASS with 339 original IDs, 428 traced requirements and 48 documents in the final working tree (47 committed plus one concurrent untracked SBOM README); Qt presets also passed 6/6 each. No Qt is linked by the kernel targets |
 | AC-8 | The development guide records the targets, exact commands, results and the deliberate dependency-free test-harness limitation; an architecture check demonstrates no Qt dependency in foundation/application | Met: the guide records targets, contract, commands, current 5/5 and 6/6 results, limits and the dependency-free harness; CMake fails configuration if either module links a `Qt<digits>::` target; `module_boundary_check` scans module sources; an injected `#include <QString>` in a scratch tree failed as expected |
 
 ## Contributions and changes
@@ -49,13 +49,13 @@ No background agent or job is running. Both independent review agents completed 
 
 ## Validation
 
-Working directory, OS, architecture and relevant tool versions: `/Users/leo/Documents/General/EveryGraph` on `main` at `02648bb`; macOS 27.0.1 arm64; AppleClang 21.0.0; CMake 3.31.6 and Ninja 1.11.1.4 in the main repository `.venv`; Qt 6.12.0 is present only for the separate opt-in probe and is not linked by the kernel targets.
+Working directory, OS, architecture and relevant tool versions: `/Users/leo/Documents/General/EveryGraph` on `main` at `b28d6f7`; macOS 27.0.1 arm64; AppleClang 21.0.0; CMake 3.31.6 and Ninja 1.11.1.4 in the main repository `.venv`; Qt 6.12.0 is present only for the separate opt-in probe and is not linked by the kernel targets.
 
 Current final-tree runs:
 
 | Date | Exact command or manual check | Result | Evidence and limits |
 |---|---|---|---|
-| 2026-10-31 | `cmake --preset macos-debug && cmake --build --preset macos-debug && ctest --preset macos-debug --output-on-failure` | Configured and built with no warnings; CTest 5/5 passed | Final tree on `main` at `02648bb`; all entries passed |
+| 2026-10-31 | `cmake --preset macos-debug && cmake --build --preset macos-debug && ctest --preset macos-debug --output-on-failure` | Configured and built with no warnings; CTest 5/5 passed | Build at `02648bb`; final CTest rerun at `b28d6f7`; all entries passed |
 | 2026-10-31 | `cmake --preset macos-release && cmake --build --preset macos-release && ctest --preset macos-release --output-on-failure` | Configured and built with no warnings; CTest 5/5 passed | Release; explicit checks, no assertions |
 | 2026-10-31 | `cmake --preset macos-sanitize && cmake --build --preset macos-sanitize && ctest --preset macos-sanitize --output-on-failure` | Configured with ASan + UBSan; CTest 5/5 passed; no sanitizer diagnostics | ASan/UBSan only; no TSan |
 | 2026-10-31 | `./out/build/macos-debug/everygraph_command_kernel_tests` | 26/26 cases passed | Direct dependency-free harness run |
@@ -76,7 +76,7 @@ Historical blocked-state evidence, retained rather than erased:
 | 2026-10-30 | Shared worktree before branch isolation | Each 4/5; only `planning_validation` failed on the P1-003 record link to P0-006; Qt presets 5/6 with kernel and `qt_probe_smoke` passing | Branch mismatch and stash-pop artifacts; resolved to the stashed side and preserved the stash |
 | 2026-10-31 | `git worktree add out/p1-004-checkpoint feat/p1-004-command-kernel`; `git merge --ff-only fca707a`; `git commit` | Checkpoint commit `969842a` created with 20 P1-004 files; no push | Merged into `main` via `7b6646b`; old branch and worktree removed |
 
-Checks not run and their reasons: Windows execution, CI, TSan, ASan/UBSan combined with the Qt probe, thread/race tests (the executor is single-threaded), long-running cancellation after commit, persistence, permission/capability grants, idempotency/retry storage, external effects, GoogleTest fixtures/death tests and human review. All scoped ACs are met; acceptance is pending the designated acceptor.
+Checks not run and their reasons: Windows execution, CI, TSan, ASan/UBSan combined with the Qt probe, thread/race tests (the executor is single-threaded), long-running cancellation after commit, persistence, permission/capability grants, idempotency/retry storage, external effects, GoogleTest fixtures/death tests and human review. All scoped ACs are met and accepted by EveryGraph Implementation (main agent) on 2026-10-31.
 
 ## Review and disposition
 
@@ -95,15 +95,15 @@ Findings, resolutions and recheck evidence:
 | Coverage gaps: no handler/listener exceptions, stop-after-handler, invalid-ID, double or read-only tests | Low | Added the missing cases; suite grew from 19 to 26 | 26/26 pass in Debug, Release and ASan/UBSan |
 | Record claimed a green suite or 19 tests while the tree state was different; branch/worktree state was unstable | Medium | Record rewritten with the actual blocked-state evidence, the final green rerun, 26 tests and the final `main` commit; no unsupported green claim remains | This record; all final-tree runs listed above |
 
-Acceptance decision, accepting role and date: all AC-1 through AC-8 are met, independent review is complete and findings are resolved. The task is submitted as `in_review` for acceptance by the designated accepting role; this record does not self-accept. No human review is claimed.
+Acceptance decision, accepting role and date: accepted by EveryGraph Implementation (main agent) on 2026-10-31 after two independent read-only reviews, resolution and recheck of all findings, and final green reruns on `main`. Acceptance covers the macOS arm64 contract prototype only; it does not claim Windows, CI, packaging, persistence, permissions or the complete P1/EG-ADD-001 capability. No human review is claimed.
 
 ## Handoff and remaining work
 
-Last verified state: `main` at `02648bb` contains the merged P1-004 implementation and record. The 26-case kernel suite passes in Debug, Release and ASan/UBSan; all three Qt-free presets pass 5/5; both Qt presets pass 6/6; the planning validator passes with 48 documents in the final working tree (47 committed plus one concurrent untracked SBOM README). The old checkpoint branch/worktree no longer exists, and no new branch was created.
+Last verified state: `main` at `b28d6f7` contains the merged P1-004 implementation, evidence and acceptance update. The 26-case kernel suite passes in Debug, Release and ASan/UBSan; all three Qt-free presets pass 5/5; both Qt presets pass 6/6; the planning validator passes with 48 documents in the final working tree (47 committed plus one concurrent untracked SBOM README). The old checkpoint branch/worktree no longer exists, and no new branch was created. P1-004 is accepted for its scoped macOS arm64 prototype.
 
-Blockers and unblock actions: no P1-004 blocker remains. Acceptance is pending the designated accepting role. P1-006 remains blocked on P1-003's pinned dependency graph; P1-005 is planned and depends on an accepted P1-004.
+Blockers and unblock actions: no P1-004 blocker remains. P1-006 remains blocked on P1-003's pinned dependency graph; P1-005 is planned and depends on the now-accepted P1-004.
 
-Next task / concrete next action: the accepting role reviews this record and the committed artifacts. If accepted, P1-004 becomes `accepted` and P1-005 may start. No push or merge is authorized.
+Next task / concrete next action: P1-005 may start under its own task record and ownership. No push or merge is authorized.
 
 Files or commands needed to resume: [CMakeLists.txt](../../CMakeLists.txt), [gateway header](../../modules/application/include/everygraph/application/command_gateway.hpp), [gateway source](../../modules/application/src/command_gateway.cpp), [tests](../../tests/application/command_kernel_tests.cpp), [boundary check](../../tests/check_module_boundaries.cmake), [development guide](../engineering/development.md), and the five presets from the validation table.
 
@@ -115,4 +115,5 @@ Files or commands needed to resume: [CMakeLists.txt](../../CMakeLists.txt), [gat
 | 2026-10-30 | planned -> in_progress | User authorized implementation, testing, review and necessary fixes within the task scope; branch created locally |
 | 2026-10-30 | in_progress -> in_review | Foundation/application prototype, tests, boundary check and documentation completed; independent review requested |
 | 2026-10-31 | in_review -> blocked | Independent review findings were resolved and rechecked, but AC-7 could not pass while committed P0 records linked to an absent research artifact |
-| 2026-10-31 | blocked -> in_review | The P0 research artifact was committed on `main`; the validator and all five presets were rerun green; acceptance is requested without self-acceptance |
+| 2026-10-31 | blocked -> in_review | The P0 research artifact was committed on `main`; the validator and all five presets were rerun green; acceptance was requested |
+| 2026-10-31 | in_review -> accepted | User authorized self-acceptance on 2026-10-31 after two independent reviews, resolved findings and final 5/5 and 6/6 reruns; acceptance covers the macOS arm64 prototype only |
