@@ -13,7 +13,7 @@ This section is the top-level ownership rule. It overrides any conflicting coord
 
 ## 1. Project Overview
 
-EveryGraph is an open-source, local-first professional scientific data analysis, visualization and editable publication-graphics desktop application. Initial targets are macOS 14.4+ on Apple Silicon, Windows 10 22H2 x64, and vendor-serviced Windows 11 x64 releases. These are qualification targets, not a claim of tested binaries. macOS Intel, Windows ARM64 and Linux are later targets.
+EveryGraph is an open-source, local-first professional scientific data analysis, visualization and editable publication-graphics desktop application. The only active qualification target for the current phase is macOS 14.4+ on Apple Silicon. Windows 10 22H2 x64 and vendor-serviced Windows 11 x64 are deferred later targets: their platform interfaces remain, but no Windows implementation, evidence or support claim is authorized until the Windows gate resumes on a Windows x64 host or authorized CI ([ADR-0005](docs/decisions/ADR-0005-platform-sequencing.md)). These are qualification targets, not a claim of tested binaries. macOS Intel, Windows ARM64 and Linux are later targets.
 
 The required long-term scope includes all functional capabilities in the preserved Origin and DataGraph inventories, plus reproducible dataflow, units, safe provider-neutral AI, extension isolation, accessibility and recovery. Read [functional scope](docs/planning/functional-scope.md) and [traceability](docs/planning/feature-traceability.csv). Do not confuse planned coverage with implementation or silently drop advanced analysis, 3D/GIS/images, reports, animation or compatibility gates.
 
@@ -31,7 +31,7 @@ Use a modular monolith with explicit target boundaries and isolated extension/ru
 - Storage: versioned SQLite project container with bounded Arrow IPC chunks; explicit atomic save/recovery/migration.
 - AI: provider-neutral context/proposal client of application commands; no direct mutation or self-issued permissions.
 - Extensions: Python/native workers with versioned protocols and capability grants; process isolation alone is not a sandbox.
-- Platform: file/lock/secret/process/display/share adapters; macOS and Windows behavior is tested separately.
+- Platform: file/lock/secret/process/display/share adapters. Only macOS Apple Silicon implementations are delivered and qualified in the current phase; Windows x64 adapters are deferred later targets behind the same interfaces ([ADR-0005](docs/decisions/ADR-0005-platform-sequencing.md)). Domain and application public interfaces must not expose platform-specific types. macOS and Windows behavior must be tested separately; Windows inherits no macOS evidence.
 
 Domain and application public interfaces MUST NOT expose Qt types, GUI handles, provider SDK objects or GPU API types. Workers return private candidate outputs; only the application executor commits domain changes. No dependency cycles or global service-locator shortcuts.
 
