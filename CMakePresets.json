@@ -34,6 +34,18 @@
       }
     },
     {
+      "name": "macos-qt-vcpkg-base",
+      "hidden": true,
+      "inherits": "macos-base",
+      "cacheVariables": {
+        "EVERYGRAPH_ENABLE_QT_PROBE": "ON",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_MANIFEST_DIR": "${sourceDir}",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-dynamic",
+        "VCPKG_HOST_TRIPLET": "arm64-osx"
+      }
+    },
+    {
       "name": "macos-debug",
       "displayName": "macOS arm64 Debug (AppleClang)",
       "inherits": "macos-base",
@@ -76,6 +88,22 @@
       }
     },
     {
+      "name": "macos-debug-qt-vcpkg",
+      "displayName": "macOS arm64 Debug with Qt Widgets probe from the pinned vcpkg graph (arm64-osx-dynamic; VCPKG_ROOT required)",
+      "inherits": "macos-qt-vcpkg-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "macos-release-qt-vcpkg",
+      "displayName": "macOS arm64 Release with Qt Widgets probe from the pinned vcpkg graph (arm64-osx-dynamic; VCPKG_ROOT required)",
+      "inherits": "macos-qt-vcpkg-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "windows-base",
       "hidden": true,
       "inherits": "base",
@@ -115,6 +143,8 @@
     { "name": "macos-sanitize", "configurePreset": "macos-sanitize" },
     { "name": "macos-debug-qt", "configurePreset": "macos-debug-qt" },
     { "name": "macos-release-qt", "configurePreset": "macos-release-qt" },
+    { "name": "macos-debug-qt-vcpkg", "configurePreset": "macos-debug-qt-vcpkg" },
+    { "name": "macos-release-qt-vcpkg", "configurePreset": "macos-release-qt-vcpkg" },
     { "name": "windows-debug", "configurePreset": "windows-debug" },
     { "name": "windows-release", "configurePreset": "windows-release" }
   ],
@@ -146,6 +176,18 @@
     {
       "name": "macos-release-qt",
       "configurePreset": "macos-release-qt",
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error" }
+    },
+    {
+      "name": "macos-debug-qt-vcpkg",
+      "configurePreset": "macos-debug-qt-vcpkg",
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error" }
+    },
+    {
+      "name": "macos-release-qt-vcpkg",
+      "configurePreset": "macos-release-qt-vcpkg",
       "output": { "outputOnFailure": true },
       "execution": { "noTestsAction": "error" }
     },

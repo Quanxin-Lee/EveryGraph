@@ -1,0 +1,35 @@
+{
+  "scope": "License evidence for resolved packages whose vcpkg port manifest does not declare a license. Values come from installed share/<package>/copyright files and the Qt source LICENSES directory. This is a qualification inventory, not a legal conclusion.",
+  "packages": {
+    "double-conversion": {
+      "license": "BSD-3-Clause",
+      "evidence": "installed share/double-conversion/copyright contains the V8 project BSD 3-clause text; the port manifest declares no license",
+      "kind": "runtime"
+    },
+    "libb2": {
+      "license": "CC0-1.0",
+      "evidence": "installed share/libb2/copyright contains CC0 1.0 Universal; the port manifest declares no license",
+      "kind": "runtime"
+    },
+    "opengl": {
+      "license": "NOASSERTION",
+      "evidence": "vcpkg wrapper for the macOS OpenGL framework; no package license text is installed and system framework terms apply",
+      "kind": "system-framework-wrapper"
+    },
+    "opengl-registry": {
+      "license": "NOASSERTION",
+      "evidence": "installed share/opengl-registry/copyright states that files use different per-file licenses; no single expression is asserted",
+      "kind": "header-registry"
+    },
+    "qtbase": {
+      "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+      "evidence": "qtbase-everywhere-src-6.12.0 REUSE.toml and LICENSES directory; bundled third-party licenses are listed separately in LICENSES; the port manifest declares no license",
+      "kind": "runtime"
+    },
+    "vcpkg-make": {
+      "license": "MIT AND GPL-2.0-or-later",
+      "evidence": "installed share/vcpkg-make/copyright states that cmake scripts are MIT and bundled GNU Automake scripts are GPL-2.0-or-later",
+      "kind": "build-tool"
+    }
+  }
+}
