@@ -10,7 +10,7 @@
 - Dependencies: none
 - Created: 2026-10-30
 - Updated: 2026-10-30
-- Branch / worktree / base revision: working tree on branch `feat/p1-001-qt-baseline` at commit `41b6cf8`, based on `747809e`; the P1-004 owner has concurrently created `feat/p1-004-command-kernel` from `41b6cf8`. This record and the allocated candidate rows are uncommitted. P0-006 does not own the P1-004 branch or its implementation.
+- Branch / worktree / base revision: working tree on branch `feat/p1-001-qt-baseline` at commit `41b6cf8`, based on `747809e`; the P1-004 owner has concurrently created `feat/p1-004-command-kernel` from `41b6cf8`. This record and the allocated candidate records were committed as `8f403e4`; AGENTS.md was committed as `54a8a7b`. The shared task board remains uncommitted because it contains concurrent P0-002/P0-003 status changes and the P1-004 row whose record is still untracked. P0-006 does not own the P1-004 branch or its implementation.
 - Authorization: the user requested an additional parallel verification task and explicitly authorized allocating a new task ID, adding its record and board row, allocating the non-conflicting candidate batch, and the P1-003 vcpkg/network scope. No edits to other owners' task records, no product implementation by this task, no installs, Windows execution, CI dispatch, commit, push or publication are authorized.
 
 ## Scope and acceptance
@@ -42,6 +42,7 @@ Out of scope: editing P0-002, P0-003, P1-001, P1-002, P1-003 or P1-004 records; 
 | 2026-10-30 | EveryGraph Verification / boundary correction | Initially edited the P1-001 and P0-003 records without ownership; reverted the P1-001 added rows and restored P0-003 to its pre-edit text after the user corrected the role | P1-001 now matches its owner's committed version; P0-003 retains its owner's accepted record |
 | 2026-10-30 | EveryGraph Verification / documentation contributor | Added the user-requested parallel-agent isolation clause to AGENTS.md before the boundary correction | [AGENTS.md](../../AGENTS.md), task-record section |
 | 2026-10-30 | User / project owner | Confirmed completion and accepted the P0-006 verification/proposal | Direct user confirmation |
+| 2026-10-30 | EveryGraph Verification / committer | Committed AGENTS.md as `54a8a7b` and P0-000/P0-006 plus the candidate task records as `8f403e4`; did not commit other owners' files or the shared board | Git log |
 
 User decision recorded on 2026-10-30: the candidate batch was approved for board allocation, and the P1-003 vcpkg/network scope was authorized. P1-004 was already allocated and started by its owner, so the extra agent did not add a duplicate row, did not edit its record and did not claim its work. The P1-003 authorization is recorded here, not in the P1-003 record; its owner must update that record and board row when starting.
 
@@ -58,7 +59,7 @@ Working directory: `/Users/leo/Documents/General/EveryGraph`. Observed environme
 | 2026-10-30 | `ctest --preset macos-debug`, `macos-release`, `macos-sanitize` | Each 3/3 passed | Qt-free toolchain and planning suites |
 | 2026-10-30 | `QT_ROOT="$(brew --prefix qtbase)" ctest --preset macos-debug-qt`, `macos-release-qt` | Each 4/4 passed | P1-001 Qt probe; not a product application |
 | 2026-10-30 | `git log --oneline -5` | `41b6cf8`, `d226fa3`, `747809e` | P1-001 implementation and record-link commits exist locally |
-| 2026-10-30 | `git status --short` | P0-002, P0-003 and board modified; candidate records and `modules/` untracked | Concurrent P1-004 implementation is active; no commit was made by this task |
+| 2026-10-30 | `git status --short` | P0-002, P0-003 and board modified; P1-004 record and `modules/` untracked | This task committed its own records as `8f403e4` and AGENTS.md as `54a8a7b`; concurrent P1-004 work and the shared board remain uncommitted |
 | 2026-10-30 | Board consistency check, 16 rows | Passed: schema, unique IDs, dependencies, requirement references, record paths and metadata agree | Includes the eight newly allocated rows; does not validate semantic acceptance or authorization |
 | 2026-10-30 | `brew list --versions qtbase` | `qtbase 6.12.0_2` | Qualification installation only; not a pinned dependency graph |
 
@@ -169,3 +170,4 @@ Files or commands needed to resume: [P1-003 record](p1-003-dependency-pins-sbom.
 | 2026-10-30 | Boundary correction | The agent initially edited P1-001/P0-003 without ownership; edits were reverted after user correction; no further edits to those records |
 | 2026-10-30 | P0-000 established as the standing task-allocation authority | User instruction; the P0-006 eight-row batch is recognized as the initial allocation and future allocations must use P0-000 |
 | 2026-10-30 | in_review -> accepted | User confirmed completion on 2026-10-30; acceptance covers the P0-006 verification/proposal only |
+| 2026-10-30 | Committed own records and governance rule | AGENTS.md `54a8a7b`; P0-000/P0-006 and candidate records `8f403e4`; shared board deferred until concurrent owner records are committed |

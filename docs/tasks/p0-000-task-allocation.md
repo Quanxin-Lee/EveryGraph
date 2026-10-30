@@ -10,7 +10,7 @@
 - Dependencies: none
 - Created: 2026-10-30
 - Updated: 2026-10-30
-- Branch / worktree / base revision: not tied to one branch. The current repository is on `feat/p1-001-qt-baseline` at `41b6cf8`, with concurrent P1-004 work on `feat/p1-004-command-kernel`; this record is uncommitted.
+- Branch / worktree / base revision: not tied to one branch. The current repository is on `feat/p1-001-qt-baseline` at `41b6cf8`, with concurrent P1-004 work on `feat/p1-004-command-kernel`. This record was committed as `8f403e4`; its board row remains uncommitted with the shared board because the board also contains concurrent owner changes.
 - Authorization: the user established P0-000 on 2026-10-30 as the standing task-allocation authority. It may allocate new task IDs and board rows, maintain its own record, and verify board consistency. It must not edit another owner's task record, execute other tasks or implement product work. No installation, commit, push or publication is authorized.
 
 ## Scope and acceptance
@@ -38,6 +38,7 @@ Out of scope: product implementation, executing another task, accepting another 
 |---|---|---|---|
 | 2026-10-30 | User / project owner | Established P0-000 as the standing task-allocation authority; future task IDs are allocated through it | Direct user instruction |
 | 2026-10-30 | EveryGraph Verification / current P0-000 executor | Created this record and the P0-000 board row; added the allocation-authority rule to AGENTS.md; recognized the P0-006 eight-row batch as the initial allocation | [Board](../planning/task-board.csv), [p0-006](p0-006-extra-agent-verification.md), [AGENTS.md](../../AGENTS.md) |
+| 2026-10-30 | EveryGraph Verification / committer | Committed this record and P0-006 as `8f403e4`, after AGENTS.md `54a8a7b`; did not commit the shared board or other owners' files | Git log |
 
 The P0-006 batch (P0-004, P0-005, P1-005 to P1-010) was allocated before P0-000 was established. It is recognized as the initial batch. Future allocations, including new P1/P2/P3 task IDs, must go through P0-000.
 
@@ -50,7 +51,7 @@ Working directory: `/Users/leo/Documents/General/EveryGraph`. Environment: macOS
 | 2026-10-30 | `python3 tools/validate_planning.py` | Passed: 339 original IDs; 428 traced requirements; 46 documents | Includes this record; checks links, fences and English policy, not task semantics |
 | 2026-10-30 | Board schema/record check, 17 rows | Passed: schema, unique IDs, dependencies, requirement references, record paths and metadata agree | P0-000 row added; no duplicate IDs |
 | 2026-10-30 | Existing test suites | Last verified in P0-006: three Qt-free presets 3/3 and two Qt presets 4/4 | No source or build change in this task; not rerun for a documentation-only allocation |
-| 2026-10-30 | `git status --short` | P0-006 and candidate records untracked; P1-004 `modules/` untracked; concurrent P0-002/P0-003/board changes present | No commit by this task |
+| 2026-10-30 | `git status --short` | P1-004 record and `modules/` untracked; concurrent P0-002/P0-003/board changes present | This record and P0-006 were committed as `8f403e4`; the shared board remains uncommitted until concurrent owner records are committed |
 
 Checks not run and their reasons: product builds, Windows execution, CI, dependency resolution and independent review of other tasks. P0-000 is a coordination record, not a product capability.
 
@@ -91,3 +92,4 @@ Files or commands needed to resume: [task board](../planning/task-board.csv), [r
 |---|---|---|
 | 2026-10-30 | New -> in_progress | User established P0-000 as the standing task-allocation authority; it may be executed by different agents |
 | 2026-10-30 | Recognized P0-006's eight-row batch as the initial allocation | P0-006 was completed before P0-000 existed; future allocations use P0-000 |
+| 2026-10-30 | Committed this record | Committed as `8f403e4`; the shared board and other owners' records remain uncommitted |
