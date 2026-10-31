@@ -2,7 +2,7 @@
 
 ## Scope and evidence boundary
 
-This scaffold builds `everygraph_toolchain_probe`, a dependency-free C++20 standard-library executable. P1-004 adds the dependency-free `everygraph_foundation` and `everygraph_application` static libraries and the `everygraph_command_kernel_tests` executable; they implement a command, revision, transaction, undo/redo and event contract over a fake in-memory document, not a product domain model, persistence layer, GUI or wire protocol. An opt-in `everygraph_qt_probe` target adds a minimal Qt Widgets workbench qualification probe; it is not EveryGraph, a GUI prototype, a scientific implementation, or a benchmark. P1-003 adds a vcpkg manifest with an immutable baseline, a removable Qt 6.12.0 overlay, an `arm64-osx-dynamic` preset route and an initial SBOM generator; its section records the pinned graph and verification limits. No product business module exists.
+This scaffold builds `everygraph_toolchain_probe`, a dependency-free C++20 standard-library executable. P1-004 adds the dependency-free `everygraph_foundation` and `everygraph_application` static libraries and the `everygraph_command_kernel_tests` executable; they implement a command, revision, transaction, undo/redo and event contract over a fake in-memory document, not a product domain model, persistence layer, GUI or wire protocol. An opt-in `everygraph_qt_probe` target adds a minimal Qt Widgets workbench qualification probe; it is not EveryGraph, a GUI prototype, a scientific implementation, or a benchmark. P1-003 adds a vcpkg manifest with an immutable baseline, a removable Qt 6.12.0 overlay, an `arm64-osx-dynamic` preset route and an initial SBOM generator; its section records the pinned graph and verification limits. P1-011 moves those targets' definitions into per-module and per-test-group CMake files without changing a target name, flag, test or output path; its section records the convention and the equivalence evidence. No product business module exists.
 
 The probe checks `std::span`, an owning vector snapshot surviving mutation and destruction of its source, move-owned data in `std::jthread`, stop-token observation, and joining before reading worker results. A latch makes stop observation deterministic without timing assumptions. Explicit return-code checks remain active in Release; assertions are not used as tests.
 
@@ -407,6 +407,51 @@ ctest --preset windows-release
 ```
 
 The workflow uses `vswhere` with the VS 2022 version range `[17.0,18.0)` and the x86/x64 C++ tools component to locate the installation, then calls `VsDevCmd.bat -arch=x64 -host_arch=x64` inside the same `cmd` step as configure/build/test. It checks the target architecture and availability of `cl`, preserving the initialized environment and propagating command failures. There is no Windows ASan/UBSan preset or Windows validation claim from this macOS host.
+
+## Build topology and per-module targets (P1-011)
+
+Before P1-011 every target, flag loop and `add_test` call lived in the root `CMakeLists.txt`. That made the root file a shared write target for otherwise independent tasks, which conflicts with the exclusive-ownership rule in AGENTS.md section 0. The topology is now split so that a task adds targets only inside the tree it owns.
+
+| File | Owns |
+| --- | --- |
+| `CMakeLists.txt` (root) | `cmake_minimum_required`, `project`, the three shared `option()` declarations, the sanitizer/TSan conflict guard, `find_package(Threads)`, `find_package(Python3)`, `include(CTest)`, the top-level output directories, the two shared policy functions, the warning and sanitizer policy loops, and one `add_subdirectory` line per top-level tree |
+| `modules/foundation/CMakeLists.txt` | `everygraph_foundation` |
+| `modules/application/CMakeLists.txt` | `everygraph_application` |
+| `tools/CMakeLists.txt` | `everygraph_toolchain_probe`, `everygraph_qt_probe` and their `toolchain_probe` / `qt_probe_smoke` tests, both behind `BUILD_TESTING` |
+| `tests/CMakeLists.txt` | the `add_subdirectory` line per test group, then the repository-wide checks that compile nothing: `planning_validation`, `planning_validator_tests`, `module_boundary_check` |
+| `tests/application/CMakeLists.txt` | `everygraph_command_kernel_tests` and its `command_kernel_tests` test |
+
+Rules a task must follow when it adds build work:
+
+- **Define a target in the directory that owns its sources.** Source paths in a target are relative to that directory, so `modules/foundation/CMakeLists.txt` lists `src/error.cpp` and resolves to the same file the root file previously named as `modules/foundation/src/error.cpp`.
+- **Guard `add_test`, never a target definition.** The single-file topology created every test executable whether or not `BUILD_TESTING` was on and registered its test only when on. `tests/CMakeLists.txt` therefore adds its groups before its `BUILD_TESTING` early return, and `tests/application/CMakeLists.txt` and `tools/CMakeLists.txt` wrap only their `add_test` calls. A `-DBUILD_TESTING=OFF` configuration builds the same four targets before and after the refactor, and registers zero tests in both.
+- **Register every build target that must carry the shared policy** by calling `everygraph_register_code_target(<target>)`. The warning set and the sanitizer flags are applied in the root file's two loops over the `EVERYGRAPH_CODE_TARGETS` global property, in that order per target. A global property is used because a subdirectory cannot append to a parent-scope variable. A target that is not registered silently escapes both policies.
+- **Call `everygraph_assert_no_qt_linkage(<target>)` in every GUI-independent module** after that target's `target_link_libraries` call. The function is defined in the root file as shared policy; each module applies it to its own targets because only the module knows them. `module_boundary_check` remains the second, independent guard and scans the module trees for Qt includes and `Q`-prefixed type tokens.
+- **Pin `WORKING_DIRECTORY` on any test whose registration moves.** A test's default working directory is the binary directory of the CMake file that registers it, so relocating an `add_test` call silently relocates the test's working directory even when its command is identical. `toolchain_probe`, `qt_probe_smoke`, `command_kernel_tests` and `module_boundary_check` now state `WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"`, which is the value each had while every target was defined in the root file. `planning_validation` and `planning_validator_tests` already pinned the source root explicitly and needed no change.
+- **Keep flags, sanitizer behavior and warnings in the root loops.** A module file must not add `-W`, `-fsanitize` or `/W` options locally; per-target compile features, include directories and link libraries are the module's own business.
+- **Adding a new top-level tree costs exactly one `add_subdirectory` line in the root file.** Everything else about it — targets, flags registration, tests — stays local to that tree. `modules/data`, `modules/plot` and the other planned directories are created only when their work starts, each with its own `CMakeLists.txt`.
+
+The root file also pins `CMAKE_RUNTIME_OUTPUT_DIRECTORY`, `CMAKE_LIBRARY_OUTPUT_DIRECTORY` and `CMAKE_ARCHIVE_OUTPUT_DIRECTORY` to `${CMAKE_BINARY_DIR}`. Targets defined in a subdirectory would otherwise emit into `out/build/<preset>/tools/` and `out/build/<preset>/tests/application/`, which would break the recorded `macdeployqt`, `otool`, `vtool` and SBOM-generator command paths in this guide and the P1-012 bundle work that reads them. The assignment must precede `add_subdirectory(tools)`: Qt's `qt_standard_project_setup()` sets `CMAKE_RUNTIME_OUTPUT_DIRECTORY` to the defining directory on Windows when it is still unset, so pinning it first keeps the Windows route consistent with the macOS layout actually recorded here.
+
+`EVERYGRAPH_ENABLE_QT_PROBE` is now declared as `option(... OFF)` in the root file. It was previously read while undeclared, so the Qt presets passed only because they set the cache variable; any other configuration left the option undefined rather than explicitly off. `macos-debug-qt`, `macos-release-qt` and the two `*-qt-vcpkg` presets still turn it on through their `cacheVariables`, and the three Qt-free presets continue to configure without locating Qt.
+
+`CMakePresets.json` is unchanged by the refactor. Preset names, build and test presets and the Windows presets are the same set as before.
+
+Because the target definitions moved, the order in which CMake registers tests changed with them, so `ctest -N` now lists `command_kernel_tests` and `module_boundary_check` in different positions. The test name set, each test's command, working directory, timeout and environment are unchanged — `ctest --show-only=json-v1` over the pre-refactor and refactored topologies reports the same five and six tests with zero differing properties — and the presets run the unfiltered suite, so no selection depends on the order.
+
+Refactor result on 2026-10-31, macOS 27.0.1 arm64, AppleClang 21.0.0.21000334, CMake 3.31.6 and Ninja 1.11.1.4 from `.venv`, Homebrew `qtbase` 6.12.0 for the two Qt presets and the retained `out/vcpkg` graph at baseline `d186940b` for the two vcpkg presets:
+
+| Preset | Configure / build | CTest |
+| --- | --- | --- |
+| macos-debug | Passed, no compiler warnings | 5/5 passed |
+| macos-release | Passed, no compiler warnings | 5/5 passed |
+| macos-sanitize | Passed with ASan + UBSan | 5/5 passed, no sanitizer diagnostics |
+| macos-debug-qt | Passed, no compiler warnings | 6/6 passed |
+| macos-release-qt | Passed, no compiler warnings | 6/6 passed |
+| macos-debug-qt-vcpkg | Passed, no compiler warnings | 6/6 passed |
+| macos-release-qt-vcpkg | Passed, no compiler warnings | 6/6 passed |
+
+The five AC-4 presets were also configured and built from wiped scratch directories, so their result is a clean-configure proof rather than an incremental reconfigure. The two vcpkg presets were re-configured only in place: a scratch build directory would force a full Qt 6.12.0 source rebuild instead of reusing the retained `out/vcpkg` install graph, which is outside this task. `Windows-debug` and `windows-release` remain unexecuted on this host. Against the pre-refactor captures, `compile_commands.json` matches entry for entry — same source files, same include directories, same defines and the same warning and sanitizer flags — after normalizing only the two build-tree locations that follow the defining directory (the per-target object directory, and Qt's `everygraph_qt_probe_autogen` directory, which is now under `tools/`). Release binaries, including `everygraph_qt_probe.app/Contents/MacOS/everygraph_qt_probe`, are byte-identical. Debug binaries differ only in `LC_UUID` and in the single `N_OSO` debug string that records the object-file path; the `__text` code section and the symbol count are identical.
 
 ## Build and code standards
 

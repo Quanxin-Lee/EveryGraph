@@ -4,6 +4,7 @@ project(EveryGraphPhase0 LANGUAGES CXX)
 
 option(EVERYGRAPH_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(EVERYGRAPH_ENABLE_TSAN "Enable ThreadSanitizer separately from ASan and UBSan" OFF)
+option(EVERYGRAPH_ENABLE_QT_PROBE "Build the opt-in Qt 6.12 Widgets qualification probe" OFF)
 
 if(EVERYGRAPH_ENABLE_SANITIZERS AND EVERYGRAPH_ENABLE_TSAN)
     message(FATAL_ERROR "ASan/UBSan and TSan must use separate build directories and cannot be combined.")
@@ -11,29 +12,26 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
+include(CTest)
 
-add_library(everygraph_foundation STATIC
-    modules/foundation/src/error.cpp
-    modules/foundation/src/ids.cpp
-)
-target_include_directories(everygraph_foundation PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/modules/foundation/include"
-)
-target_compile_features(everygraph_foundation PUBLIC cxx_std_20)
-set_target_properties(everygraph_foundation PROPERTIES CXX_EXTENSIONS OFF)
+# Every target is defined in the directory that owns its sources, so adding a
+# module never edits this file. Outputs stay in the top-level binary directory,
+# where the single-file topology placed them and where the documented tooling
+# commands and the SBOM generator look for them. Qt's qt_standard_project_setup
+# also sets CMAKE_RUNTIME_OUTPUT_DIRECTORY on Windows only when it is unset, so
+# this must be assigned before any subdirectory is added.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-add_library(everygraph_application STATIC
-    modules/application/src/command_gateway.cpp
-    modules/application/src/command_registry.cpp
-    modules/application/src/document.cpp
-    modules/application/src/value.cpp
+define_property(GLOBAL PROPERTY EVERYGRAPH_CODE_TARGETS
+    BRIEF_DOCS "EveryGraph-owned build targets"
+    FULL_DOCS "Targets that receive the shared warning and sanitizer policy. Each directory registers its own targets, because a subdirectory cannot add to a parent-scope variable."
 )
-target_include_directories(everygraph_application
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/modules/application/include"
-)
-target_link_libraries(everygraph_application PUBLIC everygraph_foundation)
-target_compile_features(everygraph_application PUBLIC cxx_std_20)
-set_target_properties(everygraph_application PROPERTIES CXX_EXTENSIONS OFF)
+
+function(everygraph_register_code_target target)
+    set_property(GLOBAL APPEND PROPERTY EVERYGRAPH_CODE_TARGETS "${target}")
+endfunction()
 
 function(everygraph_assert_no_qt_linkage target)
     get_target_property(target_libraries ${target} LINK_LIBRARIES)
@@ -54,37 +52,12 @@ function(everygraph_assert_no_qt_linkage target)
     endif()
 endfunction()
 
-everygraph_assert_no_qt_linkage(everygraph_foundation)
-everygraph_assert_no_qt_linkage(everygraph_application)
+add_subdirectory(modules/foundation)
+add_subdirectory(modules/application)
+add_subdirectory(tools)
+add_subdirectory(tests)
 
-add_executable(everygraph_toolchain_probe tools/toolchain_probe.cpp)
-target_compile_features(everygraph_toolchain_probe PRIVATE cxx_std_20)
-set_target_properties(everygraph_toolchain_probe PROPERTIES CXX_EXTENSIONS OFF)
-target_link_libraries(everygraph_toolchain_probe PRIVATE Threads::Threads)
-
-add_executable(everygraph_command_kernel_tests tests/application/command_kernel_tests.cpp)
-target_compile_features(everygraph_command_kernel_tests PRIVATE cxx_std_20)
-set_target_properties(everygraph_command_kernel_tests PROPERTIES CXX_EXTENSIONS OFF)
-target_link_libraries(everygraph_command_kernel_tests PRIVATE everygraph_application)
-
-set(everygraph_code_targets
-    everygraph_foundation
-    everygraph_application
-    everygraph_toolchain_probe
-    everygraph_command_kernel_tests
-)
-
-if(EVERYGRAPH_ENABLE_QT_PROBE)
-    find_package(Qt6 6.12.0 EXACT REQUIRED COMPONENTS Core Gui Widgets)
-    qt_standard_project_setup()
-
-    qt_add_executable(everygraph_qt_probe MACOSX_BUNDLE tools/qt_probe/main.cpp)
-    target_compile_features(everygraph_qt_probe PRIVATE cxx_std_20)
-    set_target_properties(everygraph_qt_probe PROPERTIES CXX_EXTENSIONS OFF)
-    target_link_libraries(everygraph_qt_probe PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
-
-    list(APPEND everygraph_code_targets everygraph_qt_probe)
-endif()
+get_property(everygraph_code_targets GLOBAL PROPERTY EVERYGRAPH_CODE_TARGETS)
 
 foreach(everygraph_code_target IN LISTS everygraph_code_targets)
     if(MSVC)
@@ -116,58 +89,4 @@ if(EVERYGRAPH_ENABLE_SANITIZERS OR EVERYGRAPH_ENABLE_TSAN)
             target_link_options(${everygraph_code_target} PRIVATE ${everygraph_sanitizer_flag})
         endif()
     endforeach()
-endif()
-
-include(CTest)
-if(BUILD_TESTING)
-    add_test(NAME toolchain_probe COMMAND everygraph_toolchain_probe)
-    set_tests_properties(toolchain_probe PROPERTIES TIMEOUT 30)
-
-    add_test(NAME planning_validation
-        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tools/validate_planning.py"
-    )
-    set_tests_properties(planning_validation PROPERTIES
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        TIMEOUT 60
-    )
-
-    add_test(NAME planning_validator_tests
-        COMMAND "${Python3_EXECUTABLE}" -m unittest discover -s tools -p test_validate_planning.py
-    )
-    set_tests_properties(planning_validator_tests PROPERTIES
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        TIMEOUT 60
-    )
-
-    add_test(NAME command_kernel_tests COMMAND everygraph_command_kernel_tests)
-    set_tests_properties(command_kernel_tests PROPERTIES TIMEOUT 60)
-
-    add_test(NAME module_boundary_check
-        COMMAND "${CMAKE_COMMAND}"
-            "-DEVERYGRAPH_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
-            -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_module_boundaries.cmake"
-    )
-    set_tests_properties(module_boundary_check PROPERTIES TIMEOUT 30)
-
-    if(EVERYGRAPH_ENABLE_QT_PROBE)
-        add_test(NAME qt_probe_smoke COMMAND everygraph_qt_probe --smoke-test)
-        if(VCPKG_INSTALLED_DIR AND APPLE)
-            if(CMAKE_BUILD_TYPE MATCHES "Debug")
-                set(everygraph_qt_plugin_dir
-                    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/Qt6/plugins")
-            else()
-                set(everygraph_qt_plugin_dir
-                    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Qt6/plugins")
-            endif()
-            set_tests_properties(qt_probe_smoke PROPERTIES
-                ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_PLUGIN_PATH=${everygraph_qt_plugin_dir}"
-                TIMEOUT 30
-            )
-        else()
-            set_tests_properties(qt_probe_smoke PROPERTIES
-                ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
-                TIMEOUT 30
-            )
-        endif()
-    endif()
 endif()
