@@ -55,6 +55,10 @@ QString format_id(foundation::ObjectId id) {
 
 PropertiesPanel::PropertiesPanel(QWidget* parent) : QWidget(parent) {
     setObjectName(QStringLiteral("propertiesPanel"));
+    setAccessibleName(QStringLiteral("Properties panel"));
+    setAccessibleDescription(
+        QStringLiteral("Read-only properties of the selected project object."));
+    setFocusPolicy(Qt::StrongFocus);
     auto* layout = new QVBoxLayout(this);
     auto* title = new QLabel(QStringLiteral("Properties"), this);
     QFont title_font = title->font();
@@ -66,6 +70,9 @@ PropertiesPanel::PropertiesPanel(QWidget* parent) : QWidget(parent) {
     object_id_ = new QLabel(QStringLiteral("(none)"), this);
     object_type_ = new QLabel(QStringLiteral("(none)"), this);
     object_revision_ = new QLabel(QStringLiteral("(none)"), this);
+    object_id_->setAccessibleName(QStringLiteral("Object ID value"));
+    object_type_->setAccessibleName(QStringLiteral("Type value"));
+    object_revision_->setAccessibleName(QStringLiteral("Revision value"));
     for (QLabel* label : {object_id_, object_type_, object_revision_}) {
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
     }
@@ -76,6 +83,9 @@ PropertiesPanel::PropertiesPanel(QWidget* parent) : QWidget(parent) {
 
     properties_ = new QLabel(QStringLiteral("(none)"), this);
     properties_->setObjectName(QStringLiteral("propertiesValues"));
+    properties_->setAccessibleName(QStringLiteral("Property values"));
+    properties_->setAccessibleDescription(
+        QStringLiteral("Key and value pairs for the selected object."));
     properties_->setWordWrap(true);
     properties_->setTextInteractionFlags(Qt::TextSelectableByMouse);
     auto* properties_title = new QLabel(QStringLiteral("Properties"), this);

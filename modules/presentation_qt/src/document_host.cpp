@@ -4,6 +4,7 @@
 
 #include <QAction>
 #include <QCloseEvent>
+#include <QTabBar>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QVBoxLayout>
@@ -17,16 +18,24 @@ DetachedDocumentWindow::DetachedDocumentWindow(DocumentDescriptor descriptor,
     : QMainWindow(parent), descriptor_(std::move(descriptor)), content_(content) {
     setObjectName(QStringLiteral("detachedDocumentWindow"));
     setWindowTitle(QStringLiteral("%1 - EveryGraph").arg(descriptor_.title));
+    setAccessibleName(
+        QStringLiteral("%1 (detached document)").arg(descriptor_.title));
+    setAccessibleDescription(
+        QStringLiteral("Floating document window. Close it or use Dock Back "
+                       "to return the document to the workbench tabs."));
     setAttribute(Qt::WA_DeleteOnClose, false);
     if (content_ != nullptr) {
         setCentralWidget(content_);
     }
 
-    auto* toolbar = addToolBar(QStringLiteral("Document"));
+    auto* toolbar = addToolBar(QStringLiteral("Detached document toolbar"));
     toolbar->setObjectName(QStringLiteral("detachedDocumentToolbar"));
+    toolbar->setAccessibleDescription(
+        QStringLiteral("Return the floating document to the workbench tabs."));
     dock_action_ = toolbar->addAction(QStringLiteral("Dock Back"));
     dock_action_->setObjectName(QStringLiteral("dockBackAction"));
     dock_action_->setToolTip(QStringLiteral("Return this document to the workbench tabs"));
+    dock_action_->setStatusTip(QStringLiteral("Return this document to the workbench tabs"));
     connect(dock_action_, &QAction::triggered, this, &DetachedDocumentWindow::request_dock_back);
 
     resize(720, 480);
@@ -52,12 +61,23 @@ void DetachedDocumentWindow::closeEvent(QCloseEvent* event) {
 
 DocumentHost::DocumentHost(QWidget* parent) : QWidget(parent) {
     setObjectName(QStringLiteral("documentHost"));
+    setAccessibleName(QStringLiteral("Document area"));
+    setAccessibleDescription(
+        QStringLiteral("Tabbed document host. Use Control+Shift+T to detach the "
+                       "current document and Control+Shift+R to dock it back."));
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
     tabs_ = new QTabWidget(this);
     tabs_->setObjectName(QStringLiteral("documentTabs"));
+    tabs_->setAccessibleName(QStringLiteral("Open documents"));
+    tabs_->setAccessibleDescription(
+        QStringLiteral("Tabs for open documents. Use the arrow keys to move "
+                       "between tabs and Control+W to close the current document."));
+    tabs_->setFocusPolicy(Qt::StrongFocus);
+    tabs_->tabBar()->setObjectName(QStringLiteral("documentTabBar"));
+    tabs_->tabBar()->setFocusPolicy(Qt::StrongFocus);
     tabs_->setDocumentMode(true);
     tabs_->setMovable(true);
     tabs_->setTabsClosable(true);
@@ -258,6 +278,9 @@ void DocumentHost::attach_tab(Entry& entry) {
     const int index = tabs_->addTab(entry.content, entry.descriptor.title);
     tabs_->setTabToolTip(
         index, QStringLiteral("%1 (%2)").arg(entry.descriptor.title, entry.descriptor.kind));
+    tabs_->tabBar()->setAccessibleTabName(
+        index, QStringLiteral("%1, %2 document").arg(entry.descriptor.title,
+                                                     entry.descriptor.kind));
     entry.detached = nullptr;
 }
 

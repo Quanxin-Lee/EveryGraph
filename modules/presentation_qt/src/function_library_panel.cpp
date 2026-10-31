@@ -9,6 +9,9 @@ namespace everygraph::presentation {
 FunctionLibraryPanel::FunctionLibraryPanel(QWidget* parent) : QWidget(parent) {
     setObjectName(QStringLiteral("functionLibraryPanel"));
     setAccessibleName(QStringLiteral("Function library"));
+    setAccessibleDescription(
+        QStringLiteral("Read-only placeholder list of analysis functions. "
+                       "No function executes in this prototype."));
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(4, 4, 4, 4);
@@ -16,6 +19,9 @@ FunctionLibraryPanel::FunctionLibraryPanel(QWidget* parent) : QWidget(parent) {
     list_ = new QListWidget(this);
     list_->setObjectName(QStringLiteral("functionLibraryList"));
     list_->setAccessibleName(QStringLiteral("Placeholder analysis functions"));
+    list_->setAccessibleDescription(
+        QStringLiteral("Five read-only function names. Selection has no effect."));
+    list_->setFocusPolicy(Qt::StrongFocus);
     list_->setEditTriggers(QAbstractItemView::NoEditTriggers);
     list_->addItems({QStringLiteral("Column Statistics"), QStringLiteral("FFT Spectrum"),
                      QStringLiteral("Gaussian Fit"), QStringLiteral("Linear Fit"),
@@ -26,6 +32,9 @@ FunctionLibraryPanel::FunctionLibraryPanel(QWidget* parent) : QWidget(parent) {
         QStringLiteral("Placeholder function library. Functions are listed for layout and "
                        "preference testing only; none executes in this prototype."),
         this);
+    note->setAccessibleName(QStringLiteral("Function library notice"));
+    note->setAccessibleDescription(
+        QStringLiteral("Explains that the listed functions are placeholders."));
     note->setWordWrap(true);
     layout->addWidget(note);
 }

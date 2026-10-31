@@ -86,6 +86,10 @@ WorkbenchWindow::WorkbenchWindow(CommandQuery& query, WorkbenchBindings bindings
       save_preferences_(std::move(save_preferences)) {
     setObjectName(QStringLiteral("workbenchWindow"));
     setWindowTitle(QStringLiteral("EveryGraph Workbench (prototype)"));
+    setAccessibleName(QStringLiteral("EveryGraph Workbench"));
+    setAccessibleDescription(
+        QStringLiteral("Prototype workbench with a project tree, document tabs, "
+                       "properties and a function library."));
     resize(1200, 760);
     build_ui();
     build_actions();
@@ -146,6 +150,10 @@ void WorkbenchWindow::build_ui() {
     tree_ = new QTreeView(this);
     tree_->setObjectName(QStringLiteral("projectTree"));
     tree_->setAccessibleName(QStringLiteral("Project tree"));
+    tree_->setAccessibleDescription(
+        QStringLiteral("Read-only project objects with name, type, ID and revision. "
+                       "Use the arrow keys to browse."));
+    tree_->setFocusPolicy(Qt::StrongFocus);
     tree_->setModel(model_);
     tree_->setSelectionBehavior(QAbstractItemView::SelectRows);
     tree_->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -194,8 +202,12 @@ void WorkbenchWindow::build_ui() {
     documents_ = new DocumentHost(this);
     setCentralWidget(documents_);
 
-    toolbar_ = addToolBar(QStringLiteral("Workbench"));
+    // Qt names the toolbar accessible object from its window title and ignores
+    // accessibleName, so the title carries the label the screen reader announces.
+    toolbar_ = addToolBar(QStringLiteral("Workbench toolbar"));
     toolbar_->setObjectName(QStringLiteral("workbenchToolbar"));
+    toolbar_->setAccessibleDescription(
+        QStringLiteral("Project and document commands. Every command has a keyboard shortcut."));
     toolbar_->setMovable(true);
     toolbar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolbar_->setIconSize(QSize(16, 16));
@@ -203,7 +215,17 @@ void WorkbenchWindow::build_ui() {
     default_format_label_ = new QLabel(this);
     default_format_label_->setObjectName(QStringLiteral("defaultFormatLabel"));
     default_format_label_->setAccessibleName(QStringLiteral("Default file format"));
+    default_format_label_->setAccessibleDescription(
+        QStringLiteral("Shows the preferred format for new documents. "
+                       "It does not save or export in this prototype."));
     statusBar()->addPermanentWidget(default_format_label_);
+
+    menuBar()->setAccessibleName(QStringLiteral("Main menu"));
+    menuBar()->setAccessibleDescription(
+        QStringLiteral("File, Edit, Object, View and Help menus."));
+    statusBar()->setAccessibleName(QStringLiteral("Status bar"));
+    statusBar()->setAccessibleDescription(
+        QStringLiteral("Shows command results and the current interface state."));
 
     auto* welcome = new QLabel(
         QStringLiteral("EveryGraph workbench prototype.\n\n"
@@ -282,6 +304,7 @@ void WorkbenchWindow::build_actions() {
         if (auto* button = qobject_cast<QToolButton*>(toolbar_->widgetForAction(action))) {
             button->setObjectName(action->objectName() + QStringLiteral("Button"));
             button->setAccessibleName(action->text());
+            button->setAccessibleDescription(action->toolTip());
             button->setToolTip(action->toolTip());
         }
     }
@@ -333,14 +356,21 @@ void WorkbenchWindow::build_actions() {
     QAction* project_toggle = project_dock_->toggleViewAction();
     project_toggle->setObjectName(QStringLiteral("projectDockToggleAction"));
     project_toggle->setShortcut(QKeySequence(QStringLiteral("Ctrl+1")));
+    project_toggle->setToolTip(QStringLiteral("Show or hide the Project panel"));
+    project_toggle->setStatusTip(QStringLiteral("Show or hide the Project panel"));
     view_menu->addAction(project_toggle);
     QAction* properties_toggle = properties_dock_->toggleViewAction();
     properties_toggle->setObjectName(QStringLiteral("propertiesDockToggleAction"));
     properties_toggle->setShortcut(QKeySequence(QStringLiteral("Ctrl+2")));
+    properties_toggle->setToolTip(QStringLiteral("Show or hide the Properties panel"));
+    properties_toggle->setStatusTip(QStringLiteral("Show or hide the Properties panel"));
     view_menu->addAction(properties_toggle);
     QAction* function_library_toggle = function_library_dock_->toggleViewAction();
     function_library_toggle->setObjectName(QStringLiteral("functionLibraryDockToggleAction"));
     function_library_toggle->setShortcut(QKeySequence(QStringLiteral("Ctrl+3")));
+    function_library_toggle->setToolTip(QStringLiteral("Show or hide the Function library panel"));
+    function_library_toggle->setStatusTip(
+        QStringLiteral("Show or hide the Function library panel"));
     view_menu->addAction(function_library_toggle);
     view_menu->addSeparator();
 

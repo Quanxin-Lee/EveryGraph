@@ -73,6 +73,37 @@ else()
         "QT_QPA_PLATFORM=offscreen;EVERYGRAPH_PREFERENCES_PATH=${CMAKE_BINARY_DIR}/workbench-smoke-preferences.json")
 endif()
 
+set(everygraph_accessibility_test_sources tests/accessibility_tests.cpp)
+if(APPLE)
+    enable_language(OBJCXX)
+    list(APPEND everygraph_accessibility_test_sources
+        tests/native_pinyin_ime.hpp
+        tests/native_pinyin_ime.mm
+    )
+endif()
+qt_add_executable(everygraph_accessibility_tests ${everygraph_accessibility_test_sources})
+target_link_libraries(everygraph_accessibility_tests PRIVATE
+    everygraph_presentation_qt
+    everygraph_desktop_fakes
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Test
+)
+if(APPLE)
+    target_link_libraries(everygraph_accessibility_tests PRIVATE
+        "-framework Cocoa"
+        "-framework Carbon"
+    )
+endif()
+target_compile_features(everygraph_accessibility_tests PRIVATE cxx_std_20)
+set_target_properties(everygraph_accessibility_tests PROPERTIES
+    CXX_EXTENSIONS OFF
+    OBJCXX_STANDARD 20
+    OBJCXX_EXTENSIONS OFF
+)
+everygraph_register_code_target(everygraph_accessibility_tests)
+
 add_test(NAME workbench_tests COMMAND everygraph_workbench_tests)
 set_tests_properties(workbench_tests PROPERTIES
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
@@ -86,6 +117,55 @@ set_tests_properties(preferences_tests PROPERTIES
     ENVIRONMENT "${everygraph_workbench_test_environment}"
     TIMEOUT 120
 )
+
+set(everygraph_accessibility_1x_environment
+    "${everygraph_workbench_test_environment};QT_SCALE_FACTOR=1;EVERYGRAPH_EXPECTED_SCALE=1;EVERYGRAPH_SCREENSHOT_DIR=${CMAKE_BINARY_DIR}/accessibility-evidence/1x"
+)
+set(everygraph_accessibility_2x_environment
+    "${everygraph_workbench_test_environment};QT_SCALE_FACTOR=2;EVERYGRAPH_EXPECTED_SCALE=2;EVERYGRAPH_SCREENSHOT_DIR=${CMAKE_BINARY_DIR}/accessibility-evidence/2x"
+)
+add_test(NAME accessibility_1x COMMAND everygraph_accessibility_tests)
+set_tests_properties(accessibility_1x PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    ENVIRONMENT "${everygraph_accessibility_1x_environment}"
+    TIMEOUT 180
+)
+add_test(NAME accessibility_2x COMMAND everygraph_accessibility_tests)
+set_tests_properties(accessibility_2x PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    ENVIRONMENT "${everygraph_accessibility_2x_environment}"
+    TIMEOUT 180
+)
+
+if(APPLE)
+    set(everygraph_accessibility_native_environment
+        "QT_QPA_PLATFORM=cocoa;EVERYGRAPH_SCREENSHOT_DIR=${CMAKE_BINARY_DIR}/accessibility-evidence/native;EVERYGRAPH_PREFERENCES_PATH=${CMAKE_BINARY_DIR}/accessibility-native-preferences.json"
+    )
+    if(VCPKG_INSTALLED_DIR)
+        list(APPEND everygraph_accessibility_native_environment
+            "QT_PLUGIN_PATH=${everygraph_qt_plugin_dir}")
+    endif()
+    add_test(NAME accessibility_focus_native
+        COMMAND everygraph_accessibility_tests
+            focus_order_cycles_without_trap
+            preferences_focus_order_is_explicit
+    )
+    set_tests_properties(accessibility_focus_native PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        ENVIRONMENT "${everygraph_accessibility_native_environment}"
+        TIMEOUT 120
+    )
+    add_test(NAME accessibility_ime_native
+        COMMAND everygraph_accessibility_tests native_pinyin_ime_composes_text)
+    set_tests_properties(accessibility_ime_native PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        ENVIRONMENT "${everygraph_accessibility_native_environment}"
+        TIMEOUT 120
+        # Qt Test exits 0 when it skips, so without this the entry would report a
+        # pass while the real composition check never ran.
+        SKIP_REGULAR_EXPRESSION "the native composition check was skipped"
+    )
+endif()
 
 add_test(NAME workbench_smoke COMMAND everygraph_desktop --smoke-test)
 set_tests_properties(workbench_smoke PROPERTIES

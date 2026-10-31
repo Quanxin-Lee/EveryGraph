@@ -41,7 +41,8 @@ std::array<QWidget*, 2> windows_chrome(QMainWindow& window) {
 
 QPalette themed_palette(const QColor& window_color, const QColor& base_color,
                         const QColor& alternate_color, const QColor& text_color,
-                        const QColor& button_color, const QColor& highlight_color) {
+                        const QColor& button_color, const QColor& highlight_color,
+                        const QColor& link_color) {
     QPalette palette;
     palette.setColor(QPalette::Window, window_color);
     palette.setColor(QPalette::WindowText, text_color);
@@ -56,7 +57,7 @@ QPalette themed_palette(const QColor& window_color, const QColor& base_color,
     palette.setColor(QPalette::BrightText, Qt::white);
     palette.setColor(QPalette::Highlight, highlight_color);
     palette.setColor(QPalette::HighlightedText, Qt::white);
-    palette.setColor(QPalette::Link, highlight_color);
+    palette.setColor(QPalette::Link, link_color);
     palette.setColor(QPalette::Disabled, QPalette::Text, text_color.darker(150));
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, text_color.darker(150));
     palette.setColor(QPalette::Disabled, QPalette::WindowText, text_color.darker(150));
@@ -66,12 +67,15 @@ QPalette themed_palette(const QColor& window_color, const QColor& base_color,
 }  // namespace
 
 QPalette ShellAppearance::dark_palette() {
+    // #3d7ebd with white selected text measured about 4.27:1, below the 4.5:1
+    // normal-text floor; #2f6fab measures about 5.27:1.
     return themed_palette(QColor(QStringLiteral("#2b2b2b")),
                           QColor(QStringLiteral("#1e1e1e")),
                           QColor(QStringLiteral("#262626")),
                           QColor(QStringLiteral("#e6e6e6")),
                           QColor(QStringLiteral("#3a3a3a")),
-                          QColor(QStringLiteral("#3d7ebd")));
+                          QColor(QStringLiteral("#2f6fab")),
+                          QColor(QStringLiteral("#8ab8e8")));
 }
 
 QPalette ShellAppearance::light_palette() {
@@ -80,6 +84,7 @@ QPalette ShellAppearance::light_palette() {
                           QColor(QStringLiteral("#f7f7f7")),
                           QColor(QStringLiteral("#202020")),
                           QColor(QStringLiteral("#e4e4e4")),
+                          QColor(QStringLiteral("#2f6fab")),
                           QColor(QStringLiteral("#2f6fab")));
 }
 
