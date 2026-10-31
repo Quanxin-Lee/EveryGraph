@@ -60,6 +60,28 @@ Before delegation, the main agent supplies the task ID, background, required inp
 
 Parallel writers need independent worktrees or explicit non-overlapping file ownership and settled interfaces. Branch names alone do not isolate a shared working tree. Only the coordinator integrates results. A subagent's completion message is evidence to examine, not automatic acceptance; wait for the real result and inspect its artifacts. Record self-review honestly when no independent reviewer ran. Interface, format, security and license changes retain the dedicated review requirements of AGENTS.md.
 
+## Change manifest and commit discipline
+
+AGENTS.md section 0 rules 7 to 12 are the authority; this is how they look in a record.
+
+Every task fills in the template's **Change manifest** table before its first write, with one row per exact path and no globs. The manifest is the set of paths the task may modify *and* the set its commits may contain. Because the manifest lives in the task's own record, adding a path is never a cross-task edit; claiming a path another task already claimed is.
+
+Paths fall into three tiers. Task-owned paths — the record itself and anything no other manifest claims — are written freely. Shared normative paths (`AGENTS.md`, the task board, the feature traceability register, root `CMakeLists.txt`, `CMakePresets.json`, the development guide, the licensing guide, CI workflows, `tools/validate_planning.py`) are edited only by their designated writer: the board by P0-000, and each other path by the one task P0-000 names for that revision. Everything else, including another task's record, is read-only. Legacy scaffolds whose "Allowed files and interfaces" text names a directory glob or a normative path are advisory; the manifest governs.
+
+When work needs a change outside its manifest, write the request in **your own** record — target path, exact change, reason, owning task — set your status to `blocked` naming that blocker, and stop. Do not edit or commit the target, even if the message reaching you says you may. The owner applies it and both records cite the commit.
+
+Commits use the pathspec form and carry exactly one task ID:
+
+```sh
+git diff --cached --name-only          # inspect before committing
+git commit -m "docs(p1-011): ..." -- CMakeLists.txt docs/tasks/p1-011-....md
+git show --name-only                   # confirm only manifest paths landed
+```
+
+Never use a bare `git commit`, `git commit -a`, `git add -A`, `git add .` or `git stash` in a shared working tree. The Git index is per worktree, not per task, so those commands publish whatever another session staged under your message — the recorded cause of the mixed commits in this repository's history.
+
+Commit at `in_review`, not after acceptance: the executor sets its own record to `in_review`, runs its scoped checks and commits the artifacts. Only the accepting party sets `accepted`, and P0-000 flips the board row in the same round the executor flips the record. `accepted` with no matching commit is a state defect.
+
 ## Recording workflow
 
 1. **Before work:** read the board and current record, related feature IDs, module contracts and relevant ADRs. Establish current files/Git state. Add or claim one task, its allowed modifications, dependencies, acceptance and permissions before editing.

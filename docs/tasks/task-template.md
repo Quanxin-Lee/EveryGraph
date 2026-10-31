@@ -24,6 +24,12 @@ Objective:
 
 Allowed files and interfaces:
 
+Change manifest (AGENTS.md section 0 rule 7; complete it before the first write and extend it only through rules 8 and 9. One row per exact repository-relative path, no directory globs. Only these paths may be modified or committed):
+
+| Path | Action | Basis |
+|---|---|---|
+| `exact/path` | create / modify | Own task artifact / user instruction for this shared normative path / granted request in <task-id> |
+
 Out of scope:
 
 | Criterion | Required evidence | Result |
@@ -56,6 +62,7 @@ Acceptance decision, accepting role and date (or pending):
 
 ## Handoff and remaining work
 
+Commits (each with this task ID in the subject and only manifest paths; state that no commit exists and why when true):
 Last verified state:
 Blockers and unblock actions:
 Next task / concrete next action:
