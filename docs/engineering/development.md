@@ -315,6 +315,47 @@ The negative path was exercised with a scratch tree containing `#include <QStrin
 - The test harness is a small custom executable with explicit return-code checks and one CTest entry, not GoogleTest with discovery, fixtures or death tests. GoogleTest remains a future pinned dependency under P1-003.
 - No Windows build, CI run, sanitizer-plus-Qt combination or thread-sanitizer run is claimed. `macos-debug-qt` and `macos-release-qt` are local qualification runs, not release packaging.
 
+## Worker handshake and cancellation prototype (P1-005)
+
+P1-005 adds a versioned worker protocol, an in-process transport and a separate test-worker process to the application prototype. Fake bounded jobs exercise the contract; no Python, native plugin, AI provider, numerical kernel or real scientific worker is involved. The prototype is macOS/POSIX crash containment, **not an OS sandbox**, and it makes no untrusted-code containment claim. No code path changed after the artifact commit `0e0579b`; this section records the accepted build facts and supersedes the P1-004 limit sentence that said no worker, task handle, progress stream or serialized command queue existed.
+
+### Targets and registration
+
+| Target / test | Purpose |
+| --- | --- |
+| `everygraph_application` | Gains `worker_protocol.cpp`, `job_scheduler.cpp` and the private `child_process.cpp` helper, and links `Threads::Threads` in addition to `everygraph_foundation`. It is not a new target; the P1-004 description "links foundation only" is superseded for it. |
+| `everygraph_test_worker` | New second executable, defined in `tests/worker/CMakeLists.txt` and linked to `everygraph_application`; one cooperative mode plus 11 injected faults. |
+| `everygraph_worker_protocol_tests` | New dependency-free 50-case test executable; its compile definition `EVERYGRAPH_TEST_WORKER_PROGRAM` names the `$<TARGET_FILE:everygraph_test_worker>` path. |
+| `worker_protocol_tests` | The single CTest entry for that executable, `WORKING_DIRECTORY` pinned to the binary directory and a 180-second timeout. It takes the three Qt-free presets from 7/7 to 8/8. |
+
+### Protocol and test-worker mechanism
+
+The wire format is schema version 1: one percent-encoded `key=value;` frame per line, bounded at 4096 bytes, with eight message kinds (submit, accepted, progress, cancel, result, failure, superseded and shutdown) and eleven failure reasons. The codec rejects unknown, duplicate or malformed fields, unsupported schema versions, oversized or multiline frames and raw control characters.
+
+In-process jobs observe a `std::stop_token` at bounded checkpoints. Child jobs are spawned with `posix_spawn`; the host sends cancel and superseded control frames over a pipe, waits a bounded grace period and then escalates to `SIGKILL`. The scheduler blocks `SIGPIPE` on the threads that own the pipes, resets the child's signal disposition and mask, and redirects the worker's stderr so diagnostics cannot corrupt a frame. The test worker can be told to overrun its deadline, crash, exit early, emit malformed or unsupported frames, use a foreign identity, echo a host frame, report progress beyond its total, send a late result or ignore cancellation; those modes are how the failure-injection cases reach the host's timeout, crash, protocol and supersession paths.
+
+Progress updates are bounded per stage and coalesced by `ProgressAggregator`; a progress count above its total is refused as a protocol violation. Admission checks run at submit time against a byte budget and a bounded pending queue, and a rejected job takes no reservation and starts no worker. `commit_worker_result` is the only path into the P1-004 command gateway: it accepts a succeeded candidate carrying a value and refuses canceled, superseded, failed and stale candidates, so a failed or canceled worker publishes no revision or event.
+
+### Recorded result
+
+On 2026-10-31, macOS 27.0.1 arm64, AppleClang 21.0.0.21000334, CMake 3.31.6 and Ninja 1.11.1.4 from `.venv`:
+
+| Preset | Configure / build | CTest |
+| --- | --- | --- |
+| macos-debug | Passed, no compiler warnings | 8/8 passed; direct binary 50/50 |
+| macos-release | Passed, no compiler warnings | 8/8 passed; direct binary 50/50 |
+| macos-sanitize | Passed with ASan + UBSan, no sanitizer diagnostics | 8/8 passed; direct binary 50/50 |
+
+The thread-race check was an out-of-tree `-DEVERYGRAPH_ENABLE_TSAN=ON` configuration, not a fourth preset and not CI: it built with no warnings, passed 8/8 under CTest and 50/50 directly, with no ThreadSanitizer diagnostic. The worker group is selected with `ctest --preset macos-debug -R '^worker_protocol_tests$'` or run directly as `./out/build/macos-debug/everygraph_worker_protocol_tests`.
+
+### Limits
+
+- **No sandbox.** Process separation is crash containment only. No OS sandbox, capability grant, operating-system-enforced resource limit or untrusted-code test exists; a real worker transport needs its own containment and rights review.
+- macOS/POSIX only. The child transport is untested on Linux, Windows and any non-arm64 host.
+- Records and superseded outcomes are never pruned, escalation is `SIGKILL`-only after a fixed grace period, and the worker's stderr is discarded with no diagnostic channel.
+- The jobs are fake bounded loops over an in-memory test document; no scientific semantics, throughput, memory-scaling or production-scheduler claim is made.
+- CI execution, Windows execution and a Qt combination are not claimed. The test harness is the same dependency-free CTest executable pattern as P1-004, not GoogleTest.
+
 ## Pinned native dependency graph and initial SBOM (P1-003)
 
 P1-003 replaces the temporary Homebrew-only dependency route with a vcpkg manifest, an immutable registry baseline and a local Qt 6.12.0 overlay for macOS arm64. This is a qualification graph for the Qt probe, not a product dependency set, a packaging result or a Windows qualification. The Homebrew section above remains historical P1-001 evidence.
