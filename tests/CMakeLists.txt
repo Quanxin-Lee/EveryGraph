@@ -3,6 +3,7 @@
 # executable regardless of BUILD_TESTING, and only its add_test calls were
 # conditional, so that behavior is preserved here.
 add_subdirectory(application)
+add_subdirectory(worker)
 
 if(NOT BUILD_TESTING)
     return()
