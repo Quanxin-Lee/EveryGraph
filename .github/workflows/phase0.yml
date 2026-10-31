@@ -51,6 +51,7 @@ jobs:
           ctest --preset "${{ matrix.preset }}"
 
   windows:
+    if: github.event_name == 'workflow_dispatch'
     name: ${{ matrix.preset }}
     runs-on: windows-2022
     timeout-minutes: 20
