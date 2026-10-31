@@ -3,7 +3,7 @@
 ## Metadata
 
 - Task ID: P0-016
-- Status: in_progress
+- Status: accepted
 - Owner: EveryGraph Implementation
 - Record writer: EveryGraph Implementation
 - Related requirements: none — governance and build-configuration work; the roadmap Phase-0 exit clause and [ADR-0005](../decisions/ADR-0005-platform-sequencing.md) supply the rationale
