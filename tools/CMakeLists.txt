@@ -10,6 +10,25 @@ if(BUILD_TESTING)
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
         TIMEOUT 30
     )
+
+    add_test(NAME catalog_validation
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/validate_catalog_children.py"
+    )
+    set_tests_properties(catalog_validation PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        TIMEOUT 60
+    )
+
+    # The discovery start directory is relative, so unittest resolves "tools"
+    # against the working directory; pinning the source root is what makes the
+    # registration independent of the directory CTest would otherwise default to.
+    add_test(NAME catalog_validator_tests
+        COMMAND "${Python3_EXECUTABLE}" -m unittest discover -s tools -p test_catalog_children.py
+    )
+    set_tests_properties(catalog_validator_tests PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        TIMEOUT 60
+    )
 endif()
 
 if(EVERYGRAPH_ENABLE_QT_PROBE)

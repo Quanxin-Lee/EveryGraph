@@ -94,6 +94,8 @@ A successful run on macOS 27.2 with a deployment target of 14.4 is not evidence 
 CMake requires `Python3` >= 3.10 with the `Interpreter` component. When `BUILD_TESTING` is on, CTest registers:
 
 - `toolchain_probe`: the compiled C++ probe, with a 30-second timeout.
+- `catalog_validation`: the Python interpreter running `tools/validate_catalog_children.py` from the source root, with a 60-second timeout.
+- `catalog_validator_tests`: the 37 standard-library unittest cases for the catalog-child validator's behavior, with a 60-second timeout.
 - `planning_validation`: the Python interpreter running `tools/validate_planning.py` from the source root, with a 60-second timeout.
 - `planning_validator_tests`: six standard-library unittest cases for validator behavior, with a 60-second timeout.
 - `command_kernel_tests`: the dependency-free command/transaction prototype executable, with a 60-second timeout.
@@ -109,6 +111,27 @@ ctest --preset macos-sanitize
 ```
 
 The six validator unit cases also passed when invoked directly with `python3 -m unittest discover -s tools -p test_validate_planning.py -v`. The validator checks preserved source hashes, coverage/anchors/classifications, local document links/fences/language and matrix arithmetic. It does not check remote URL availability, render Mermaid or test application/scientific behavior. The workflow runs full CTest so missing or failing planning checks fail CI.
+
+### Catalog-child register checks (P0-011)
+
+`tools/validate_catalog_children.py` and `tools/test_catalog_children.py` existed from P0-004 onward but were reachable only by direct invocation, so a regression in the catalog contract could land without failing any build or CI gate. P0-011 registers them as the two named CTest tests above, in `tools/CMakeLists.txt` — the tree that owns those scripts — guarded by `BUILD_TESTING` like every other registration.
+
+**What they protect.** The 172-row `docs/planning/catalog-children.csv` evidence register against its pinned contract `tools/catalog_expectations.json`: child-ID grammar, sequence gaps without a recorded retirement, the seven unresolved catalog parents, required-field and enum values, verbatim local anchors with excerpt digests and registered retrieval dates, count floors and exact claim-only counts, the no-support-claim and no-vendor-count discipline, the ASCII policy outside the two exempt anchor fields, byte-level immutability of the feature register, the child register and the preserved root inventories, and agreement of the declared constants with the P0-003 and P0-005 evidence documents. `catalog_validator_tests` is the behavioral half: each case breaks one invariant and asserts the matching check reports it, so a green register proves a working check rather than a no-op.
+
+**Prerequisite.** CMake must locate a `Python3` interpreter of version 3.10 or newer with the `Interpreter` component, which the root file requires unconditionally, and `BUILD_TESTING` must be on. Both entries run against the *source* tree, not the build tree, so the checkout must be complete: the checks read `docs/`, `tools/` and the preserved root inventory files. `WORKING_DIRECTORY` is pinned to `${CMAKE_SOURCE_DIR}` because the discovery start directory `tools` is a relative path, and the registered command is `${Python3_EXECUTABLE}`, the same interpreter handle `planning_validation` uses — Homebrew's framework 3.14 on this host, the repository `.venv` 3.13.9 when `Python3_EXECUTABLE` is pinned to it, and the CI `setup-python` interpreter in the workflow. Neither entry touches the network: the validator imports no network-capable module and both entries pass under a `sys.addaudithook` guard that rejects any `socket.*`, `os.system` or `subprocess.Popen` event.
+
+**Failure semantics — no silent skip.** Neither registration sets `SKIP_RETURN_CODE`, so no catalog result can be reported as skipped. Measured on a throwaway copy of the repository outside the working tree: a single renamed named entry in the register fails both tests with CTest exit 8; deleting `docs/planning/catalog-children.csv` or `tools/catalog_expectations.json` fails both with a traceback rather than skipping; an interpreter that disappears after configure is reported `***Not Run` and counts as a failure; a missing interpreter at configure time fails configuration outright (`Could NOT find Python3 (missing: Interpreter)`); and renaming the test module makes `unittest discover` exit 5 with `NO TESTS RAN`, which CTest records as a failure. On a fresh `-DBUILD_TESTING=OFF` configure the four build targets still compile and zero tests register, which is the P1-011 rule that only `add_test` is guarded. Reconfiguring an *existing* build directory from `ON` to `OFF` instead leaves all registrations listed, because CMake 3.31.6 keeps the generated `CTestTestfile.cmake` files — pre-existing behavior that hits `planning_validation` and the rest exactly as it hits these two, and a route no preset takes, since every preset keeps `BUILD_TESTING` on and has its own `out/build/<preset>` directory.
+
+Result on 2026-10-31, macOS 27.0.1 arm64, AppleClang 21.0.0.21000334, CMake 3.31.6 and Ninja 1.11.1.4 from `.venv`, Homebrew `qtbase` 6.12.0 for the Qt preset:
+
+| Preset | Configure / build | CTest |
+| --- | --- | --- |
+| macos-debug | Passed, no compiler warnings | 7/7 passed |
+| macos-release | Passed, no compiler warnings | 7/7 passed |
+| macos-sanitize | Passed with ASan + UBSan, no sanitizer diagnostics | 7/7 passed |
+| macos-debug-qt | Passed, no compiler warnings | 8/8 passed |
+
+The three Qt-free presets were configured, built and tested from wiped scratch build directories as well as through the recorded `out/build/<preset>` trees, so the result is a clean-configure proof rather than an incremental reconfigure. Because `.github/workflows/phase0.yml` runs the unfiltered `ctest --preset` for `macos-debug`, `macos-release` and `macos-sanitize`, these two entries are now part of the configured CI gate; the workflow itself is unchanged and has not been dispatched.
 
 ## Qt 6.12.0 Widgets probe on macOS arm64 (P1-001)
 
@@ -417,7 +440,7 @@ Before P1-011 every target, flag loop and `add_test` call lived in the root `CMa
 | `CMakeLists.txt` (root) | `cmake_minimum_required`, `project`, the three shared `option()` declarations, the sanitizer/TSan conflict guard, `find_package(Threads)`, `find_package(Python3)`, `include(CTest)`, the top-level output directories, the two shared policy functions, the warning and sanitizer policy loops, and one `add_subdirectory` line per top-level tree |
 | `modules/foundation/CMakeLists.txt` | `everygraph_foundation` |
 | `modules/application/CMakeLists.txt` | `everygraph_application` |
-| `tools/CMakeLists.txt` | `everygraph_toolchain_probe`, `everygraph_qt_probe` and their `toolchain_probe` / `qt_probe_smoke` tests, both behind `BUILD_TESTING` |
+| `tools/CMakeLists.txt` | `everygraph_toolchain_probe`, `everygraph_qt_probe` and their `toolchain_probe` / `qt_probe_smoke` tests, plus from P0-011 the `catalog_validation` / `catalog_validator_tests` registrations for the validator scripts that live in this tree, all behind `BUILD_TESTING` |
 | `tests/CMakeLists.txt` | the `add_subdirectory` line per test group, then the repository-wide checks that compile nothing: `planning_validation`, `planning_validator_tests`, `module_boundary_check` |
 | `tests/application/CMakeLists.txt` | `everygraph_command_kernel_tests` and its `command_kernel_tests` test |
 
