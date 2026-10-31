@@ -88,6 +88,8 @@ NEGATION = re.compile(r"\b(?:not|no|never|without|neither|only|lack|lacks|lackin
 DESIGNATED_BASIS = re.compile(r"\b(?:P0-000|designated|designation|direct user instruction)\b", re.IGNORECASE)
 BASIS_NEGATION = re.compile(r"\b(?:not|no|never|without)\b", re.IGNORECASE)
 STATUS_WORD = re.compile(r"\b(?:planned|in_progress|in_review|blocked|accepted|canceled)\b", re.IGNORECASE)
+TRANSITION_STATE = re.compile(r"\bto[^A-Za-z_]{0,4}\b(planned|in_progress|in_review|blocked|accepted|canceled)\b",
+                              re.IGNORECASE)
 COMMIT_HASH = re.compile(r"\b[0-9a-f]{7,40}\b")
 RECORD_MARK = "\x01"
 SENTENCE_BREAK = re.compile(r"[.;:]")
@@ -718,6 +720,29 @@ def accepted_without_commit(records, history):
     return findings
 
 
+def requested_state(request):
+    """The one state a `Board sync` line asks P0-000 to write, or None when it names none or several.
+
+    Reading the first status word was not enough: a line that describes the state it is leaving as
+    well as the one it reaches (`from in_progress to accepted`, `set the row to accepted; it
+    currently reads planned`) named its old state first, so the request matched the very row it was
+    complaining about and the backlog went silent. The word a `to` introduces is therefore the
+    target, and a bare state is used only when the line carries exactly one; anything else is
+    reported rather than guessed at, because rule 11 asks for one row, one state and one commit.
+    """
+    moved = {match.group(1).lower() for match in TRANSITION_STATE.finditer(request)}
+    if len(moved) == 1:
+        return moved.pop()
+    states = {match.group(0).lower() for match in STATUS_WORD.finditer(request)}
+    return states.pop() if len(states) == 1 else None
+
+
+def ambiguous_states(request):
+    """The distinct states a request names, when it names more than one and targets neither."""
+    states = sorted({match.group(0).lower() for match in STATUS_WORD.finditer(request)})
+    return states if len(states) > 1 else []
+
+
 def check_board_backlog(records, board):
     findings = []
     for task_id in sorted(set(records) | set(board)):
@@ -729,8 +754,15 @@ def check_board_backlog(records, board):
                                     f"the record says {record.status} while the board row says {row.status}; P0-000 syncs the "
                                     f"row from the record and its proving commit"))
         for request in record.board_sync:
-            requested = STATUS_WORD.search(request)
+            requested = requested_state(request)
             if requested is None:
+                found = ", ".join(ambiguous_states(request))
+                if found:
+                    findings.append(Finding(NOTICE, "BOARD_SYNC_AMBIGUOUS", task_id,
+                                            f"the Board sync request names {found} without saying which is the state "
+                                            f"reached, so no row can be synced from it; rule 11 wants one state: "
+                                            f"{request[:160]}"))
+                    continue
                 if record.status not in MANIFEST_REQUIRED_STATUSES:
                     continue
                 if PLACEHOLDER.search(request):
@@ -742,10 +774,10 @@ def check_board_backlog(records, board):
                     findings.append(Finding(NOTICE, "BOARD_SYNC_WAITING", task_id,
                                             f"the Board sync request does not name a state: {request[:160]}"))
                 continue
-            if requested.group(0).lower() != row.status:
+            if requested != row.status:
                 commit = COMMIT_HASH.search(request)
                 findings.append(Finding(NOTICE, "BOARD_SYNC_WAITING", task_id,
-                                        f"P0-000 still owes the {task_id} row the state {requested.group(0).lower()} "
+                                        f"P0-000 still owes the {task_id} row the state {requested} "
                                         f"(the board says {row.status}, proving commit "
                                         f"{commit.group(0) if commit else 'not stated'})"))
         if record.board_sync_unfilled and not record.board_sync and record.status in MANIFEST_REQUIRED_STATUSES:

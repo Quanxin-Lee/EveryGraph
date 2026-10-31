@@ -25,7 +25,7 @@ from validate_task_manifest import (ALLOCATION_BASELINE, BOARD_PATH, ERROR, NOTI
                                    check_commit_subjects, check_duplicate_claims, check_manifest_presence,
                                    check_manifest_shape, check_normative_claims, check_repository, collect_history,
                                    is_normative, main, metadata_lines, names_independent_reviewer, normalize_path,
-                                   parse_commit_log, parse_manifest, read_board, read_records)
+                                   parse_commit_log, parse_manifest, read_board, read_records, requested_state)
 
 BOARD_FIELDS = ["task_id", "title", "requirement_ids", "owner", "depends_on", "status",
                 "acceptance_criteria", "record", "updated_on"]
@@ -780,6 +780,51 @@ class BoardBacklogTests(FixtureTree):
                   board_sync=["P0-200 reached accepted, proving commit deadbeef1"])
         records, board, _ = self.load()
         self.assertEqual([item for item in check_board_backlog(records, board) if item.code == "BOARD_SYNC_WAITING"], [])
+
+    def test_a_request_naming_the_state_it_leaves_is_still_reported_as_waiting(self):
+        self.task("P0-200", "accepted", board_status="in_progress",
+                  reviewer="one independent read-only subagent review.",
+                  board_sync=["row P0-200 from in_progress to accepted, proving commit deadbeef1"])
+        records, board, _ = self.load()
+        findings = check_board_backlog(records, board)
+        codes = [item.code for item in findings]
+        self.assertIn("BOARD_SYNC_WAITING", codes)
+        self.assertNotIn("BOARD_SYNC_AMBIGUOUS", codes)
+        waiting = next(item for item in findings if item.code == "BOARD_SYNC_WAITING")
+        self.assertIn("owes the P0-200 row the state accepted", waiting.message)
+        self.assertIn("the board says in_progress", waiting.message)
+        self.assertIn("deadbeef", waiting.message)
+
+    def test_a_filled_request_that_quotes_its_row_s_old_state_stays_quiet(self):
+        self.task("P0-200", "accepted", board_status="accepted",
+                  reviewer="one independent read-only subagent review.",
+                  board_sync=["set board row **P0-200** to **accepted** with `updated_on` 2026-10-31, proven by "
+                              "commit **deadbeef1**. The row currently reads in_review"])
+        records, board, _ = self.load()
+        self.assertEqual([item.code for item in check_board_backlog(records, board)
+                          if item.code in ("BOARD_SYNC_WAITING", "BOARD_SYNC_AMBIGUOUS")], [])
+
+    def test_a_request_that_names_two_states_and_targets_neither_is_ambiguous(self):
+        self.task("P0-200", "accepted", board_status="in_progress",
+                  reviewer="one independent read-only subagent review.",
+                  board_sync=["the row needs accepted but the record said in_progress, commit deadbeef1"])
+        records, board, _ = self.load()
+        findings = [item for item in check_board_backlog(records, board) if item.code == "BOARD_SYNC_AMBIGUOUS"]
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].level, NOTICE)
+        self.assertEqual(findings[0].scope, "P0-200")
+        self.assertIn("accepted, in_progress", findings[0].message)
+        self.assertIn("rule 11 wants one state", findings[0].message)
+
+    def test_requested_state_follows_the_transition_word(self):
+        self.assertEqual(requested_state("row P0-200 to accepted at deadbeef1"), "accepted")
+        self.assertEqual(requested_state("P0-200 reached in_review, commit deadbeef1"), "in_review")
+        self.assertEqual(requested_state("from in_progress to accepted, proving commit deadbeef1"), "accepted")
+        self.assertEqual(requested_state("set the row to **`accepted`**; it currently reads planned"), "accepted")
+        self.assertEqual(requested_state("set board row **P0-200** to **accepted**; the row currently reads planned"),
+                         "accepted")
+        self.assertIsNone(requested_state("needs accepted but said in_progress, commit deadbeef1"))
+        self.assertIsNone(requested_state("row <target>, state <state>, commit <commit>"))
 
     def test_a_board_sync_request_without_a_state_is_flagged(self):
         self.task("P0-200", "in_progress", manifest=[("docs/tasks/p0-200-fixture.md", "modify", "Own task record")],
