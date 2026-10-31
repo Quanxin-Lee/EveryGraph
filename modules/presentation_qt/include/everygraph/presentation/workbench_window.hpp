@@ -8,10 +8,12 @@
 
 #include "everygraph/application/command.hpp"
 #include "everygraph/foundation/ids.hpp"
+#include "everygraph/presentation/preferences.hpp"
 #include "everygraph/presentation/workbench_icons.hpp"
 
 class QAction;
 class QDockWidget;
+class QLabel;
 class QToolBar;
 class QTreeView;
 
@@ -24,6 +26,7 @@ namespace everygraph::presentation {
 
 class CommandQuery;
 class DocumentHost;
+class FunctionLibraryPanel;
 class ProjectTreeModel;
 class PropertiesPanel;
 
@@ -38,15 +41,20 @@ struct WorkbenchBindings {
     std::function<application::CommandOutcome()> redo;
 };
 
+using PreferencesSaver =
+    std::function<bool(const Preferences& preferences, QString* error_message)>;
+
 // The workbench composition: menus, toolbar, status bar, project-tree dock,
-// properties dock and tabbed document host. Every document write travels
-// through a binding; widgets only display kernel snapshots.
+// properties dock, function-library dock and tabbed document host. Every
+// document write travels through a binding; widgets only display kernel
+// snapshots. Preferences affect shell chrome and panel layout only.
 class WorkbenchWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     WorkbenchWindow(CommandQuery& query, WorkbenchBindings bindings,
-                    QWidget* parent = nullptr);
+                    Preferences initial_preferences = {},
+                    PreferencesSaver save_preferences = {}, QWidget* parent = nullptr);
     ~WorkbenchWindow() override;
 
     [[nodiscard]] ProjectTreeModel* project_model() const noexcept;
@@ -56,8 +64,19 @@ public:
     [[nodiscard]] QToolBar* workbench_toolbar() const noexcept;
     [[nodiscard]] QDockWidget* project_dock() const noexcept;
     [[nodiscard]] QDockWidget* properties_dock() const noexcept;
+    [[nodiscard]] QDockWidget* function_library_dock() const noexcept;
+    [[nodiscard]] FunctionLibraryPanel* function_library_panel() const noexcept;
     [[nodiscard]] QAction* find_action(const QString& object_name) const;
     [[nodiscard]] foundation::ObjectId selected_object() const noexcept;
+    [[nodiscard]] const Preferences& preferences() const noexcept;
+    [[nodiscard]] FocusMode focus_mode() const noexcept;
+    [[nodiscard]] QString default_format_text() const;
+
+    void apply_preferences(const Preferences& preferences);
+    [[nodiscard]] bool persist_preferences(QString* error_message = nullptr);
+    void set_focus_mode(FocusMode mode);
+    void restore_layout();
+
     [[nodiscard]] bool select_object(foundation::ObjectId id);
     void open_object_document(foundation::ObjectId id);
 
@@ -72,12 +91,20 @@ public slots:
     void detach_current_document();
     void dock_current_document();
     void close_current_document();
+    void open_preferences();
+    void select_normal_focus_mode();
+    void select_data_focus_mode();
+    void select_commands_focus_mode();
 
 private:
     void build_ui();
     void build_actions();
     QAction* create_action(const QString& object_name, const QString& text, WorkbenchIcon icon,
                            const QString& shortcut, const QString& tooltip);
+    void apply_appearance();
+    void apply_focus_mode_visibility();
+    void update_focus_actions();
+    void update_default_format_label();
     void update_selection();
     void refresh_after_event();
     void update_action_states();
@@ -91,16 +118,25 @@ private:
 
     CommandQuery& query_;
     WorkbenchBindings bindings_;
+    Preferences preferences_;
+    PreferencesSaver save_preferences_;
     ProjectTreeModel* model_{nullptr};
     QTreeView* tree_{nullptr};
     PropertiesPanel* properties_{nullptr};
+    FunctionLibraryPanel* function_library_{nullptr};
     DocumentHost* documents_{nullptr};
     QToolBar* toolbar_{nullptr};
     QDockWidget* project_dock_{nullptr};
     QDockWidget* properties_dock_{nullptr};
+    QDockWidget* function_library_dock_{nullptr};
+    QLabel* default_format_label_{nullptr};
+    QAction* normal_focus_action_{nullptr};
+    QAction* data_focus_action_{nullptr};
+    QAction* commands_focus_action_{nullptr};
     foundation::ObjectId selected_;
     QString last_detached_document_;
     application::SubscriptionId subscription_{0};
+    bool applying_preferences_{false};
 };
 
 }  // namespace everygraph::presentation

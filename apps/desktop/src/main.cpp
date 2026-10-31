@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "everygraph/presentation/command_dispatcher.hpp"
+#include "everygraph/presentation/preferences_store.hpp"
 #include "everygraph/presentation/workbench_window.hpp"
 
 #include "fake_project.hpp"
@@ -18,6 +19,12 @@ int main(int argc, char* argv[]) {
     using everygraph::application::ExpectedRevisions;
     using everygraph::application::ParameterMap;
     using everygraph::foundation::ObjectId;
+    using everygraph::presentation::Preferences;
+    using everygraph::presentation::PreferencesLoadResult;
+    using everygraph::presentation::PreferencesStore;
+
+    PreferencesStore preferences_store(PreferencesStore::default_file_path());
+    const PreferencesLoadResult loaded_preferences = preferences_store.load();
 
     everygraph::desktop::FakeProject project;
     everygraph::presentation::ShellCommandDispatcher dispatcher(project.gateway());
@@ -45,7 +52,14 @@ int main(int argc, char* argv[]) {
     bindings.undo = [&dispatcher] { return dispatcher.undo(); };
     bindings.redo = [&dispatcher] { return dispatcher.redo(); };
 
-    everygraph::presentation::WorkbenchWindow window(query, std::move(bindings));
+    everygraph::presentation::WorkbenchWindow window(
+        query, std::move(bindings), loaded_preferences.preferences,
+        [&preferences_store](const Preferences& preferences, QString* error_message) {
+            return preferences_store.save(preferences, error_message);
+        });
+    QObject::connect(&application, &QCoreApplication::aboutToQuit, &window, [&window] {
+        (void)window.persist_preferences();
+    });
     window.show();
 
     const bool smoke_test = application.arguments().contains(QStringLiteral("--smoke-test"));

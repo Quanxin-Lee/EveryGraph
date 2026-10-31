@@ -523,6 +523,88 @@ ctest --preset macos-release
 - The offscreen platform exercises widget composition and signals, not a human-visible rendering or accessibility-tree audit. Toolbar actions expose accessible names; full keyboard-navigation, screen-reader and high-contrast verification remain future work.
 - macOS arm64 only. No Windows build, CI execution, sanitizer-plus-Qt run, signing, notarization, packaging or deployment claim is made; `VCPKG_APPLOCAL_DEPS=OFF` still means the build-tree application references the pinned install root.
 
+## Preferences, appearance and focus mode (P1-007)
+
+P1-007 makes the P1-006 workbench configurable without mixing user preferences with project or scientific state. Interface, focus-mode, function-library and default-file-format settings are held in a typed `Preferences` value and a versioned JSON file outside the project; the file never contains dataset values, scene colors or export settings. Appearance recolors shell chrome only, and focus modes are panel-visibility presets. The function library remains a read-only placeholder list; no function executes, no project is saved and the default file format is a preference only.
+
+### Targets and registration
+
+| Target / test | Purpose |
+| --- | --- |
+| `everygraph_presentation_qt` | Adds `Preferences` and its enum names, `PreferencesStore`, `PreferencesDialog`, `ShellAppearance` and the read-only `FunctionLibraryPanel`; `WorkbenchWindow` gains a function-library dock, a default-format status label, an Edit > Preferences action, three exclusive focus-mode actions, layout save/restore and preference persistence. All shell-only behavior stays in the presentation module. |
+| `everygraph_preferences_tests` | New Qt Test executable with twenty-three test methods plus init/cleanup: missing-file defaults, environment path override, full round trip, two-process application restart (including the three interface visibility booleans), invalid JSON/root/schema/type/value/window-state fallbacks, non-object groups and non-numeric schema, an unrestorable saved layout, read and write failures with previous-file preservation, project-state isolation, dialog editing and restore-defaults, shell-only appearance isolation for menu bar, status bar, toolbar, menu, dock and dock content, focus-mode panel toggles and keyboard shortcuts on a 1024x600 window, normal-mode visibility preferences, the default-format label, dock resize/rearrange persistence across a simulated restart, and the read-only function library. |
+| `preferences_tests` | New CTest entry on the offscreen platform with the same pinned `QT_PLUGIN_PATH` and a test-only `EVERYGRAPH_PREFERENCES_PATH` as `workbench_tests` and `workbench_smoke`. |
+
+### Settings location and schema
+
+`PreferencesStore::default_file_path()` resolves to `EVERYGRAPH_PREFERENCES_PATH` when that variable is non-empty, otherwise to `QStandardPaths::AppConfigLocation/preferences.json`; the application sets organization `EveryGraph` and application name `EveryGraph Workbench`, and falls back to `~/.everygraph/preferences.json` only if the platform returns no application configuration directory. The file is written with `QSaveFile`, so a failed write leaves the previous file intact and surfaces `settings.write_failed` in the status bar.
+
+Schema version 1 has five root keys:
+
+| Key | Values |
+| --- | --- |
+| `schema_version` | `1`; any other value rejects the file and uses defaults |
+| `interface.appearance` | `system`, `light` or `dark` |
+| `interface.show_project_panel`, `interface.show_properties_panel`, `interface.show_toolbar` | booleans |
+| `interface.window_state` | base64 of the raw `QMainWindow::saveState(1)` layout bytes; empty means the default layout |
+| `focus_mode` | `normal`, `data_only` or `commands_only` |
+| `function_library.visible` | boolean |
+| `defaults.file_format` | `csv`, `parquet` or `everygraph_project` |
+
+A missing file silently yields defaults. An unreadable, invalid-JSON, non-object or unsupported-schema file keeps the documented defaults and emits one diagnostic; an unknown key, wrong JSON type, unknown enum value, non-object group or invalid base64 layout keeps that field's documented default and emits a diagnostic. Diagnostic codes are `settings.invalid_json`, `settings.invalid_root`, `settings.unsupported_schema`, `settings.unknown_key`, `settings.invalid_type`, `settings.invalid_value`, `settings.invalid_window_state`, `settings.read_failed` and `settings.write_failed`; messages go to `qWarning` and, for user-triggered saves, the status bar. A validly encoded layout that `QMainWindow::restoreState` cannot apply is discarded with `settings.invalid_window_state` and the default layout is kept. A failed save leaves the previous file intact, verified by a write to a read-only directory. Loading and applying preferences never calls the command gateway; the test suite runs a real fake-project command, applies dark/commands-only preferences and a focus-mode change, persists, and compares the full object map and undo depth before and after.
+
+### Appearance and focus behavior
+
+`ShellAppearance` applies a palette to the menu bar, status bar, toolbars, docks and menus only. The test checks the dark and light palette on each of those chrome widget classes, including a menu and the project tree inside a themed dock, while the document host, a fake scene widget with scene background `#f7f1e3` and a fake export background `#ffffff` stay unchanged; `system` restores each chrome widget's captured base palette. The shell records the appearance name in the `everygraphAppearance` window property for tests. `Restore Defaults` in the dialog resets every editable field and keeps the current saved layout, because the layout is owned by the window rather than the dialog.
+
+The View menu exposes `Normal Layout` (`Ctrl+Alt+0`), `Data-Only Focus Mode` (`Ctrl+Alt+D`) and `Commands-Only Focus Mode` (`Ctrl+Alt+C`) as an exclusive group, plus dock toggles for the project (`Ctrl+1`), properties (`Ctrl+2`) and function library (`Ctrl+3`). Normal mode honors the three visibility preferences; data-only shows only the project dock and document host; commands-only shows only menus, toolbar and status bar. A focus-mode change is persisted immediately, and dock visibility changes are persisted only in normal mode. `Edit > Preferences...` edits the typed value in a modal dialog; accepting applies appearance, visibility and the default-format label, then persists the whole preference value including the current layout. The composition root also persists preferences on `QCoreApplication::aboutToQuit`, so quitting through the Quit action or the `--smoke-test` timer saves the final layout.
+
+Dock layout uses `QMainWindow::saveState(1)` and `QMainWindow::restoreState(state, 1)`; a state that cannot be restored is discarded with `settings.invalid_window_state` and the default layout is kept. The P1-006 off-screen detached-window restore is unchanged.
+
+### Commands and recorded result
+
+On 2026-10-31, macOS 27.0.1 arm64, AppleClang 21.0.0.21000334, CMake 3.31.6 and Ninja 1.11.1.4 from `.venv`, vcpkg tool `2026-09-26-51bf87ca6e9bf3e622d84ff323bd202ab1ca0c0b` at the pinned baseline and the locally built pkgconf/autotools prefixes on `PATH`:
+
+```sh
+export PATH="$PWD/.venv/bin:$PWD/out/pkgconf-install/bin:$PWD/out/autotools-install/bin:$PATH"
+export VCPKG_ROOT="$PWD/out/vcpkg"
+
+cmake --preset macos-debug-desktop
+cmake --build --preset macos-debug-desktop
+ctest --preset macos-debug-desktop
+
+cmake --preset macos-release-desktop
+cmake --build --preset macos-release-desktop
+ctest --preset macos-release-desktop
+
+cmake --preset macos-debug
+cmake --build --preset macos-debug
+ctest --preset macos-debug
+
+cmake --preset macos-release
+cmake --build --preset macos-release
+ctest --preset macos-release
+```
+
+| Preset | Configure / build | CTest |
+| --- | --- | --- |
+| macos-debug-desktop | Passed; no compiler warnings | 12/12 passed, including `preferences_tests` |
+| macos-release-desktop | Passed; no compiler warnings | 12/12 passed |
+| macos-debug | Passed; Qt-free regression | 8/8 passed |
+| macos-release | Passed; Qt-free regression | 8/8 passed |
+
+Run directly on the offscreen platform, `everygraph_preferences_tests` reports 25 passed and `everygraph_workbench_tests` reports 11 passed, 0 failed in both debug and release. `shell_boundary_check` also covers the new sources: presentation widgets still hold only `CommandQuery` and bindings, and the Qt-free fake project remains free of Qt. `python3 tools/validate_planning.py` passes.
+
+### Limits
+
+- Preferences are shell settings, not project state. There is no project-file setting, dataset or unit default, scene-color editor or export-background setting; the default file format is displayed and stored, but no file is saved or exported.
+- The function library is a fixed read-only list of five placeholder entries; no analysis function is implemented or executed.
+- The JSON schema has one version; a future schema must define migration or rejection explicitly. There is no settings synchronization, user profile or cloud storage.
+- Appearance is verified by palette comparison and fake scene/export values, not a human-visible rendering review, high-contrast audit or platform dark-mode integration. The offscreen platform logs `propagateSizeHints` warnings; they are harness noise, not test failures.
+- Focus modes and shortcuts are exercised by Qt Test key events on the offscreen platform at 1024x600; a physical small screen, real window manager, screen-reader tree and full keyboard-navigation audit remain future work.
+- Dock resizing and rearrangement are verified with `resizeDocks`/`addDockWidget` and a `saveState`/`restoreState` round trip in one process. The settings file and application restart are verified separately by launching `everygraph_desktop --smoke-test` in two real processes: the first run loads values written by the test and saves its layout on quit, and the second run reloads the changed values.
+- macOS arm64 only. No Windows build, CI execution, sanitizer-plus-Qt run, signing, notarization, packaging or release claim is made.
+
 ## Windows configuration only: not executed
 
 The Windows-only configure presets select Ninja and `cl`; `architecture: { value: x64, strategy: external }` requires an already initialized x64 compiler environment. It does not cause Ninja to select an architecture. Use Visual Studio 2022 with the C++ desktop toolchain and Windows SDK, and its x64 Native Tools developer command prompt. Ensure CMake 3.31.6, the Ninja 1.11.1.4 pip distribution, and Python >= 3.10 are available there.

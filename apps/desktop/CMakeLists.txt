@@ -40,6 +40,24 @@ target_compile_features(everygraph_workbench_tests PRIVATE cxx_std_20)
 set_target_properties(everygraph_workbench_tests PROPERTIES CXX_EXTENSIONS OFF)
 everygraph_register_code_target(everygraph_workbench_tests)
 
+qt_add_executable(everygraph_preferences_tests tests/preferences_tests.cpp)
+target_link_libraries(everygraph_preferences_tests PRIVATE
+    everygraph_presentation_qt
+    everygraph_desktop_fakes
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Test
+)
+target_compile_features(everygraph_preferences_tests PRIVATE cxx_std_20)
+target_compile_definitions(everygraph_preferences_tests PRIVATE
+    EVERYGRAPH_DESKTOP_BINARY="$<TARGET_FILE:everygraph_desktop>")
+set_target_properties(everygraph_preferences_tests PROPERTIES CXX_EXTENSIONS OFF)
+everygraph_register_code_target(everygraph_preferences_tests)
+# The restart test launches the desktop binary, so building the test alone
+# must build that binary too.
+add_dependencies(everygraph_preferences_tests everygraph_desktop)
+
 if(VCPKG_INSTALLED_DIR AND APPLE)
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         set(everygraph_qt_plugin_dir
@@ -49,13 +67,21 @@ if(VCPKG_INSTALLED_DIR AND APPLE)
             "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Qt6/plugins")
     endif()
     set(everygraph_workbench_test_environment
-        "QT_QPA_PLATFORM=offscreen;QT_PLUGIN_PATH=${everygraph_qt_plugin_dir}")
+        "QT_QPA_PLATFORM=offscreen;QT_PLUGIN_PATH=${everygraph_qt_plugin_dir};EVERYGRAPH_PREFERENCES_PATH=${CMAKE_BINARY_DIR}/workbench-smoke-preferences.json")
 else()
-    set(everygraph_workbench_test_environment "QT_QPA_PLATFORM=offscreen")
+    set(everygraph_workbench_test_environment
+        "QT_QPA_PLATFORM=offscreen;EVERYGRAPH_PREFERENCES_PATH=${CMAKE_BINARY_DIR}/workbench-smoke-preferences.json")
 endif()
 
 add_test(NAME workbench_tests COMMAND everygraph_workbench_tests)
 set_tests_properties(workbench_tests PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    ENVIRONMENT "${everygraph_workbench_test_environment}"
+    TIMEOUT 120
+)
+
+add_test(NAME preferences_tests COMMAND everygraph_preferences_tests)
+set_tests_properties(preferences_tests PROPERTIES
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
     ENVIRONMENT "${everygraph_workbench_test_environment}"
     TIMEOUT 120

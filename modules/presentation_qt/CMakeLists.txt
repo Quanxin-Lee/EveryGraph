@@ -1,15 +1,25 @@
 add_library(everygraph_presentation_qt STATIC
     include/everygraph/presentation/command_dispatcher.hpp
     include/everygraph/presentation/document_host.hpp
+    include/everygraph/presentation/function_library_panel.hpp
+    include/everygraph/presentation/preferences.hpp
+    include/everygraph/presentation/preferences_dialog.hpp
+    include/everygraph/presentation/preferences_store.hpp
     include/everygraph/presentation/project_tree_model.hpp
     include/everygraph/presentation/properties_panel.hpp
+    include/everygraph/presentation/shell_appearance.hpp
     include/everygraph/presentation/window_placement.hpp
     include/everygraph/presentation/workbench_icons.hpp
     include/everygraph/presentation/workbench_window.hpp
     src/command_dispatcher.cpp
     src/document_host.cpp
+    src/function_library_panel.cpp
+    src/preferences.cpp
+    src/preferences_dialog.cpp
+    src/preferences_store.cpp
     src/project_tree_model.cpp
     src/properties_panel.cpp
+    src/shell_appearance.cpp
     src/window_placement.cpp
     src/workbench_icons.cpp
     src/workbench_window.cpp

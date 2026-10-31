@@ -4,11 +4,17 @@
 #include "everygraph/application/event.hpp"
 #include "everygraph/presentation/command_dispatcher.hpp"
 #include "everygraph/presentation/document_host.hpp"
+#include "everygraph/presentation/function_library_panel.hpp"
+#include "everygraph/presentation/preferences_dialog.hpp"
+#include "everygraph/presentation/preferences_store.hpp"
 #include "everygraph/presentation/project_tree_model.hpp"
 #include "everygraph/presentation/properties_panel.hpp"
+#include "everygraph/presentation/shell_appearance.hpp"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
+#include <QDebug>
 #include <QDockWidget>
 #include <QGuiApplication>
 #include <QHeaderView>
@@ -71,13 +77,45 @@ QString object_label(foundation::ObjectId id) {
 }  // namespace
 
 WorkbenchWindow::WorkbenchWindow(CommandQuery& query, WorkbenchBindings bindings,
-                                 QWidget* parent)
-    : QMainWindow(parent), query_(query), bindings_(std::move(bindings)) {
+                                 Preferences initial_preferences,
+                                 PreferencesSaver save_preferences, QWidget* parent)
+    : QMainWindow(parent),
+      query_(query),
+      bindings_(std::move(bindings)),
+      preferences_(std::move(initial_preferences)),
+      save_preferences_(std::move(save_preferences)) {
     setObjectName(QStringLiteral("workbenchWindow"));
     setWindowTitle(QStringLiteral("EveryGraph Workbench (prototype)"));
     resize(1200, 760);
     build_ui();
     build_actions();
+    restore_layout();
+    apply_preferences(preferences_);
+    connect(project_dock_, &QDockWidget::visibilityChanged, this, [this](bool visible) {
+        if (applying_preferences_ || preferences_.focus_mode != FocusMode::normal ||
+            preferences_.interface.show_project_panel == visible) {
+            return;
+        }
+        preferences_.interface.show_project_panel = visible;
+        (void)persist_preferences();
+    });
+    connect(properties_dock_, &QDockWidget::visibilityChanged, this, [this](bool visible) {
+        if (applying_preferences_ || preferences_.focus_mode != FocusMode::normal ||
+            preferences_.interface.show_properties_panel == visible) {
+            return;
+        }
+        preferences_.interface.show_properties_panel = visible;
+        (void)persist_preferences();
+    });
+    connect(function_library_dock_, &QDockWidget::visibilityChanged, this,
+            [this](bool visible) {
+                if (applying_preferences_ || preferences_.focus_mode != FocusMode::normal ||
+                    preferences_.function_library.visible == visible) {
+                    return;
+                }
+                preferences_.function_library.visible = visible;
+                (void)persist_preferences();
+            });
     subscription_ = query_.subscribe(
         [this](const application::DocumentEvent&) { refresh_after_event(); });
     connect(qGuiApp, &QGuiApplication::screenAdded, this,
@@ -90,6 +128,15 @@ WorkbenchWindow::WorkbenchWindow(CommandQuery& query, WorkbenchBindings bindings
 }
 
 WorkbenchWindow::~WorkbenchWindow() {
+    // Hiding docks during QMainWindow teardown emits visibilityChanged after
+    // the layout and this window's preference members are gone; disconnect the
+    // dock signals before teardown and drop the saver so nothing persists.
+    for (QDockWidget* dock : {project_dock_, properties_dock_, function_library_dock_}) {
+        if (dock != nullptr) {
+            disconnect(dock, nullptr, this, nullptr);
+        }
+    }
+    save_preferences_ = {};
     query_.unsubscribe(subscription_);
 }
 
@@ -137,6 +184,13 @@ void WorkbenchWindow::build_ui() {
     properties_dock_->setWidget(properties_);
     addDockWidget(Qt::RightDockWidgetArea, properties_dock_);
 
+    function_library_ = new FunctionLibraryPanel(this);
+    function_library_dock_ = new QDockWidget(QStringLiteral("Function Library"), this);
+    function_library_dock_->setObjectName(QStringLiteral("functionLibraryDock"));
+    function_library_dock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    function_library_dock_->setWidget(function_library_);
+    addDockWidget(Qt::LeftDockWidgetArea, function_library_dock_);
+
     documents_ = new DocumentHost(this);
     setCentralWidget(documents_);
 
@@ -145,6 +199,11 @@ void WorkbenchWindow::build_ui() {
     toolbar_->setMovable(true);
     toolbar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolbar_->setIconSize(QSize(16, 16));
+
+    default_format_label_ = new QLabel(this);
+    default_format_label_->setObjectName(QStringLiteral("defaultFormatLabel"));
+    default_format_label_->setAccessibleName(QStringLiteral("Default file format"));
+    statusBar()->addPermanentWidget(default_format_label_);
 
     auto* welcome = new QLabel(
         QStringLiteral("EveryGraph workbench prototype.\n\n"
@@ -253,6 +312,16 @@ void WorkbenchWindow::build_actions() {
     edit_menu->addAction(redo_action);
     edit_menu->addSeparator();
     edit_menu->addAction(find_object);
+    edit_menu->addSeparator();
+    auto* preferences_action = new QAction(QStringLiteral("Preferences..."), this);
+    preferences_action->setObjectName(QStringLiteral("preferencesAction"));
+    preferences_action->setShortcut(QKeySequence::Preferences);
+    preferences_action->setMenuRole(QAction::PreferencesRole);
+    preferences_action->setStatusTip(
+        QStringLiteral("Edit interface preferences stored outside the project"));
+    connect(preferences_action, &QAction::triggered, this,
+            &WorkbenchWindow::open_preferences);
+    edit_menu->addAction(preferences_action);
 
     QMenu* object_menu = menuBar()->addMenu(QStringLiteral("&Object"));
     object_menu->addAction(new_folder);
@@ -269,6 +338,44 @@ void WorkbenchWindow::build_actions() {
     properties_toggle->setObjectName(QStringLiteral("propertiesDockToggleAction"));
     properties_toggle->setShortcut(QKeySequence(QStringLiteral("Ctrl+2")));
     view_menu->addAction(properties_toggle);
+    QAction* function_library_toggle = function_library_dock_->toggleViewAction();
+    function_library_toggle->setObjectName(QStringLiteral("functionLibraryDockToggleAction"));
+    function_library_toggle->setShortcut(QKeySequence(QStringLiteral("Ctrl+3")));
+    view_menu->addAction(function_library_toggle);
+    view_menu->addSeparator();
+
+    normal_focus_action_ = new QAction(QStringLiteral("Normal Layout"), this);
+    normal_focus_action_->setObjectName(QStringLiteral("normalFocusAction"));
+    normal_focus_action_->setShortcut(QKeySequence(QStringLiteral("Ctrl+Alt+0")));
+    normal_focus_action_->setCheckable(true);
+    normal_focus_action_->setStatusTip(
+        QStringLiteral("Show the configured panels and the command toolbar"));
+    data_focus_action_ = new QAction(QStringLiteral("Data-Only Focus Mode"), this);
+    data_focus_action_->setObjectName(QStringLiteral("dataFocusAction"));
+    data_focus_action_->setShortcut(QKeySequence(QStringLiteral("Ctrl+Alt+D")));
+    data_focus_action_->setCheckable(true);
+    data_focus_action_->setStatusTip(
+        QStringLiteral("Show only the project tree and document area"));
+    commands_focus_action_ = new QAction(QStringLiteral("Commands-Only Focus Mode"), this);
+    commands_focus_action_->setObjectName(QStringLiteral("commandsFocusAction"));
+    commands_focus_action_->setShortcut(QKeySequence(QStringLiteral("Ctrl+Alt+C")));
+    commands_focus_action_->setCheckable(true);
+    commands_focus_action_->setStatusTip(
+        QStringLiteral("Show only menus, the command toolbar and the status bar"));
+    auto* focus_group = new QActionGroup(this);
+    focus_group->setExclusive(true);
+    for (QAction* focus_action :
+         {normal_focus_action_, data_focus_action_, commands_focus_action_}) {
+        focus_group->addAction(focus_action);
+        view_menu->addAction(focus_action);
+    }
+    connect(normal_focus_action_, &QAction::triggered, this,
+            &WorkbenchWindow::select_normal_focus_mode);
+    connect(data_focus_action_, &QAction::triggered, this,
+            &WorkbenchWindow::select_data_focus_mode);
+    connect(commands_focus_action_, &QAction::triggered, this,
+            &WorkbenchWindow::select_commands_focus_mode);
+
     view_menu->addSeparator();
     view_menu->addAction(detach_action);
     view_menu->addAction(dock_action);
@@ -324,6 +431,26 @@ QDockWidget* WorkbenchWindow::project_dock() const noexcept {
 
 QDockWidget* WorkbenchWindow::properties_dock() const noexcept {
     return properties_dock_;
+}
+
+QDockWidget* WorkbenchWindow::function_library_dock() const noexcept {
+    return function_library_dock_;
+}
+
+FunctionLibraryPanel* WorkbenchWindow::function_library_panel() const noexcept {
+    return function_library_;
+}
+
+const Preferences& WorkbenchWindow::preferences() const noexcept {
+    return preferences_;
+}
+
+FocusMode WorkbenchWindow::focus_mode() const noexcept {
+    return preferences_.focus_mode;
+}
+
+QString WorkbenchWindow::default_format_text() const {
+    return default_format_label_ == nullptr ? QString() : default_format_label_->text();
 }
 
 QAction* WorkbenchWindow::find_action(const QString& object_name) const {
@@ -485,6 +612,120 @@ void WorkbenchWindow::close_current_document() {
     }
     if (documents_->close_document(current.toStdString())) {
         statusBar()->showMessage(QStringLiteral("Closed document %1.").arg(current), 5000);
+    }
+}
+
+void WorkbenchWindow::open_preferences() {
+    PreferencesDialog dialog(preferences_, this);
+    connect(&dialog, &PreferencesDialog::preferences_accepted, this,
+            [this](const Preferences& updated) {
+                apply_preferences(updated);
+                (void)persist_preferences();
+            });
+    dialog.exec();
+}
+
+void WorkbenchWindow::select_normal_focus_mode() {
+    set_focus_mode(FocusMode::normal);
+}
+
+void WorkbenchWindow::select_data_focus_mode() {
+    set_focus_mode(FocusMode::data_only);
+}
+
+void WorkbenchWindow::select_commands_focus_mode() {
+    set_focus_mode(FocusMode::commands_only);
+}
+
+void WorkbenchWindow::set_focus_mode(FocusMode mode) {
+    preferences_.focus_mode = mode;
+    applying_preferences_ = true;
+    apply_focus_mode_visibility();
+    update_focus_actions();
+    applying_preferences_ = false;
+    (void)persist_preferences();
+}
+
+void WorkbenchWindow::apply_preferences(const Preferences& preferences) {
+    applying_preferences_ = true;
+    preferences_ = preferences;
+    apply_appearance();
+    apply_focus_mode_visibility();
+    update_focus_actions();
+    update_default_format_label();
+    applying_preferences_ = false;
+}
+
+void WorkbenchWindow::apply_appearance() {
+    ShellAppearance::apply(*this, preferences_.interface.appearance);
+}
+
+void WorkbenchWindow::apply_focus_mode_visibility() {
+    const bool normal = preferences_.focus_mode == FocusMode::normal;
+    const bool data_only = preferences_.focus_mode == FocusMode::data_only;
+    const bool commands_only = preferences_.focus_mode == FocusMode::commands_only;
+
+    project_dock_->setVisible(normal ? preferences_.interface.show_project_panel : data_only);
+    properties_dock_->setVisible(normal && preferences_.interface.show_properties_panel);
+    function_library_dock_->setVisible(normal && preferences_.function_library.visible);
+    toolbar_->setVisible(normal ? preferences_.interface.show_toolbar : commands_only);
+    documents_->setVisible(!commands_only);
+}
+
+void WorkbenchWindow::update_focus_actions() {
+    if (normal_focus_action_ != nullptr) {
+        normal_focus_action_->setChecked(preferences_.focus_mode == FocusMode::normal);
+    }
+    if (data_focus_action_ != nullptr) {
+        data_focus_action_->setChecked(preferences_.focus_mode == FocusMode::data_only);
+    }
+    if (commands_focus_action_ != nullptr) {
+        commands_focus_action_->setChecked(preferences_.focus_mode == FocusMode::commands_only);
+    }
+}
+
+void WorkbenchWindow::update_default_format_label() {
+    if (default_format_label_ == nullptr) {
+        return;
+    }
+    default_format_label_->setText(
+        QStringLiteral("Default format: %1")
+            .arg(default_file_format_display_name(preferences_.defaults.file_format)));
+}
+
+bool WorkbenchWindow::persist_preferences(QString* error_message) {
+    if (!save_preferences_) {
+        return true;
+    }
+    preferences_.interface.window_state = saveState(1);
+    QString error;
+    if (!save_preferences_(preferences_, &error)) {
+        const QString message =
+            error.isEmpty() ? QStringLiteral("unknown error") : error;
+        statusBar()->showMessage(
+            QStringLiteral("Preferences could not be saved: %1").arg(message), 10000);
+        if (error_message != nullptr) {
+            *error_message = message;
+        }
+        return false;
+    }
+    if (error_message != nullptr) {
+        error_message->clear();
+    }
+    return true;
+}
+
+void WorkbenchWindow::restore_layout() {
+    if (preferences_.interface.window_state.isEmpty()) {
+        return;
+    }
+    if (!restoreState(preferences_.interface.window_state, 1)) {
+        qWarning().noquote()
+            << QString::fromLatin1(PreferencesStore::kInvalidWindowStateCode)
+                       + QLatin1Char(':')
+            << QStringLiteral("the saved window layout could not be restored; "
+                              "using the default layout");
+        preferences_.interface.window_state.clear();
     }
 }
 
