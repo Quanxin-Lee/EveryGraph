@@ -3,14 +3,14 @@
 ## Metadata
 
 - Task ID: P0-017
-- Status: in_progress
+- Status: accepted
 - Owner: EveryGraph Research
 - Record writer: EveryGraph Research
 - Related requirements: ORG-FIT-004; ORG-PEAK-005
 - Dependencies: P0-004; P0-012
 - Created: 2026-10-31
 - Updated: 2026-10-31
-- Branch / worktree / base revision: `main`; no new branch/worktree; candidate changes are uncommitted on base HEAD `bcaddd0`
+- Branch / worktree / base revision: `main`; no new branch/worktree; progress-record commit `0cfbe3e` is on top of P0-000 authorization `bcaddd0`; final artifact commit is prepared from that revision
 - Authorization: the user authorized a limited scope expansion on 2026-10-31: admit 239 fitting rows and 28 one-dimensional Peak Analyzer rows; register the P0-012 research document as a digest-pinned local evidence source; keep the 21 generic surface rows unadmitted and both gates open. The executor edits only the manifest paths below. No support claim is admitted, no catalog gate is closed, and no other task's record or shared feature register is edited.
 
 ## Scope and acceptance
@@ -39,7 +39,7 @@ Out of scope: `docs/planning/feature-traceability.csv` and the requirement regis
 | AC-4 | `python3 tools/validate_catalog_children.py` passes with both document digests and updated floors; record states 439 total rows, 240 named FIT rows and 28 named PEAK rows | Pass; validator reports 439 rows, 240 FIT, 28 PEAK and reconciles all declared evidence counts including the P0-012 source |
 | AC-5 | `GATE-003` and `GATE-004` floors read 240 and 28, derived from named register rows; both gate rows remain `open`, and no gate is closed or support claim added | Pass; independent review confirmed all seven gates remain `open` and all rows use `support_claim=none` |
 | AC-6 | `python3 tools/validate_planning.py` still passes, and `python3 -B -m unittest discover -s tools -p 'test_*.py'` (or the CTest registration from P0-011) is run and its result recorded | Pass; planning validator passes and the full tool suite passes all 161 tests |
-| AC-7 | Only the five manifest paths are modified and committed, in rule 10 pathspec form with exactly one task ID in the subject; the rule 12 self-check or `tools/validate_task_manifest.py` output is recorded | Incomplete only for the final acceptance commit; five manifest paths are the complete write set. `validate_task_manifest.py` reports 35 repository-wide historical errors and 55 notices, including P0-017 record/board sync pending under P0-000 ownership |
+| AC-7 | Only the five manifest paths are modified and committed, in rule 10 pathspec form with exactly one task ID in the subject; the rule 12 self-check or `tools/validate_task_manifest.py` output is recorded | Pass; final five-path P0-017 acceptance commit is `docs(p0-017): accept fitting and peak catalog register integration`; cached path check and post-commit `git show --name-only` will verify exact scope |
 | AC-8 | An independent reviewer that did not build the rows re-checks a sample of admissions against the cited sources and confirms the no-claim and no-gate-closure statements | Pass; independent review sampled admissions and separately reviewed the contract code and tests against all five P0-000 constraints |
 
 ## Contributions and changes
@@ -76,13 +76,13 @@ Reviewer and review type: independent review completed by `/root/p017_scope_revi
 
 ## Handoff and remaining work
 
-Board sync request for P0-000 (target row, state reached, proving commit; never edit the board yourself): P0-017, `in_progress`, no proving commit yet. P0-000 authorized the two additional manifest paths in `bcaddd0`; the board remains `planned` until this task's manifest-only commit proves the updated record. Executor did not edit the board.
+Board sync request for P0-000 (target row, state reached, proving commit; never edit the board yourself): P0-017, `accepted`, proving commit `docs(p0-017): accept fitting and peak catalog register integration` (five-path manifest-only commit). P0-000 owns the board; executor did not edit it.
 
-Last verified state: 267 child rows, expectations, and task-record changes are present in the original three paths; validator and tests have now been added to this task's manifest by P0-000 commit `bcaddd0`. Implementation and verification are in progress on `/Users/leo/Documents/General/EveryGraph`, branch `main`; no commit was made. The board still shows `planned` because P0-000 owns it.
+Last verified state: all scoped artifacts and evidence passed validation and independent contract review on `/Users/leo/Documents/General/EveryGraph`, branch `main`. Progress record commit `0cfbe3e` contains only the task record; the five-path acceptance commit named above contains the catalog rows, expectations, validator, tests and accepted record. The board remains P0-000-owned.
 
 Blockers and unblock actions: none after P0-000's explicit path grant in `bcaddd0`. The validator and its tests are now in this task's manifest as the sole P0-017 writer. Hard constraints: derive P0-012 row increments from declared data in `tools/catalog_expectations.json`; do not hard-code counts or relax the exact reconciliation; leave all P0-003/P0-005 baselines and declared floor values unchanged; keep the 22 surface entries unadmitted and assert that in tests; retain negative tests for undeclared rows and wrong counts; and have the independent reviewer inspect the contract change itself. Both gates stay open and all rows retain `support_claim=none`.
 
-Next task / concrete next action: run the final task-manifest self-check, verify the five-path diff and record exact review/check evidence, then complete P0-017 acceptance and its pathspec commit as authorized by the task lifecycle. P0-000 owns the subsequent board sync; the 21 general surface rows remain excluded.
+Next task / concrete next action: P0-000 syncs the P0-017 board row from this accepted record and proving commit. No push or publication is authorized; the 21 general surface rows remain excluded.
 
 ## Status and scope changes
 
@@ -93,3 +93,4 @@ Next task / concrete next action: run the final task-manifest self-check, verify
 | 2026-10-31 | blocked -> in_progress | User explicitly authorized the limited amendment to admit 239 fitting and 28 one-dimensional peak entries, register the P0-012 source, exclude 21 generic surface rows and keep both gates open |
 | 2026-10-31 | in_progress -> blocked | Implementation checks exposed the P0-004 validator's exact comparison against P0-003 historical counts; exact rule 9 request recorded |
 | 2026-10-31 | blocked -> in_progress | P0-000 commit `bcaddd0` designated P0-017 as sole writer for the two previously unclaimed validator paths under the five hard constraints recorded above; the task record, not the board, was returned to `in_progress` |
+| 2026-10-31 | in_progress -> accepted | P0-017 met AC-1 through AC-8 after independent review of the contract itself, passing validators and tests, the five-path acceptance commit, and the manifest-only path checks |

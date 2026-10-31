@@ -328,7 +328,7 @@ def validate_contract_completeness(rows, expectations):
     errors = []
     if not expectations.get("notice", "").strip():
         return ["The contract file must state that child rows are evidence entries, not implementation"]
-    for label in ("P0-003", "P0-005"):
+    for label in ("P0-003", "P0-005", "P0-012"):
         if label not in expectations.get("evidence_documents", {}):
             errors.append(f"Evidence document for {label} is not declared")
     if "evidence_document" in expectations:
@@ -356,6 +356,66 @@ def split_section(text, start, stop):
     return tail.split(stop, 1)[0] if stop in tail else tail
 
 
+def validate_p0_012_admissions(rows, expectations, root=ROOT):
+    """Return the P0-012 row deltas after matching its tables to declared floors."""
+    errors = []
+    config = expectations.get("p0_012", {})
+    document = expectations.get("evidence_documents", {}).get("P0-012")
+    source_code = config.get("source_code")
+    if not document or source_code not in expectations.get("local_sources", {}):
+        return ["P0-012 evidence document or local source registration is missing"], {}
+    if expectations["local_sources"][source_code] != document:
+        errors.append("P0-012 local source path differs from its evidence document")
+
+    text = (root / document).read_text(encoding="utf-8")
+    declared_floors = expectations.get("p0_005", {}).get("declared_floors", {})
+    tables = {}
+    table_ids = {}
+    declared_counts = {}
+    for area, heading in config.get("table_headings", {}).items():
+        stop = config.get("table_stops", {}).get(area)
+        columns = config.get("table_columns", {}).get(area)
+        table = markdown_rows(text, heading, columns, stop=stop)
+        floor_key = config.get("floor_keys", {}).get(area)
+        floor = declared_floors.get(floor_key)
+        if table is None or floor is None:
+            errors.append(f"P0-012 {area} table or declared floor is missing")
+            continue
+        if len(table) != floor:
+            errors.append(f"P0-012 {area} rows changed: document {len(table)}, contract {floor}")
+        tables[area] = table
+        table_ids[area] = {entry[0].strip("`") for entry in table}
+        declared_counts[area] = floor
+
+    expected_ids = table_ids.get("FIT", set()) | table_ids.get("PEAK", set())
+    source_rows = [row for row in rows if row.get("evidence_code") == source_code]
+    actual_ids = {row.get("child_id") for row in source_rows}
+    if actual_ids != expected_ids:
+        undeclared = sorted(actual_ids - expected_ids)
+        missing = sorted(expected_ids - actual_ids)
+        errors.append(f"P0-012 admitted child IDs differ from its tables: undeclared={undeclared}; missing={missing}")
+
+    surface_ids = table_ids.get("SURFACE", set())
+    retained_surface_ids = set(config.get("retained_surface_ids", []))
+    if not retained_surface_ids <= surface_ids:
+        errors.append("P0-012 retained surface IDs are absent from its surface table")
+    registered_ids = {row.get("child_id") for row in rows}
+    for child_id in sorted(retained_surface_ids - registered_ids):
+        errors.append(f"Existing P0-012 surface child is missing: {child_id}")
+    for child_id in sorted(retained_surface_ids & actual_ids):
+        errors.append(f"P0-012 surface child must retain its existing anchor: {child_id}")
+    admitted_surface_ids = surface_ids & actual_ids
+    if admitted_surface_ids:
+        errors.append(f"P0-012 surface rows must remain unadmitted: {sorted(admitted_surface_ids)}")
+    other_surface_ids = surface_ids - retained_surface_ids
+    registered_surface_ids = other_surface_ids & registered_ids
+    if registered_surface_ids:
+        errors.append(f"P0-012 surface rows must remain unadmitted: {sorted(registered_surface_ids)}")
+
+    deltas = {area: count for area, count in declared_counts.items() if area in {"FIT", "PEAK"}}
+    return errors, deltas
+
+
 def markdown_rows(text, heading, columns, stop=None):
     section = split_section(text, heading, stop or "\n## ")
     if section is None:
@@ -370,7 +430,7 @@ def markdown_rows(text, heading, columns, stop=None):
 
 
 def validate_document_consistency(rows, expectations, root=ROOT):
-    """Compare the register and the contract file with both accepted evidence documents."""
+    """Compare the register and contract with every accepted evidence document."""
     errors = validate_contract_completeness(rows, expectations)
     p003 = (root / expectations["evidence_documents"]["P0-003"]).read_text(encoding="utf-8")
     p005 = (root / expectations["evidence_documents"]["P0-005"]).read_text(encoding="utf-8")
@@ -412,6 +472,8 @@ def validate_document_consistency(rows, expectations, root=ROOT):
     if len(additions) != expectations["p0_005"]["graph_additions"]:
         errors.append(f"P0-005 section 6.4 rows changed: document {len(additions)}, contract "
                       f"{expectations['p0_005']['graph_additions']}")
+    p012_errors, p012_deltas = validate_p0_012_admissions(rows, expectations, root)
+    errors += p012_errors
     for line in section_three.splitlines():
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
         if len(cells) != 6 or not re.match(r"^\d+", cells[3]):
@@ -422,6 +484,7 @@ def validate_document_consistency(rows, expectations, root=ROOT):
         declared_count = int(re.match(r"\d+", cells[3]).group())
         if area == "GRAPH":
             declared_count += len(additions)
+        declared_count += p012_deltas.get(area, 0)
         actual = len([row for row in rows if area_of(row["child_id"]) == area
                       and row["membership_status"] != "claim_only"])
         if actual != declared_count:
@@ -466,7 +529,8 @@ def main():
     print("PASS: ID grammar, sequence retirements, parent integrity, field enums and area consistency")
     print("PASS: anchors verbatim, source names present, excerpt hashes and registered retrieval dates")
     print("PASS: count floors and claim-only counts match tools/catalog_expectations.json")
-    print("PASS: declared constants and named counts agree with the P0-003 and P0-005 evidence documents")
+    print("PASS: declared constants and named counts agree with the P0-003, P0-005 and P0-012 evidence documents")
+    print("PASS: P0-012 counts come from declared expectation floors; its surface rows remain unadmitted")
     print("PASS: register and inventory immutability, ASCII policy outside anchor fields, no support claim")
     print("Not checked: remote URL availability, semantic register-family mapping, scientific semantics")
     return 0

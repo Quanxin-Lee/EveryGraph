@@ -33,7 +33,7 @@
       "source_name",
       "source_excerpt"
     ],
-    "sha256": "a2c95d4fa565103a3315ea4734d29f8f09fd379760569c73826fc2cb0d9ba997",
+    "sha256": "765df56af143bf88ecc4c408b5a5c50c16a056d5538f4ea9e3a9e4d7d5932b49",
     "retired_child_ids": []
   },
   "register": {
@@ -54,13 +54,15 @@
   "protected_inputs": {
     "origin-feature-inventory.md": "fd22138468ea7798ea858c86d5217a2bcd0685ff38f5622ae62fae29db9d0ff8",
     "datagraph-feature-inventory.md": "f5e6876c38cbc90505546ae19dd7786ed45b3a4e9779032de19ad8f6b9ad62fb",
-    "docs/planning/functional-scope.md": "eb9a91041b0bd71fc1cce39a5fb966a44d3a6644d298ba63176f99f09b6aea69"
+    "docs/planning/functional-scope.md": "eb9a91041b0bd71fc1cce39a5fb966a44d3a6644d298ba63176f99f09b6aea69",
+    "docs/research/fitting-and-peak-catalog-enumeration.md": "10797d90df5afed6f944f629802918477abec8d7a8693f47338a2841dd3f3c4f"
   },
   "local_sources": {
     "S1": "origin-feature-inventory.md",
     "S2": "datagraph-feature-inventory.md",
     "S9": "docs/planning/functional-scope.md",
-    "S10": "docs/planning/feature-traceability.csv"
+    "S10": "docs/planning/feature-traceability.csv",
+    "S11": "docs/research/fitting-and-peak-catalog-enumeration.md"
   },
   "external_sources": {
     "S3": {
@@ -153,14 +155,14 @@
     }
   },
   "counts": {
-    "TOTAL_ROWS": 172,
+    "TOTAL_ROWS": 439,
     "IO_FORMAT_FAMILIES_MIN": 34,
     "IO_SOURCE_ADAPTERS": 2,
     "GRAPH_NAMED_MIN": 94,
     "GRAPH_CLAIM_ONLY": 1,
-    "FIT_NAMED_MIN": 1,
+    "FIT_NAMED_MIN": 240,
     "FIT_CLAIM_ONLY": 1,
-    "PEAK_NAMED_MIN": 0,
+    "PEAK_NAMED_MIN": 28,
     "PEAK_CLAIM_ONLY": 1,
     "EXPORT_NAMED": 16,
     "EXPORT_CLAIM_ONLY": 1,
@@ -190,7 +192,8 @@
   },
   "evidence_documents": {
     "P0-003": "docs/research/capability-catalog-decomposition.md",
-    "P0-005": "docs/research/catalog-evidence-gaps-2026b.md"
+    "P0-005": "docs/research/catalog-evidence-gaps-2026b.md",
+    "P0-012": "docs/research/fitting-and-peak-catalog-enumeration.md"
   },
   "p0_005": {
     "graph_additions": 21,
@@ -216,9 +219,35 @@
       "EXPORT_NAMED": 16,
       "EXPORT_CURRENT_GUIDE": 15
     },
-    "unenforced_note": "These are P0-005 section 10 evidence floors for vendor catalog pages. The register carries no per-function fitting or peak rows yet, so the checks compare them against the document only and never against row counts or an acceptance threshold."
+    "unenforced_note": "These are evidence floors from P0-005 section 10, not product implementation thresholds. The register now indexes 239 fitting-function and 28 one-dimensional Peak Analyzer entries; the separate 22-name surface catalog remains outside P0-017. The floors do not assert catalog completeness."
   },
   "notice": "docs/planning/catalog-children.csv is an evidence index. Each row records that a name or a vendor claim exists in the cited source on the recorded date. A row does not implement, schedule or promise a capability, and support_claim is none on every row. The seven catalog parents and EG-ADD-015 stay unresolved in the feature register until their closure conditions are met, and no vendor count is an acceptance threshold.",
   "verified_inputs_checked": "2026-10-31",
-  "local_anchor_note": "Local anchors verify against the preserved inventory and scope digests above and carry this same verification date; the contract file itself is not pinned, so a coordinated edit of the contract and the register remains a human review control"
+  "local_anchor_note": "Local anchors verify against the preserved inventory, functional-scope and P0-012 enumeration digests above; the P0-012 source is identified at its reviewed commit and every local anchor uses this verification date. The contract file itself is not pinned, so coordinated contract-and-register edits remain a human review control.",
+  "p0_012": {
+    "source_code": "S11",
+    "table_headings": {
+      "FIT": "### 4.2 Per-function enumeration",
+      "PEAK": "### 5.2 Per-function enumeration",
+      "SURFACE": "### 6.2 Per-function enumeration"
+    },
+    "table_stops": {
+      "FIT": "### 4.3 Fitting anomalies and prerequisites",
+      "PEAK": "### 5.3 Peak anomalies",
+      "SURFACE": "### 6.3 Surface anomalies"
+    },
+    "table_columns": {
+      "FIT": 7,
+      "PEAK": 8,
+      "SURFACE": 6
+    },
+    "floor_keys": {
+      "FIT": "FIT_NUMBERED_PAGES",
+      "PEAK": "PEAK_1D_NAMED",
+      "SURFACE": "PEAK_SURFACE_NAMED"
+    },
+    "retained_surface_ids": [
+      "EG-CAT-FIT-002"
+    ]
+  }
 }

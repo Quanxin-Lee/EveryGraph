@@ -344,6 +344,41 @@ class CatalogChildValidatorTests(unittest.TestCase):
         self.assertTrue(any("Count table drift for GATE" in item
                             for item in validate_document_consistency(rows, self.base)))
 
+    def test_p0_012_declared_additions_reconcile_and_surface_rows_stay_unadmitted(self):
+        self.assertEqual(validate_document_consistency(self.rows, self.base), [])
+        config = self.base["p0_012"]
+        document = (ROOT / self.base["evidence_documents"]["P0-012"]).read_text(encoding="utf-8")
+        surface_rows = validator.markdown_rows(
+            document,
+            config["table_headings"]["SURFACE"],
+            config["table_columns"]["SURFACE"],
+            stop=config["table_stops"]["SURFACE"],
+        )
+        surface_ids = {row[0] for row in surface_rows}
+        s11_ids = {row["child_id"] for row in self.rows if row["evidence_code"] == config["source_code"]}
+        registered_ids = {row["child_id"] for row in self.rows}
+        retained_ids = set(config["retained_surface_ids"])
+        surface_floor = self.base["p0_005"]["declared_floors"][config["floor_keys"]["SURFACE"]]
+
+        self.assertEqual(len(surface_ids), surface_floor)
+        self.assertTrue(surface_ids.isdisjoint(s11_ids))
+        self.assertTrue((surface_ids - retained_ids).isdisjoint(registered_ids))
+        self.assertEqual(retained_ids, {"EG-CAT-FIT-002"})
+        retained = next(row for row in self.rows if row["child_id"] == "EG-CAT-FIT-002")
+        self.assertEqual(retained["evidence_code"], "F8")
+
+    def test_p0_012_rejects_a_child_not_declared_by_its_source_tables(self):
+        undeclared = self.child("EG-CAT-FIT-003")
+        undeclared["child_id"] = "EG-CAT-FIT-242"
+        errors = validate_document_consistency(self.rows + [undeclared], self.base)
+        self.assertTrue(any("P0-012 admitted child IDs differ" in item and
+                            "EG-CAT-FIT-242" in item for item in errors), errors)
+
+    def test_p0_012_rejects_a_wrong_registered_count(self):
+        rows = [row for row in self.rows if row["child_id"] != "EG-CAT-FIT-003"]
+        errors = validate_document_consistency(rows, self.base)
+        self.assertTrue(any("Count table drift for FIT" in item for item in errors), errors)
+
     def test_p0_005_sourced_rows_anchor_on_registered_pages(self):
         for child_id in ("EG-CAT-FIT-001", "EG-CAT-PEAK-001", "EG-CAT-GRAPH-074", "EG-CAT-GRAPH-080", "EG-CAT-GRAPH-095"):
             row = self.child(child_id)
