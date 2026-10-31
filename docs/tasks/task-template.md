@@ -55,10 +55,10 @@ Checks not run and their reasons:
 
 ## Review and disposition
 
-Reviewer and review type (independent or self-review):
+Reviewer and review type (independent or self-review): name the reviewer that did not implement this work; a self-review cannot support acceptance under AGENTS.md section 0 rule 11.
 Reviewed files / revision:
 Findings, resolutions and recheck evidence:
-Acceptance decision, accepting role and date (or pending):
+Acceptance decision, accepting role and date (or pending): self-accepted by this task's executor after the independent review above, or the gate that still blocks it.
 
 ## Handoff and remaining work
 
