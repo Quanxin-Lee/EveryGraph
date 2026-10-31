@@ -39,6 +39,7 @@ Out of scope: registering the checker in CMake or CTest (that path is contested 
 | AC-6 | Unit tests cover each failure mode and are picked up by `python3 -B -m unittest discover -s tools -p 'test_*.py'` without a new runner. | Not run |
 | AC-7 | `python3 tools/validate_planning.py` still passes; no other task's record, the board or a build file is modified. | Not run |
 | AC-8 | The checker flags a task whose record says `accepted` while its Review section names no reviewer other than the implementing executor, or while the task has no commit — the two ways section 0 rule 11 self-acceptance can be claimed without evidence. | Not run |
+| AC-9 | The checker reports every divergence between a record's `Status` and its board row `status`, and lists the `Board sync` request lines waiting on P0-000, so the sync backlog is visible instead of being closed by whoever happens to notice it. Divergence is a report, never an automatic board write. | Not run |
 
 ## Contributions and changes
 
@@ -46,6 +47,7 @@ Out of scope: registering the checker in CMake or CTest (that path is contested 
 |---|---|---|---|
 | 2026-10-31 | P0-000 / allocation executor | Allocated P0-014 and created this initial record scaffold with its change manifest; no implementation started | [Board](../planning/task-board.csv); [P0-000 record](p0-000-task-allocation.md) |
 | 2026-10-31 | P0-000 / allocation executor | Before any executor was assigned, added AC-8 and the matching board acceptance clause so the checker also catches a self-acceptance claim with no independent reviewer or no commit, per AGENTS.md section 0 rule 11 | [AGENTS.md](../../AGENTS.md) section 0 rules 11 and 12 |
+| 2026-10-31 | P0-000 / allocation executor | Before any executor was assigned, added AC-9: because rule 4 keeps the board with P0-000 and executors only request their flip, record-versus-board divergence and the waiting `Board sync` requests must be a reported backlog rather than a write the checker or any other task performs | [AGENTS.md](../../AGENTS.md) section 0 rules 4, 11 and 12 |
 
 This record is an allocation plan, not completed work.
 

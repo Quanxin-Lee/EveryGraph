@@ -63,6 +63,7 @@ Acceptance decision, accepting role and date (or pending): self-accepted by this
 ## Handoff and remaining work
 
 Commits (each with this task ID in the subject and only manifest paths; state that no commit exists and why when true):
+Board sync request for P0-000 (target row, state reached, proving commit; never edit the board yourself):
 Last verified state:
 Blockers and unblock actions:
 Next task / concrete next action:
