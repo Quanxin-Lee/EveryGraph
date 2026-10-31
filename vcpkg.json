@@ -14,5 +14,19 @@
         "widgets"
       ]
     }
-  ]
+  ],
+  "features": {
+    "desktop-shell": {
+      "description": "Qt Test support for the workbench shell prototype; opt-in so probe builds keep the pinned graph.",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "testlib"
+          ]
+        }
+      ]
+    }
+  }
 }

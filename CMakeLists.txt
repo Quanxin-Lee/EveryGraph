@@ -5,6 +5,7 @@ project(EveryGraphPhase0 LANGUAGES CXX)
 option(EVERYGRAPH_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(EVERYGRAPH_ENABLE_TSAN "Enable ThreadSanitizer separately from ASan and UBSan" OFF)
 option(EVERYGRAPH_ENABLE_QT_PROBE "Build the opt-in Qt 6.12 Widgets qualification probe" OFF)
+option(EVERYGRAPH_ENABLE_DESKTOP_SHELL "Build the Qt workbench shell prototype from the pinned desktop-shell graph" OFF)
 
 if(EVERYGRAPH_ENABLE_SANITIZERS AND EVERYGRAPH_ENABLE_TSAN)
     message(FATAL_ERROR "ASan/UBSan and TSan must use separate build directories and cannot be combined.")
@@ -56,6 +57,13 @@ add_subdirectory(modules/foundation)
 add_subdirectory(modules/application)
 add_subdirectory(tools)
 add_subdirectory(tests)
+
+if(EVERYGRAPH_ENABLE_DESKTOP_SHELL)
+    find_package(Qt6 6.12.0 EXACT REQUIRED COMPONENTS Core Gui Widgets Test)
+    qt_standard_project_setup()
+    add_subdirectory(modules/presentation_qt)
+    add_subdirectory(apps/desktop)
+endif()
 
 get_property(everygraph_code_targets GLOBAL PROPERTY EVERYGRAPH_CODE_TARGETS)
 

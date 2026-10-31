@@ -450,6 +450,79 @@ Limits: Windows is not resolved or executed; the SBOM is qualification-scoped an
 
 The P1-003 task record holds the detailed evidence, review history and acceptance state.
 
+## Qt workbench shell and document host skeleton (P1-006)
+
+P1-006 adds the first product-shaped Qt Widgets layer: a `QMainWindow` workbench with menus, one command toolbar, a status bar, a read-only project-tree dock, a read-only properties dock and a central tabbed document host with detach and re-dock. Actions dispatch fake `project.*` commands through the P1-004 gateway from the composition root; widgets contain no scientific logic and never touch a document directly. Widgets read snapshots through the read-only `CommandQuery` port and submit writes only through `ShellCommandDispatcher`-backed bindings; no widget source holds the command gateway. The project objects are in-memory fakes, and this is a shell skeleton, not a data editor, plot application or release bundle.
+
+### Targets and registration
+
+| Target / test | Purpose |
+| --- | --- |
+| `everygraph_presentation_qt` | New static presentation module with seven sources: `ShellCommandDispatcher` and the read-only `CommandQuery` port, `DocumentHost`/`DetachedDocumentWindow`, `WindowPlacement`, programmatic `WorkbenchIcon` painting, read-only `ProjectTreeModel`, read-only `PropertiesPanel` and `WorkbenchWindow`. Links `everygraph_application`, Qt Core/Gui/Widgets; AUTOMOC is enabled for the five `QObject` classes in four presentation headers. |
+| `everygraph_desktop_fakes` | New Qt-free static library in `apps/desktop` holding the fake seed document, three registered `project.create_object`, `project.move_object` and `project.find_object` commands and `FakeProjectController`. Links the application kernel only. |
+| `everygraph_desktop` | New `MACOSX_BUNDLE` executable in `apps/desktop`; the composition root wires the fake controller into the window bindings. `--smoke-test` shows the window and quits immediately. |
+| `everygraph_workbench_tests` | New Qt Test executable with nine slots covering startup composition, toolbar accessibility and high-DPI icons, the nested project tree, create/move/find dispatch through the gateway, monotonic object IDs across undo, undo/redo, the read-only properties panel, tabs/detach/dock/off-screen restore and window placement. |
+| `workbench_tests`, `workbench_smoke`, `shell_boundary_check` | Three CTest entries. The first two run on the offscreen platform with `QT_PLUGIN_PATH` pinned to the selected vcpkg plugin directory; the third checks that kernel public headers stay Qt-free, kernel targets do not link the shell, presentation and desktop widget sources never include or hold `CommandGateway` or call kernel write methods, the root option defaults to `OFF`, and no vendor image assets or `fromTheme` calls exist. |
+
+Both desktop presets set the new `EVERYGRAPH_ENABLE_DESKTOP_SHELL=ON`; the Qt-free presets leave it `OFF`, so they neither find Qt nor build the shell. The presentation module is not linked by `everygraph_foundation`, `everygraph_application` or the Qt-free tests, and a configure-time guard rejects such a link.
+
+### Dependency delta and exact source
+
+AC-6 requires Qt Test. `vcpkg.json` therefore gains one opt-in root feature, `desktop-shell`, whose dependency is the already-pinned `qtbase` with `default-features: false` and the additional `testlib` feature. The registry baseline, the overlay port, the Qt version, the source archive and every existing dependency are unchanged:
+
+| Item | Value |
+| --- | --- |
+| Registry baseline | `d186940b2f0c4e8e5b4ff804af57d2a26fbfa091` |
+| Qt | 6.12.0 from local overlay `cmake/vcpkg-overlay-ports/qtbase/` |
+| Qt source | `qtbase-everywhere-src-6.12.0.tar.xz`, SHA-512 `87b3bd96244e03ea6145e00d088cb1e0cfaa64a575bfe32c4ec5f0227bc7872a3777ccf29c8e54e567a6ea809a8ee894e88e659d14d96655b0730455d9869d7a` |
+| Build features | Base graph remains `freetype`, `gui`, `widgets`; the `desktop-shell` feature adds `testlib` |
+| Triplets and install root | `arm64-osx-dynamic` / `arm64-osx`; `out/vcpkg-installed`, shared by the debug and release desktop presets so Qt is built once |
+
+The resolved port set is unchanged: the probe install root and `out/vcpkg-installed` both contain the same 42 ports (29 host + 13 target) at identical versions, and `docs/engineering/sbom/everygraph-macos-arm64-qt.spdx.json` still describes 43 SPDX packages. `testlib` adds `Qt6Test` headers and `libQt6Test.dylib` to the existing `qtbase` package; it does not add a port. The probe presets do not enable `desktop-shell`, so the P1-003 qualification graph and SBOM remain valid.
+
+### Commands and recorded result
+
+On 2026-10-31, macOS 27.0.1 arm64, AppleClang 21.0.0.21000334, CMake 3.31.6 and Ninja 1.11.1.4 from `.venv`, vcpkg tool `2026-09-26-51bf87ca6e9bf3e622d84ff323bd202ab1ca0c0b` at the pinned baseline, and the locally built pkgconf/autotools prefixes described above on `PATH`:
+
+```sh
+export PATH="$PWD/.venv/bin:$PWD/out/pkgconf-install/bin:$PWD/out/autotools-install/bin:$PATH"
+export VCPKG_ROOT="$PWD/out/vcpkg"
+
+cmake --preset macos-debug-desktop
+cmake --build --preset macos-debug-desktop
+ctest --preset macos-debug-desktop
+
+cmake --preset macos-release-desktop
+cmake --build --preset macos-release-desktop
+ctest --preset macos-release-desktop
+
+cmake --preset macos-debug
+cmake --build --preset macos-debug
+ctest --preset macos-debug
+
+cmake --preset macos-release
+cmake --build --preset macos-release
+ctest --preset macos-release
+```
+
+| Preset | Configure / build | CTest |
+| --- | --- | --- |
+| macos-debug-desktop | Passed from a clean tree, no compiler warnings; links `libQt6Test_debug` | 11/11 passed, including `workbench_tests`, `workbench_smoke` and `shell_boundary_check` |
+| macos-release-desktop | Passed from a clean tree, no compiler warnings | 11/11 passed; Qt Test reports library 6.12.0 on the offscreen platform |
+| macos-debug | Passed; Qt-free regression | 8/8 passed |
+| macos-release | Passed; Qt-free regression | 8/8 passed |
+
+`python3 tools/validate_planning.py` passes, including the English-policy and link checks. The task-record checker reports the pre-existing accepted-record findings, the two expected duplicate-claim reports for this task's designated `CMakeLists.txt` and `docs/engineering/development.md` rows, and the known P1-006 record-versus-board divergence notice; it does not resolve P0-000 designations, and P0-000 syncs the board row after acceptance. The P1-006 record holds the detailed evidence, independent review history and acceptance state.
+
+### Limits
+
+- The shell uses fake in-memory objects with stable integer IDs. There is no Project/Workbook/Graph domain, file import or persistence, SQLite/Arrow store, virtual table, plot canvas, numerical analysis, AI or plugin panel.
+- The project tree and properties panel are read-only views rebuilt from the `CommandQuery` snapshot; there is no inline rename, drag-and-drop, multi-selection or property editing. Move is a single-object command to a fake Scratch folder.
+- Window placement is tested against synthetic screen rectangles, not physical display reconfiguration. The workbench re-runs placement on `QGuiApplication::screenAdded` and `screenRemoved`, but a real monitor change, a native platform window, a multi-monitor DPI transition and session restore are not exercised or claimed.
+- Icons are painted programmatically at 16/32/64 physical pixels. No vendor icon set, Qt resource bundle or platform theme icon is used, and no visual-design review is claimed.
+- The offscreen platform exercises widget composition and signals, not a human-visible rendering or accessibility-tree audit. Toolbar actions expose accessible names; full keyboard-navigation, screen-reader and high-contrast verification remain future work.
+- macOS arm64 only. No Windows build, CI execution, sanitizer-plus-Qt run, signing, notarization, packaging or deployment claim is made; `VCPKG_APPLOCAL_DEPS=OFF` still means the build-tree application references the pinned install root.
+
 ## Windows configuration only: not executed
 
 The Windows-only configure presets select Ninja and `cl`; `architecture: { value: x64, strategy: external }` requires an already initialized x64 compiler environment. It does not cause Ninja to select an architecture. Use Visual Studio 2022 with the C++ desktop toolchain and Windows SDK, and its x64 Native Tools developer command prompt. Ensure CMake 3.31.6, the Ninja 1.11.1.4 pip distribution, and Python >= 3.10 are available there.
