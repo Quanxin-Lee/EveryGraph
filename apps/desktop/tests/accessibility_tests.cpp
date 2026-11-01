@@ -7,6 +7,7 @@
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QDockWidget>
+#include <QElapsedTimer>
 #include <QFontMetrics>
 #include <QFileInfo>
 #include <QImage>
@@ -207,6 +208,74 @@ QString activation_state(QWidget* top_level) {
              widget_label(QApplication::focusWidget()));
 }
 
+// Qt clears the application focus widget when its window stops being key, so a walk
+// that begins on a window the window server never made key, or whose window loses key
+// status half way through, reports a focus loss that says nothing about the declared
+// tab order. These are the states the walk needs before its first Tab.
+bool is_key_window(QWidget* top_level, QWidget* start) {
+    return top_level->isVisible() && top_level->isActiveWindow() &&
+           QApplication::activeWindow() == top_level &&
+           QApplication::focusWidget() == start;
+}
+
+// Counts the activation transitions of one top level so a failed walk can tell a
+// window that was never granted key status from one that had it taken away mid-walk.
+class ActivationWatcher : public QObject {
+public:
+    explicit ActivationWatcher(QWidget* top_level) : top_level_(top_level) {
+        top_level_->installEventFilter(this);
+    }
+
+    ~ActivationWatcher() override {
+        top_level_->removeEventFilter(this);
+    }
+
+    bool eventFilter(QObject* watched, QEvent* event) override {
+        if (watched == top_level_) {
+            if (event->type() == QEvent::WindowActivate) {
+                ++activations_;
+            } else if (event->type() == QEvent::WindowDeactivate) {
+                ++deactivations_;
+            }
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+    // Widens activation_state() with the application-level active window, the start
+    // widget and the transition counts. The counts begin with the walk, so a zero
+    // activate count is not a denial: the window is usually made key while the caller
+    // is still showing it.
+    QString describe(QWidget* start) const {
+        const auto yes_no = [](bool value) {
+            return value ? QStringLiteral("yes") : QStringLiteral("no");
+        };
+        return QStringList{
+                QStringLiteral("visible: %1").arg(yes_no(top_level_->isVisible())),
+                QStringLiteral("key: %1").arg(yes_no(top_level_->isActiveWindow())),
+                QStringLiteral("app-active: %1").arg(widget_label(QApplication::activeWindow())),
+                QStringLiteral("focused: %1").arg(widget_label(QApplication::focusWidget())),
+                QStringLiteral("start: %1").arg(widget_label(start)),
+                QStringLiteral("activate events since the walk began: %1").arg(activations_),
+                QStringLiteral("deactivate events since the walk began: %1").arg(deactivations_)}
+            .join(QStringLiteral(", "));
+    }
+
+private:
+    QWidget* top_level_ = nullptr;
+    int activations_ = 0;
+    int deactivations_ = 0;
+};
+
+constexpr int kActivationWaitMs = 2000;
+
+struct FocusWalk {
+    QStringList order;
+    // Empty when the window held key status for every step of the walk. Non-empty
+    // means the walk was refused or stopped by the window server, which is not a
+    // statement about the declared focus order.
+    QString activation_error;
+};
+
 QStringList clipped_text_widgets(QWidget* top_level) {
     QStringList clipped;
     if (top_level == nullptr) {
@@ -273,47 +342,83 @@ QStringList visible_focus_chain(QWidget* start) {
     return chain;
 }
 
-QStringList walk_focus(QWidget* top_level, QWidget* start, int max_steps) {
-    QStringList order;
+// The walk is refused before it starts rather than run and then explained: macOS
+// grants frontmost status to a newly launched process and does not hand it back to a
+// background one, so a native qualification that means anything starts from a verified
+// key window and stops the moment the window server takes that status away.
+FocusWalk walk_focus(QWidget* top_level, QWidget* start, int max_steps) {
+    FocusWalk walk;
     if (top_level == nullptr || start == nullptr) {
-        return order;
+        walk.activation_error =
+            QStringLiteral("the focus walk needs a top level and a start widget");
+        return walk;
     }
-    // macOS finishes activating a window after show() returns, and a Tab click sent
-    // to a window that is not yet key never moves focus, so the walk waits for the
-    // window server instead of assuming one fixed delay covers it.
-    for (int attempt = 0; attempt < 40 && QApplication::focusWidget() != start; ++attempt) {
+    ActivationWatcher watcher(top_level);
+    top_level->raise();
+    top_level->activateWindow();
+    start->setFocus(Qt::OtherFocusReason);
+    // This wait only observes the window server's answer; the state itself is asserted
+    // below, so a window that never becomes key fails as an activation problem and
+    // never reaches the focus-order assertions. Only the window-server request is
+    // repeated here: focus is set once, so the precondition reports the shell's own
+    // focus handling rather than this loop forcing the start widget to hold focus.
+    QElapsedTimer elapsed;
+    elapsed.start();
+    while (!is_key_window(top_level, start) && elapsed.elapsed() < kActivationWaitMs) {
         top_level->activateWindow();
-        start->setFocus(Qt::OtherFocusReason);
         QTest::qWait(25);
     }
-    if (QApplication::focusWidget() != start) {
-        return order;
+    if (!is_key_window(top_level, start)) {
+        walk.activation_error = QStringLiteral(
+                "%1 never became the key window holding focus on %2 within %3 ms (%4). "
+                "A Tab sent to a window the window server has not made key is not a "
+                "focus-order result, and macOS does not return frontmost status to a "
+                "process another application has displaced.")
+                .arg(widget_label(top_level))
+                .arg(widget_label(start))
+                .arg(kActivationWaitMs)
+                .arg(watcher.describe(start));
+        return walk;
     }
+
     QWidget* previous = nullptr;
     for (int step = 0; step < max_steps; ++step) {
         QWidget* current = QApplication::focusWidget();
         if (current == nullptr) {
-            order.append(QStringLiteral("<focus-lost>"));
+            // Reachable only while the window is still key: the check after each Tab
+            // above catches a deactivation in the step it happens. A focus widget that
+            // disappears inside a key window is the focus trap this walk is for.
+            walk.order.append(QStringLiteral("<focus-lost>"));
             break;
         }
         if (current != top_level && !top_level->isAncestorOf(current)) {
-            order.append(QStringLiteral("<outside-window>"));
+            walk.order.append(QStringLiteral("<outside-window>"));
             break;
         }
         if (current == previous) {
-            order.append(QStringLiteral("<stuck>"));
+            walk.order.append(QStringLiteral("<stuck>"));
             break;
         }
-        order.append(widget_label(current));
+        walk.order.append(widget_label(current));
         previous = current;
         QTest::keyClick(current, Qt::Key_Tab);
         QCoreApplication::processEvents();
+        if (!top_level->isActiveWindow()) {
+            walk.order.append(QStringLiteral("<focus-lost>"));
+            walk.activation_error = QStringLiteral(
+                    "%1 lost key status during the Tab after %2 at step %3 (%4).")
+                    .arg(widget_label(top_level))
+                    .arg(widget_label(current))
+                    .arg(step)
+                    .arg(watcher.describe(start));
+            return walk;
+        }
         if (QApplication::focusWidget() == start && step >= 3) {
-            order.append(widget_label(start));
+            walk.order.append(widget_label(start));
             break;
         }
     }
-    return order;
+    return walk;
 }
 
 void verify_widget_accessibility(QWidget* widget, const QString& name,
@@ -500,8 +605,10 @@ void AccessibilityTests::focus_order_cycles_without_trap() {
     QVERIFY(chain.indexOf(QStringLiteral("projectTree")) <
             chain.indexOf(QStringLiteral("documentTabBar")));
 
-    const QStringList order = walk_focus(&window, window.project_tree(), 40);
+    const FocusWalk walk = walk_focus(&window, window.project_tree(), 40);
+    const QStringList& order = walk.order;
     qInfo().noquote() << "raw shell focus walk:" << order.join(QStringLiteral(" -> "));
+    QVERIFY2(walk.activation_error.isEmpty(), qPrintable(walk.activation_error));
     QVERIFY2(!order.isEmpty(),
              qPrintable(QStringLiteral("the walk never reached the project tree, ") +
                         activation_state(&window)));
@@ -581,8 +688,10 @@ void AccessibilityTests::preferences_focus_order_is_explicit() {
         }
     }
 
-    const QStringList order = walk_focus(&dialog, appearance, 30);
+    const FocusWalk walk = walk_focus(&dialog, appearance, 30);
+    const QStringList& order = walk.order;
     qInfo().noquote() << "raw preferences focus walk:" << order.join(QStringLiteral(" -> "));
+    QVERIFY2(walk.activation_error.isEmpty(), qPrintable(walk.activation_error));
     QVERIFY2(!order.isEmpty(),
              qPrintable(QStringLiteral("the walk never reached the appearance combo, ") +
                         activation_state(&dialog)));
