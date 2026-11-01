@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- The entitlements the shipped local bundle signs with.
+
+     P1-012 started from an empty set and let the experiment decide. With no
+     entitlement at all, a hardened-runtime ad-hoc bundle cannot even load the Qt
+     libraries this project built: every nested library is ad-hoc signed with no
+     team identifier, the hardened runtime leaves library validation on, and dyld
+     refuses the load ("mapping process and mapped file (non-platform) have
+     different Team IDs"), so the shell aborts before it starts. Disabling library
+     validation is therefore not a convenience here: without it neither the
+     shipped bundle nor the LGPL substitution route works under the hardened
+     runtime.
+
+     The cost is explicit: this bundle accepts any code signature on a library it
+     loads, which is what protects a recipient's rebuilt LGPL Qt library, and it
+     buys that openness by giving up dyld's check that every loaded library carries
+     the same signing identity as the main executable. For a local-only open-source
+     build the second property was never available (there is no team identity to
+     validate against); a Developer ID or notarized distribution would revisit it,
+     and those are out of scope for this project. See
+     packaging/macos/strict-library-validation.entitlements.plist for the variant
+     the experiment signs one copy with, and docs/tasks/p1-012-*.md for the
+     recorded results. -->
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
+</dict>
+</plist>

@@ -381,7 +381,7 @@ A second small overlay, `cmake/vcpkg-overlay-ports/pcre2/`, is a copy of the reg
 
 The `freetype` feature is enabled because Qt builds its `offscreen` QPA platform plugin only when `QT_FEATURE_freetype` is on, and the existing probe smoke test requires the offscreen platform for headless runs. The feature adds `freetype`, `brotli`, `bzip2` and `libpng` to the target graph.
 
-The vcpkg presets set `VCPKG_APPLOCAL_DEPS=OFF`: applocal copies Qt libraries into the probe bundle but not the platform plugins, so the build-tree probe keeps referencing the pinned install root instead. `qt_probe_smoke` sets `QT_PLUGIN_PATH` to the pinned Qt plugin directory (and `QT_QPA_PLATFORM=offscreen`). Self-contained bundle deployment, plugin copying and signing belong to P1-012, not this qualification route.
+The vcpkg presets set `VCPKG_APPLOCAL_DEPS=OFF`: applocal copies Qt libraries into the probe bundle but not the platform plugins, so the build-tree probe keeps referencing the pinned install root instead. `qt_probe_smoke` sets `QT_PLUGIN_PATH` to the pinned Qt plugin directory (and `QT_QPA_PLATFORM=offscreen`). Self-contained bundle deployment, plugin copying and signing are delivered by [P1-012](#macos-bundle-ad-hoc-hardened-runtime-and-lgpl-substitution-p1-012), not by this qualification route.
 
 ### Prerequisites and bootstrap
 
@@ -446,7 +446,7 @@ Environment: macOS 27.0.1 build 26A434, arm64; AppleClang 21.0.0.21000334; macOS
 | Qt-free regression | Fresh `cmake --preset macos-debug`, `macos-release`, `macos-sanitize` with build and `ctest` | 5/5 in each preset |
 | SBOM | `python3 docs/engineering/sbom/generate_sbom.py ...` (command above) | Wrote the SPDX 2.3 document: 43 packages (29 host + 13 target + probe), 4 files (probe plus the three directly linked Qt dylibs), 111 relationships including feature-record dependencies; no home-directory paths; file-list versions cross-checked |
 
-Limits: Windows is not resolved or executed; the SBOM is qualification-scoped and not a release notice bundle or legal approval. `VCPKG_APPLOCAL_DEPS=OFF` means the build-tree probe references the pinned install root rather than a self-contained bundle; bundle deployment, signing and notarization belong to P1-012. Host `arm64-osx` tools are build-time only and are not distributed. Direct GitHub access was unavailable, so the pcre2 overlay and mirror-seeded sources remain removable workarounds.
+Limits: Windows is not resolved or executed; the SBOM is qualification-scoped and not a release notice bundle or legal approval. `VCPKG_APPLOCAL_DEPS=OFF` means the build-tree probe references the pinned install root rather than a self-contained bundle; bundle deployment and local ad-hoc signing are delivered by P1-012, whose route is documented above and which explicitly excludes notarization, stapling and clean-machine Gatekeeper qualification. Host `arm64-osx` tools are build-time only and are not distributed. Direct GitHub access was unavailable, so the pcre2 overlay and mirror-seeded sources remain removable workarounds.
 
 The P1-003 task record holds the detailed evidence, review history and acceptance state.
 
@@ -767,6 +767,54 @@ Refactor result on 2026-10-31, macOS 27.0.1 arm64, AppleClang 21.0.0.21000334, C
 
 The five AC-4 presets were also configured and built from wiped scratch directories, so their result is a clean-configure proof rather than an incremental reconfigure. The two vcpkg presets were re-configured only in place: a scratch build directory would force a full Qt 6.12.0 source rebuild instead of reusing the retained `out/vcpkg` install graph, which is outside this task. `Windows-debug` and `windows-release` remain unexecuted on this host. Against the pre-refactor captures, `compile_commands.json` matches entry for entry — same source files, same include directories, same defines and the same warning and sanitizer flags — after normalizing only the two build-tree locations that follow the defining directory (the per-target object directory, and Qt's `everygraph_qt_probe_autogen` directory, which is now under `tools/`). Release binaries, including `everygraph_qt_probe.app/Contents/MacOS/everygraph_qt_probe`, are byte-identical. Debug binaries differ only in `LC_UUID` and in the single `N_OSO` debug string that records the object-file path; the `__text` code section and the symbol count are identical.
 
+## macOS bundle, ad-hoc hardened runtime and LGPL substitution (P1-012)
+
+Executed on 2026-11-01 on the same Apple Silicon host and toolchain as the rows above; [P1-012](../tasks/p1-012-macos-bundle-hardened-runtime-lgpl.md) holds the per-criterion acceptance evidence.
+
+### The packaging route
+
+`packaging/macos/` is the whole macOS packaging route, and it is deliberately script-only: `CMakeLists.txt` and `CMakePresets.json` carry no install or bundle rule for this, because `macdeployqt` exists only as an `arm64-osx` host tool and therefore cannot deploy the `arm64-osx-dynamic` target graph this project ships.
+
+| Script | What it does |
+|---|---|
+| `macho_helpers.sh` | Shared Mach-O reading: magic-byte file detection, `LC_LOAD_DYLIB` names, install names, rpath enumeration and expansion, and a bounded `env -i` launch with a throwaway `HOME`, `TMPDIR` and `EVERYGRAPH_PREFERENCES_PATH` |
+| `build_bundle.sh --preset <preset> [--out <dir>] [--entitlements <plist>] [--sign-mode hardened\|adhoc\|none] [--vcpkg-installed <dir>]` | Restages the CMake `.app`, walks the Mach-O closure out of the pinned install root, rewrites every reference to `@rpath/<file>`, deploys `platforms/libqcocoa`, `platforms/libqoffscreen` and `styles/libqmacstyle`, normalizes rpaths and library ids, writes notices and the inventory, then signs |
+| `bundle_inventory.py --app <app> --seen <closure> --vcpkg-installed <dir> --sbom <spdx.json> --repo-root <dir> --output <json> [--notices]` | Maps every bundled Mach-O to its pinned vcpkg package, version and license, checks each version against the accepted P1-003 SPDX document, scans for private-path leakage, and writes `bundle-inventory.json` plus `Contents/Resources/licenses/` |
+| `sign_bundle.sh --app <app> --entitlements <plist> --hardened\|--adhoc` | Inside-out local ad-hoc signing of every nested Mach-O, then the bundle; the hardened runtime is applied only with `--hardened` |
+| `verify_bundle.sh --app <app> [--vcpkg-installed <dir>] [--expect-hardened\|--expect-adhoc-only] [--no-content-scan] [--no-launch]` | Per-library dependency resolution, absolute-rpath and install-name checks, a load-command parse check, a generic private-path content scan, `codesign --verify --deep --strict`, signature description checks, a hermetic launch outside the build tree, and a post-signature inventory re-check. It refuses to run on a host missing a Mach-O tool and on a bundle whose executable is not code, because both would empty its iteration and turn "every image passed" into a vacuous statement |
+| `lgpl_replace_test.sh --app <app>` | The replacement matrix: three signing states crossed with three library states, each launch bounded, plus the `DYLD_PRINT_LIBRARIES` load traces |
+| `rebuild_from_source.sh [--revision <rev>] [--export-dir <dir>] [--preset <preset>] [--allow-missing-qt-archive]` | The recipient route: export the committed source, verify the Qt source archive against the recorded SHA-512 (a missing archive stops the run unless the caller asks to skip that check), configure, build, test, bundle, verify, assert byte-identity with the reference bundle, then substitute the LGPL library and relaunch |
+| `entitlements.plist`, `strict-library-validation.entitlements.plist` | The shipped entitlement set (library validation disabled) and the empty comparison variant |
+
+### Commands and recorded result
+
+```sh
+export PATH="$PWD/.venv/bin:$PWD/out/pkgconf-install/bin:$PWD/out/autotools-install/bin:$PATH"
+export VCPKG_ROOT="$PWD/out/vcpkg"
+
+cmake --preset macos-release-desktop
+cmake --build --preset macos-release-desktop
+packaging/macos/build_bundle.sh --preset macos-release-desktop
+packaging/macos/verify_bundle.sh --app out/bundle/macos-release-desktop/everygraph_desktop.app \
+    --vcpkg-installed out/vcpkg-installed
+packaging/macos/lgpl_replace_test.sh --app out/bundle/macos-release-desktop/everygraph_desktop.app
+packaging/macos/rebuild_from_source.sh --revision HEAD
+```
+
+`build_bundle.sh` produces `out/bundle/macos-release-desktop/everygraph_desktop.app`: 30 files under `Contents`, 17 of them Mach-O (the executable, 13 dylibs in `Contents/Frameworks`, 3 plugins in `Contents/PlugIns`), 26 MB. `verify_bundle.sh` reports **72 passed, 0 failed, 1 warning**; the warning is two `__FILE__` build-path strings inside the vendor `libQt6Widgets.6.12.0.dylib`, which are build material rather than linkage. `codesign --verify --deep --strict` exits 0 on a bundle reporting `flags=0x10002(adhoc,runtime)`, `Signature=adhoc`, `TeamIdentifier=not set`, `Runtime Version=27.0.0` and one entitlement key, with `LSMinimumSystemVersion => 14.4`. A second independent `build_bundle.sh --out out/bundle-repro` is byte-identical across all 30 files, and `rebuild_from_source.sh --revision HEAD` from a fresh `git archive` export configures, builds, passes 16/16 CTest entries, emits a bundle its own run asserts is byte-identical to the reference one, and then launches successfully with `libQt6Core.6.12.0.dylib` replaced in place — one added rpath, local re-sign, no recompile and no relink of the application.
+
+Of 151 Mach-O linkage entries in the shipped bundle (load-command dependency names plus rpath values), none resolves outside the bundle or a system path, and none mentions Homebrew, `/usr/local`, `vcpkg` or `/out/build`. `DYLD_PRINT_LIBRARIES` on an ad-hoc copy traces 13 loads, every one from `Contents/Frameworks`; the hardened copy traces none because the hardened runtime strips that variable, which is why the hardened case is proven by a successful launch and the dependency-resolution checks instead.
+
+### Hardened runtime, library validation and why the entitlement is there
+
+The one platform finding worth reading before reusing these scripts: with `--options runtime` and **no** entitlements, dyld refuses to load this project's own Qt libraries even untouched — exit 134 with `code signature in <...> 'Contents/Frameworks/libQt6Widgets.6.12.0.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs`. Locally ad-hoc-signed nested libraries and an ad-hoc-signed main executable present as different (unset) team identities, so library validation rejects the mapping before any replacement is involved. `entitlements.plist` therefore declares `com.apple.security.cs.disable-library-validation`, and the empty `strict-library-validation.entitlements.plist` exists so that the comparison is measured rather than assumed.
+
+With that entitlement the substitution behaves as LGPLv3 §4's shared-library route needs: baseline, replaced-and-unsealed and replaced-then-re-signed all launch (exit 0), with `codesign` reporting the seal as valid, broken and valid respectively — the expected consequence of re-signing locally. Nothing here is evidence about Developer ID, notarization, stapling, Gatekeeper or a clean machine, and none of those results is claimed: under same-team Developer ID signing the nested libraries would share a team identity and library validation might be kept enabled, a route this project does not use and did not test.
+
+### Limits
+
+The seal is local and ad hoc: it proves the bundle's internal consistency, not Apple trust, and distribution outside the building machine is untested. `packaging/macos/` first enters the repository with this task's acceptance commit, so `rebuild_from_source.sh` still prints that the exported revision lacks it and uses the working copy of the scripts; from the next revision onward the recipient route is self-contained. The recipient run reuses the pinned install root after verifying the Qt archive hash rather than compiling Qt from a cold cache. `bundle-inventory.json` and the `.app` are generated output under the ignored `/out/` tree — the durable correspondence evidence lives in the P1-012 record and here. The `verify_bundle.sh` private-path scan was itself corrected during this task: it originally matched only the repository root of the tree running it, which silently passed a bundle containing two `/Users/...` strings; it now matches generic patterns so the result does not depend on where the verifier is invoked from. Three further limits of the earlier scripts became part of the tool contract after the independent review: `verify_bundle.sh` and `sign_bundle.sh` now stop when a Mach-O tool is unavailable or when the bundle executable is not code, because an empty image list would otherwise make every per-image check pass without reading a binary; `rebuild_from_source.sh` treats a missing Qt source archive and a recipient bundle that is not byte-identical to the reference as failures rather than notes; and `verify_bundle.sh` canonicalises `--app`, so a bundle reached through a symlinked or temporary path reports the same result as the same bundle reached directly.
+
 ## Build and code standards
 
 - CXX is the only enabled CMake language. Use target-level C++20 features, disable compiler extensions, and keep compile/link options target-local. `Threads::Threads` is a platform toolchain facility, not a downloaded dependency.
@@ -797,4 +845,4 @@ Prefer **vcpkg manifest mode with a tested pinned registry baseline**, explicit 
 
 Future unit tests should use GoogleTest for native core code and Qt Test for Qt adapters when those targets exist. Scientific worker tests should use pytest with deterministic fixtures and numerical tolerances. GoogleTest and Qt Test are not present in this build. P1-004 deliberately uses a small dependency-free CTest executable with explicit return-code checks as a temporary harness and records the migration point; it is not a GoogleTest pass count.
 
-macOS application bundling, dependency deployment, code signing, hardened runtime, notarization/stapling, and clean-machine verification are release plans only. Windows packaging, DLL deployment, Authenticode signing, and clean-machine verification are likewise plans only. No app bundle, installer, signing identity, notarization submission, or signed artifact was produced.
+macOS application bundling, dependency deployment, local ad-hoc code signing and the hardened runtime are no longer plans: P1-012 delivers them, documented above. Notarization, stapling and clean-machine Gatekeeper verification are not part of this project's route at all — the user decided on 2026-10-31 that the project is open source, runs on the machine that builds it, and signs only ad hoc, so P1-012's canceled predecessor P1-009 left no credential work behind. No Developer ID identity, notarization submission, installer or publicly trusted artifact exists or is claimed. Windows packaging, DLL deployment, Authenticode signing and clean-machine verification remain plans only, unexecuted and unauthorized on this host.
