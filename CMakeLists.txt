@@ -55,6 +55,7 @@ endfunction()
 
 add_subdirectory(modules/foundation)
 add_subdirectory(modules/application)
+add_subdirectory(modules/data)
 add_subdirectory(tools)
 add_subdirectory(tests)
 

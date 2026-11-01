@@ -5,6 +5,7 @@ endif()
 set(module_directories
     "${EVERYGRAPH_SOURCE_DIR}/modules/foundation"
     "${EVERYGRAPH_SOURCE_DIR}/modules/application"
+    "${EVERYGRAPH_SOURCE_DIR}/modules/data"
 )
 
 set(violations "")
@@ -36,4 +37,4 @@ if(violations)
     message(FATAL_ERROR "GUI toolkit tokens found in GUI-independent modules:\n${joined_violations}")
 endif()
 
-message(STATUS "module_boundary_check: no Qt includes or type tokens in foundation/application")
+message(STATUS "module_boundary_check: no GUI toolkit includes or type tokens in foundation, application or data")

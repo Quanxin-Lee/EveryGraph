@@ -1,0 +1,2086 @@
+{
+  "fragment": "tests/data/fixtures/manifest.json",
+  "owner_task": "P2-002",
+  "plan": "docs/engineering/data-conformance-plan.md",
+  "plan_version": "1.0",
+  "created": "2026-11-02",
+  "conventions": {
+    "sha256": "SHA-256 of the canonical JSON encoding (sorted keys, no spaces, ASCII escapes) of this entry's expected object",
+    "bytes": "UTF-8 length of that same canonical encoding",
+    "kind": "inline for hand-declared expected data; generated for seeded output reproducible from input.seed",
+    "cases": "test case names registered by tests/data, each prefixed with the full fixture id",
+    "expected_status": "pass, expected_diagnostic or deferred",
+    "boundary": "the slice of this fixture that P2-002 does not own, and the task that does",
+    "review_status": "pending until the plan section 15 fixture review; the implementing task's independent reviewer is recorded in the task record",
+    "last_verified": "the executed run that proved this entry, recorded by the owning task record's Validation table"
+  },
+  "families": [
+    "TYP",
+    "ID",
+    "UNIT",
+    "ALIGN"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "EG-FX-TYP-001",
+      "family": "TYP",
+      "title": "Signed and unsigned integer boundaries for 8, 16, 32 and 64 bits",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-011",
+        "DG-DATA-005",
+        "DG-DATA-006"
+      ],
+      "kind": "generated",
+      "input": {
+        "generator": "generate_typed_values",
+        "generator_version": 1,
+        "seed": 20261102
+      },
+      "sha256": "9dd6780df21213aa5d92f3e5e51c248336b850f724296fd3a289f36d29e73ac8",
+      "bytes": 407,
+      "schema": {
+        "columns": [
+          {
+            "name": "value",
+            "type": "int8|int16|int32|int64|uint8|uint16|uint32|uint64",
+            "unit": "none",
+            "role": "unspecified"
+          }
+        ]
+      },
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.number_overflow",
+          "data.type_mismatch"
+        ],
+        "invariants": [
+          "boundary values round-trip with their declared width and signedness",
+          "one step past the declared width is rejected, never wrapped or truncated",
+          "a signed append into an unsigned field and the reverse are type rejections",
+          "columnar storage equals the scalar reference over a fixed seed"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-3",
+        "data-conformance-plan:4.1-1-3"
+      ],
+      "tolerance": "bit-exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "signed_integer_boundaries_round_trip_without_wrapping",
+        "unsigned_integer_boundaries_keep_their_width_and_signedness",
+        "columnar_storage_matches_the_scalar_reference_over_a_seeded_sequence"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-003",
+      "family": "TYP",
+      "title": "float32 and float64 values including subnormal, largest finite, 1/3 and 0.1",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "DG-DATA-006"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "d841083d31784f89e20e3818783454e55c1085273b2707033ee142d7ea695e79",
+      "bytes": 273,
+      "schema": {
+        "columns": [
+          {
+            "name": "value",
+            "type": "float32|float64",
+            "unit": "none",
+            "role": "unspecified"
+          }
+        ]
+      },
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.type_mismatch"
+        ],
+        "invariants": [
+          "stored bit pattern equals the declared scalar's bit pattern",
+          "storage width is 32 or 64 bits as declared",
+          "a float64 append into a float32 field and the reverse are rejected"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:4.1-4"
+      ],
+      "tolerance": "bit-exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "float_storage_is_exact_and_never_promoted_or_demoted"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-005",
+      "family": "TYP",
+      "title": "Positive zero, negative zero and operations that produce signed zero",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "DG-DATA-006"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "8ea8ddddd663ac0cbe9ce2fb44b0ef3efaa0ee32b089ad3f97c36a93896a0073",
+      "bytes": 272,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "the sign bit of zero is stored and observable",
+          "IEEE numeric equality treats -0 and +0 as equal",
+          "structural identity keeps them distinct",
+          "multiplication and division that produce -0 store -0"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:4.1-2"
+      ],
+      "tolerance": "bit-exact plus comparison assertions",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "signed_zero_keeps_its_sign_and_both_comparisons_hold"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-006",
+      "family": "TYP",
+      "title": "NaN with distinct payloads, positive infinity and negative infinity",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "DG-DATA-006",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "d4ed517add5e837e87d35ba47cdeaa4cd33d772e6f794a5a3d10eee81bf041bd",
+      "bytes": 586,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.number_overflow",
+          "data.type_mismatch"
+        ],
+        "invariants": [
+          "a NaN payload is preserved through a published version",
+          "all NaN payloads compare equal for change detection while their bits stay distinct",
+          "IEEE equality of two NaNs is unordered, not false",
+          "infinities are values, keep their sign and are not clipped",
+          "NaN and infinity are never reported as missing",
+          "a bit form is accepted only when the declared type reports exactly those bits back, so a narrow width never masks the high bits and a boolean takes only 0 or 1"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:4.1-4",
+        "data-conformance-plan:14"
+      ],
+      "tolerance": "bit-exact through in-memory versions",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "nan_payloads_and_infinities_are_values_not_missing_or_errors"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "The Arrow IPC and SQLite payload boundary is P2-006's open decision; this fixture covers the in-memory model only"
+    },
+    {
+      "fixture_id": "EG-FX-TYP-007",
+      "family": "TYP",
+      "title": "Empty string, whitespace-only string, missing cell, zero, NaN and infinities in one table",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-011",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "ca41ebb4e938f43789dd8c2bd0245e61fd4ec3eb68ac413324ba388a710426a1",
+      "bytes": 371,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "empty text, whitespace, missing, zero, NaN and both infinities stay pairwise distinct",
+          "no implicit trim turns whitespace into empty or missing",
+          "a textual 0, nan or inf stays text and never merges with the numeric state",
+          "the states stay distinct after an edit published a successor version"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:4.1-2"
+      ],
+      "tolerance": "exact state class",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "empty_text_whitespace_missing_zero_nan_and_infinity_stay_distinct"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-008",
+      "family": "TYP",
+      "title": "Unicode labels and text: combining sequences, emoji, right-to-left marks, U+4E2D, embedded NUL",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-011",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "a9640a4c720184ba92f8be8f89cfcd02dbb88becf4e09a138f2b3dc70730b333",
+      "bytes": 521,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.invalid_text"
+        ],
+        "invariants": [
+          "code points are stored exactly with no normalization, case fold or trim",
+          "a combining sequence stays distinct from its precomposed form",
+          "an embedded NUL is rejected by the declared default policy with its byte offset",
+          "an explicitly allowing policy stores the NUL unchanged",
+          "invalid UTF-8 is rejected with a byte offset and never replaced",
+          "a non-Latin label stays presentation only and never changes the column identity"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.3",
+        "data-conformance-plan:4.1-5",
+        "data-conformance-plan:14"
+      ],
+      "tolerance": "exact code points",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "unicode_text_and_labels_keep_their_code_points_without_normalizing"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "Embedded NUL beyond the declared default-reject policy stays an open decision with P2-003"
+    },
+    {
+      "fixture_id": "EG-FX-TYP-011",
+      "family": "TYP",
+      "title": "Date-only values, leap day, pre-1970 date and a timestamp with an explicit offset",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "bea683c52f58b62f0c23c057f2aaa3012c89f75f80a0b694281aafcc2ee5cbce",
+      "bytes": 650,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.date_format",
+          "data.unknown_zone",
+          "data.type_mismatch"
+        ],
+        "invariants": [
+          "the epoch day count is exact and a day outside the month is rejected",
+          "leap-day and pre-epoch ordinals round-trip through the proleptic Gregorian rule",
+          "date-only, naive and zoned values of one number are different state classes",
+          "a zoned resolution records the exact instant, offset and zone",
+          "a half-hour zone offset is exact, not rounded",
+          "a zoned field must declare a zone the rule table lists, and no other type may carry one",
+          "the declared zone is part of the canonical schema text a later reader resolves"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:4.1-6",
+        "data-conformance-plan:14"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "date_naive_and_zoned_values_keep_their_type_and_their_instant"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "The production IANA database source and version stays an open decision with P1-003 and P2-002; EG-TZ-RULES-1 is the declared embedded rule table"
+    },
+    {
+      "fixture_id": "EG-FX-TYP-012",
+      "family": "TYP",
+      "title": "Timestamp at a DST gap and a DST overlap in a named zone",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "a09b4ed83d72ecf6e9d760af8c7407f4fcbbb3c466afea2ecfffbb25d4a38166",
+      "bytes": 521,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.date_nonexistent",
+          "data.date_ambiguous",
+          "data.unknown_zone"
+        ],
+        "invariants": [
+          "a nonexistent local time is rejected unless a declared pre or post transition policy is chosen",
+          "an ambiguous local time requires an explicit choice",
+          "the chosen policy resolves to the offset in effect before or after the transition",
+          "the zone identifier and the local time appear in the diagnostic location",
+          "an unlisted zone identifier is rejected rather than treated as UTC"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.3",
+        "data-conformance-plan:4.1-6"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "dst_gap_and_overlap_need_a_declared_resolution_with_the_zone"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-014",
+      "family": "TYP",
+      "title": "Low-cardinality text and declared categorical data with an unseen category",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-011",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "cd4bf9a41775363d333e7919202cec405b5794a088fd6c5b1d43125940e3c8d5",
+      "bytes": 433,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.unknown_category",
+          "data.duplicate_id"
+        ],
+        "invariants": [
+          "dictionary codes are stable across a published version and its successor",
+          "an unseen category follows the declared policy: rejected, or missing and never code 0",
+          "a categorical field with no dictionary is rejected at declaration",
+          "duplicate dictionary labels are rejected",
+          "a negative category code is rejected"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:4.1-2",
+        "data-conformance-plan:4.2"
+      ],
+      "tolerance": "exact code and diagnostic if rejected",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "categorical_codes_are_stable_and_an_unseen_category_is_declared"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-016",
+      "family": "TYP",
+      "title": "Empty table, header-only table, all-missing column and all-NaN column",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-011",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "b04ee2017cda02a728ff5773cc81bc162e144eda000dc7bd78d65793c6387d30",
+      "bytes": 586,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [
+          "data.unmapped_row",
+          "data.type_mismatch",
+          "data.index_out_of_range",
+          "data.resource_limit"
+        ],
+        "invariants": [
+          "a declared schema with zero rows and no chunks is an exact state, not a failure",
+          "an all-missing column keeps every cell missing and the row count exact",
+          "an all-NaN column keeps every cell a value, not missing",
+          "an empty chunk cannot cover a non-empty version, a missing chunk coverage and a chunk of the wrong type are all rejected",
+          "reading outside the row count reports an index error rather than inventing a value"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:4.1-1",
+        "data-conformance-plan:4.2"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "empty_all_missing_and_all_nan_tables_are_exact_and_invent_nothing"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-TYP-017",
+      "family": "TYP",
+      "title": "Very large and very small magnitudes and operations that overflow to infinity",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "DG-DATA-006"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "a1b72cc4012cc51e388f85187710fafdca4009fa6c5b54f76ed05b1188a725fb",
+      "bytes": 411,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "largest finite, smallest normal, subnormal and both infinities keep their bit patterns",
+          "a value that overflowed to infinity is stored as infinity and never clipped back",
+          "a value that underflowed to a signed zero keeps its sign",
+          "storage is lossless, so no precision-loss or overflow diagnostic is invented at the storage boundary"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:4.1-4"
+      ],
+      "tolerance": "bit-exact or declared data.overflow",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "extreme_magnitudes_keep_ieee_behavior_without_clipping"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "A producer that computes an overflow may declare data.overflow; the storage boundary itself reports none because it changes no value"
+    },
+    {
+      "fixture_id": "EG-FX-TYP-018",
+      "family": "TYP",
+      "title": "Rename a column, reorder columns, change display format, reopen",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-011",
+        "DG-DATA-005"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "a999c10d306c3868902df1ece63434543de6da41056ef09769fce66d6d4bc9a6",
+      "bytes": 318,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/typed_value_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "renaming, reordering and a display format leave the column identity, version identity, unit, role and stored values unchanged",
+          "the display format is stored as metadata only",
+          "the bindings of a worksheet read in declared order index order"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:4.1-7-8",
+        "data-conformance-plan:4.2"
+      ],
+      "tolerance": "exact IDs and values",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "rename_reorder_and_display_format_never_touch_values_units_or_ids"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "The reopen slice of this fixture belongs to P2-006; P2-002 covers the in-memory half"
+    },
+    {
+      "fixture_id": "EG-FX-ID-001",
+      "family": "ID",
+      "title": "Create project, workbook, worksheet, binding, dataset and chunks; save and reopen",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "6352bfd644f073090dcd78e6b7554f6cb8d9f2844cecbe75c87aa06e5bf17282",
+      "bytes": 337,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "every identity is the opaque id the caller allocated, never a position or a label",
+          "parent relationships resolve through those identities",
+          "a version names its dataset, row domain and chunks",
+          "reading the same document twice yields identical identities"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-2",
+        "data-conformance-plan:5.1-1"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "identities_and_parent_relationships_are_opaque_and_stable"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "Save and reopen is P2-006's half of this fixture; P2-002 covers the in-memory identities and relationships"
+    },
+    {
+      "fixture_id": "EG-FX-ID-002",
+      "family": "ID",
+      "title": "Rename and reorder worksheets, columns and labels",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "05310811e2ef26798fb3f028ad25d40020b84388dbcac3f7fec6f9ea6e18a686",
+      "bytes": 296,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "column identities, versions and values are unchanged by rename and reorder",
+          "a translated or display label never becomes an identity",
+          "references still resolve after the reorder, including columns_using(version)"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-1",
+        "data-conformance-plan:5.2"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "rename_reorder_and_label_editing_never_move_an_identity"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "Worksheet-level rename and reorder is exercised by P2-004, the named co-consumer of this fixture, whose record owns the worksheet edit commands"
+    },
+    {
+      "fixture_id": "EG-FX-ID-003",
+      "family": "ID",
+      "title": "Edit one chunk and publish a new version while holding the old version",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "af4e66b5c25f48bbb509c61d5cab0258f4fc9c53061edf7b463c2386119fa4fc",
+      "bytes": 562,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [
+          "data.unmapped_row",
+          "data.dangling_reference",
+          "data.type_mismatch"
+        ],
+        "invariants": [
+          "the held version keeps its identity, schema text, values and content hash unchanged",
+          "the successor references a different chunk and records the replaced version as a provenance parent",
+          "the binding and the previous-version reference move to the successor in one revision",
+          "the store keeps both versions",
+          "a successor that re-declares the field is rejected, so an edit cannot change type, unit or field identity"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-2",
+        "data-conformance-plan:5.1-2"
+      ],
+      "tolerance": "exact; prior version readable",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "an_edit_publishes_a_successor_and_the_prior_version_stays_readable"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-006",
+      "family": "ID",
+      "title": "Attempt to reuse a live id or assign a duplicate column id",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "863d5f0f094b0b1f056da8de10725ce4e76bf600f97135fcdb247a79d8b3825b",
+      "bytes": 500,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [
+          "data.duplicate_id"
+        ],
+        "invariants": [
+          "the reuse is rejected before commit with the duplicate detail code",
+          "no revision, event, undo entry or store payload is published by the rejected command",
+          "the rejected candidate stays invisible and the staged count returns to zero",
+          "identities are never reused, including a live row-domain identity",
+          "the rejection names the live object that already holds the identity with its type and revision"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-6",
+        "data-conformance-plan:3.5"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "a_live_identity_is_rejected_before_commit_and_nothing_is_published"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-007",
+      "family": "ID",
+      "title": "Delete a referenced column or dataset with dependents",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "531cdb2abf9d251be07c39f7ac5226c9e6a64ba52ac9655e3b157f8f0de4ca1f",
+      "bytes": 530,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [
+          "data.dangling_reference"
+        ],
+        "invariants": [
+          "deleting a version a binding still uses is rejected naming that binding",
+          "a derived version counts as a dependent of its inputs",
+          "once unreferenced the delete succeeds and undo restores the exact prior reference state",
+          "undo and redo depths are arithmetic and both entries replay in the original order",
+          "deleting a document reference keeps the immutable payload readable, so storage lifecycle is separate from the delete"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-5",
+        "data-conformance-plan:3.5"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "a_delete_that_would_strand_a_dependent_names_it_and_undoes_cleanly"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-009",
+      "family": "ID",
+      "title": "Build a formula or analysis result from two input versions",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "9789ff925cedf7a31c579a118ab688db780c5490c8bdeded8eaf0e746b4f2201",
+      "bytes": 354,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [
+          "data.dangling_reference"
+        ],
+        "invariants": [
+          "the derived version records exactly its two input versions with their content hashes and canonical parameters",
+          "an unrecorded input, a tampered input hash or a third input is rejected",
+          "the lineage is queryable in both directions from the store"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-6",
+        "data-conformance-plan:5.1-3"
+      ],
+      "tolerance": "exact IDs and hashes",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "a_derived_version_records_both_inputs_with_their_content_hashes"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "The formula and analysis producers of these inputs are P2-005 and P4 work; this fixture covers the data-model lineage"
+    },
+    {
+      "fixture_id": "EG-FX-ID-010",
+      "family": "ID",
+      "title": "Reorder columns and change roles or formats; save and reopen",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "2af0fb989237ab32edb24ea6a4bcd764f8d22e0941849bb143846e9997bdc93d",
+      "bytes": 284,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "role, unit and display format stay attached to the same column identity across a reorder",
+          "metadata-only commands publish no new version",
+          "a column that shares nothing with another keeps its own unit"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:4.1-8",
+        "data-conformance-plan:5.2"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "role_unit_and_format_follow_the_binding_through_reorder"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "Save and reopen is P2-006's half of this fixture"
+    },
+    {
+      "fixture_id": "EG-FX-ID-011",
+      "family": "ID",
+      "title": "Hold a read view, publish a new version, then read the old view",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "68a8fd08fe2cd658e4903d1047164fee4e13a896cb2d77e891d85ee6238386f8",
+      "bytes": 366,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "a lease holds shared ownership of the version and row domain it resolved and returns the old snapshot after a successor",
+          "a cell read by row identity resolves through the domain rather than an array position",
+          "the lease stays valid until released, with no buffer reference escaping"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-2",
+        "data-conformance-plan:5.1-7"
+      ],
+      "tolerance": "exact; no use-after-free under ASan",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "a_lease_keeps_the_snapshot_it_resolved_after_a_successor_is_published"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-012",
+      "family": "ID",
+      "title": "Try to mutate a published version through every public surface",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "EG-ADD-002"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "69f365140a338d3a9b1f2d01c95331f86604e7649b02036c0075eb5397622995",
+      "bytes": 762,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/identity_version_tests.cpp",
+        "diagnostics": [
+          "data.dangling_reference",
+          "data.unknown_draft",
+          "data.mirror_read_only"
+        ],
+        "invariants": [
+          "every published payload is reached only through an owned const handle or a value copy",
+          "a dataset version is not default-constructible, so it can only exist in its validated form",
+          "staging a candidate changes nothing a reader can see",
+          "a rejected command discards its staged payload and a corrected retry can reuse the draft",
+          "only the application executor moves a staged candidate into visible state",
+          "a chunk exists only as its builder published it, so no caller can hand out a payload that disagrees with its own digest",
+          "a mirror binding aliases one committed version and refuses a value edit through it"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-2",
+        "data-model:section-2"
+      ],
+      "tolerance": "compile-time and runtime boundary checks",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "no_public_surface_mutates_a_published_version"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-001",
+      "family": "UNIT",
+      "title": "Same unit, same value",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "ae122ba64ef16902995fbb79c730e08b39f780b8f1fe74605de7baa7103b86b5",
+      "bytes": 214,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "identity conversion is bit-exact and records the target unit",
+          "conversion never rewrites the stored source values or the version content hash"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:6.1-5"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "an_identity_conversion_changes_no_value_and_no_stored_data"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-002",
+      "family": "UNIT",
+      "title": "Length conversion among m, cm and mm",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "8171ce537ea5d2ee155b3c2fd6009ac6b19b5b71fb4dfbfbaf5accc0f6456dc6",
+      "bytes": 278,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "an exactly representable factor is bit-exact, not approximately equal",
+          "both directions round-trip to the original bits",
+          "the scale is carried as an exact rational and the dimension travels with the result"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:6.1-1"
+      ],
+      "tolerance": "exact when representable",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "length_conversions_are_bit_exact_in_both_directions"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-003",
+      "family": "UNIT",
+      "title": "Time conversion among s, ms, min and h",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "583b323cce759815d941f08a9f604847501d60961cd138146dfe5801b6ec4921",
+      "bytes": 208,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "time conversions are bit-exact and keep the duration dimension",
+          "addition across the same dimension converts through the declared scale"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:6.1-2"
+      ],
+      "tolerance": "exact when representable",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "time_conversions_keep_the_duration_dimension_and_are_exact"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-004",
+      "family": "UNIT",
+      "title": "Absolute temperature K, degC and degF",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "7949f1ecd8a3649770f353cdefba43db63720597fea2c453147d7734024a341d",
+      "bytes": 292,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "0 degC is 273.15 K and 32 degF is 0 degC under the affine rule",
+          "a purely multiplicative reading of the same input gives a different answer, which is what the assertion excludes",
+          "the offset is part of the unit identity"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:6.1-3",
+        "data-conformance-plan:14"
+      ],
+      "tolerance": "at most 1e-12 K absolute error",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "absolute_temperatures_convert_with_affine_not_multiplicative_rules"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-005",
+      "family": "UNIT",
+      "title": "Add two absolute temperatures and multiply an absolute temperature",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "77522cd8803b517ec73adfaccdb883d11d111694d39adb78edd403d099991a6c",
+      "bytes": 384,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [
+          "data.offset_unit_arithmetic"
+        ],
+        "invariants": [
+          "adding or subtracting two absolute values is rejected, not treated as scalar arithmetic",
+          "an absolute scale is not an algebraic factor",
+          "the declared difference units make the same arithmetic ordinary and keep the temperature dimension",
+          "the diagnostic location names both spellings"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:6.1-3",
+        "data-conformance-plan:3.5",
+        "data-conformance-plan:14"
+      ],
+      "tolerance": "data.offset_unit_arithmetic",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "absolute_offset_arithmetic_is_rejected_until_a_difference_unit_is_declared"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "The declared policy is delta_degC and delta_degF as difference units; absolute arithmetic stays rejected"
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-006",
+      "family": "UNIT",
+      "title": "Compound units such as m/s and kg/m3",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "c2899925722ab9a152174dd52e83e6f4c9f729d28c7e4e89855f9d7a90c5a40f",
+      "bytes": 378,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "the dimension vector combines and cancels correctly for products and quotients",
+          "conversion factors compound, so 36 km/h is exactly 10 m/s and 1000 kg/m3 is exactly 1 g/cm3",
+          "two spellings of one numerator set and denominator are one unit",
+          "a result keeps its dimension and is never silently dimensionless"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:6.1-1-2",
+        "data-conformance-plan:3.4"
+      ],
+      "tolerance": "exact or 1e-12 relative",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "compound_units_combine_and_cancel_their_dimensions_and_scales"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-007",
+      "family": "UNIT",
+      "title": "Add meters and seconds; convert a length to a time",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "c5934995887e3286743cddedda2d44d51d0ad0ec402852c9a6d714f6dd412876",
+      "bytes": 404,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [
+          "data.incompatible_unit"
+        ],
+        "invariants": [
+          "addition and subtraction across dimensions are rejected naming both units in the location",
+          "conversion across dimensions is rejected the same way",
+          "an absolute offset scale and a scale without a real zero are not convertible",
+          "a rejected unit operation publishes no version, no event and changes no metadata"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:6.1-2-5",
+        "data-conformance-plan:3.5"
+      ],
+      "tolerance": "data.incompatible_unit with both units",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "incompatible_units_are_rejected_naming_both_sides"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-012",
+      "family": "UNIT",
+      "title": "Unknown unit token, malformed compound unit, empty unit",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "e7f1b78a62c8c6781d6aaedec0f8213c681865819e9298566949e58ea4e4be71",
+      "bytes": 387,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [
+          "data.unknown_unit"
+        ],
+        "invariants": [
+          "unknown, malformed and empty spellings are rejected with the source text as location",
+          "no automatic unit invention and no fallback to dimensionless",
+          "dimensionless is declared by name (1 or percent), never by omission",
+          "a command that declares an unknown unit is rejected and changes no metadata"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:6.1-4",
+        "data-conformance-plan:3.5"
+      ],
+      "tolerance": "data.unknown_unit",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "unknown_malformed_and_empty_units_are_rejected_with_a_location"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-013",
+      "family": "UNIT",
+      "title": "Angle in radians and degrees; dimensionless ratio",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "07df3de89f93f6d54d4f06d583f74f7740055f934f6e1d2a83ed77ac2c7226e7",
+      "bytes": 361,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/unit_tests.cpp",
+        "diagnostics": [],
+        "invariants": [
+          "degree and radian conversion is within the declared relative tolerance and round-trips",
+          "an angle is a dimension, so it is neither dimensionless nor missing",
+          "a ratio of two angles is dimensionless",
+          "a column with no declared unit reports no unit rather than an implicit dimensionless one"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:3.4",
+        "data-conformance-plan:6.1-1"
+      ],
+      "tolerance": "1e-12 relative",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "angles_convert_within_tolerance_and_dimensionless_is_not_missing"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ALIGN-001",
+      "family": "ALIGN",
+      "title": "Same-domain source insertion and deletion",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-012"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "0bc82ae2e2f82b3e73cbdf5f9fb79d45af61bbfffc797a5865714d1d32fba0a1",
+      "bytes": 456,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/alignment_tests.cpp",
+        "diagnostics": [
+          "data.unmapped_row",
+          "data.unknown_draft"
+        ],
+        "invariants": [
+          "the worksheet and every same-domain binding move in one revision, with new row identities",
+          "an appended row is missing in every column and never invented",
+          "a deletion keeps the surviving identities and their values together",
+          "the superseded domain and its versions stay readable",
+          "a rejected row change leaves the previous revision intact"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-1",
+        "data-conformance-plan:7.1-1-7"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "a_row_change_moves_the_domain_and_every_same_domain_column_as_one_revision"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ALIGN-002",
+      "family": "ALIGN",
+      "title": "Foreign-domain keyed join with unique keys",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-012"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "e9c3b37810981a7fc4e66b679508a4475337c9b4a25b511d759ce06d8cb84d2a",
+      "bytes": 662,
+      "schema": {
+        "columns": [
+          {
+            "name": "key",
+            "type": "text",
+            "unit": "none",
+            "role": "label"
+          },
+          {
+            "name": "value",
+            "type": "float64",
+            "unit": "none",
+            "role": "y"
+          }
+        ]
+      },
+      "expected": {
+        "values": "tests/data/alignment_tests.cpp",
+        "diagnostics": [
+          "data.duplicate_join_key",
+          "data.type_mismatch",
+          "data.unmapped_row"
+        ],
+        "invariants": [
+          "target and source rows pair by key identity, not by current position",
+          "the source values and their content hash are unchanged by the join",
+          "the join lineage is recorded as an object with both domains and its mapped count",
+          "a duplicate key in the source is rejected rather than multiplied",
+          "the foreign binding resolves through the correspondence",
+          "a target row whose key matches nothing stays explicitly unmatched and no source value is invented for it",
+          "a source row no target names is reported as an unmatched source"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-1",
+        "data-conformance-plan:7.1-2-3"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "a_keyed_join_pairs_by_identity_and_leaves_the_source_values_untouched"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ALIGN-003",
+      "family": "ALIGN",
+      "title": "Foreign-domain positional mapping without explicit approval",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-012"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "7f17e5b8b9ee293cad126a67abf79440ef8b17750e380455fea6555ab2050487",
+      "bytes": 457,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/alignment_tests.cpp",
+        "diagnostics": [
+          "data.positional_mapping_required",
+          "data.type_mismatch"
+        ],
+        "invariants": [
+          "an unapproved positional mapping between unrelated domains is rejected and commits nothing",
+          "creating a foreign-domain column with no mapping is rejected the same way",
+          "an approved positional mapping is captured as stable id pairs, not a position zip",
+          "a same-domain column is rejected when declared as a correspondence case"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-1",
+        "data-conformance-plan:7.1-2"
+      ],
+      "tolerance": "data.positional_mapping_required",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "an_unapproved_positional_mapping_is_rejected_and_an_approved_one_pairs_ids"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ALIGN-006",
+      "family": "ALIGN",
+      "title": "Bind two columns of unequal length without a mapping",
+      "requirement_ids": [
+        "ORG-DATA-001",
+        "ORG-DATA-012"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-case-cells",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "9f3f42f97fce0bcf281956b5174a9825a0de39d0f1a66e4240fd20a79c5c6000",
+      "bytes": 340,
+      "schema": {},
+      "expected": {
+        "values": "tests/data/alignment_tests.cpp",
+        "diagnostics": [
+          "data.unmapped_row"
+        ],
+        "invariants": [
+          "a candidate shorter or longer than the worksheet domain is rejected naming both row counts",
+          "an approved positional mapping across unequal domains is rejected naming both lengths",
+          "nothing is zipped, padded or published by a rejected alignment"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-1",
+        "data-conformance-plan:7.1-3"
+      ],
+      "tolerance": "data.unmapped_row naming both lengths",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-002"
+      ],
+      "cases": [
+        "unequal_lengths_are_rejected_naming_both_and_never_zipped_or_padded"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    }
+  ]
+}

@@ -31,7 +31,7 @@ Qualification sequencing ([ADR-0005](docs/decisions/ADR-0005-platform-sequencing
 
 [Data model](docs/architecture/data-model.md) · [Rendering](docs/architecture/rendering-architecture.md) · [Concurrency/dataflow](docs/architecture/concurrency-model.md) · [AI](docs/architecture/ai-architecture.md) · [Plugins](docs/architecture/plugin-architecture.md) · [Project format](docs/architecture/project-file-format.md)
 
-[ADR-0001 Language](docs/decisions/ADR-0001-language-selection.md) · [ADR-0002 GUI](docs/decisions/ADR-0002-gui-framework.md) · [ADR-0003 Modules](docs/decisions/ADR-0003-application-architecture.md) · [ADR-0004 Storage](docs/decisions/ADR-0004-data-storage.md) · [ADR-0005 Platform sequencing](docs/decisions/ADR-0005-platform-sequencing.md)
+[ADR-0001 Language](docs/decisions/ADR-0001-language-selection.md) · [ADR-0002 GUI](docs/decisions/ADR-0002-gui-framework.md) · [ADR-0003 Modules](docs/decisions/ADR-0003-application-architecture.md) · [ADR-0004 Storage](docs/decisions/ADR-0004-data-storage.md) · [ADR-0005 Platform sequencing](docs/decisions/ADR-0005-platform-sequencing.md) · [ADR-0006 macOS P1 entry gate](docs/decisions/ADR-0006-macos-p1-entry-gate.md)
 
 ## Phase-0 checks
 
