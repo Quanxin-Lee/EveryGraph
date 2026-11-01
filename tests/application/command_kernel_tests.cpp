@@ -12,6 +12,7 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "everygraph/application/command_gateway.hpp"
@@ -35,9 +36,11 @@ using everygraph::application::DocumentEvent;
 using everygraph::application::DocumentSnapshot;
 using everygraph::application::EffectClass;
 using everygraph::application::ExecutionContext;
+using everygraph::application::GatewayOptions;
 using everygraph::application::ObjectState;
 using everygraph::application::ParameterMap;
 using everygraph::application::Repeatability;
+using everygraph::application::ValidatedDocument;
 using everygraph::application::Value;
 using everygraph::foundation::Error;
 using everygraph::foundation::ErrorCode;
@@ -438,8 +441,21 @@ void require_error(const CommandOutcome& outcome, ErrorCode code) {
     EG_REQUIRE_EQ(outcome.error->code, code);
 }
 
+// Unwraps the checked-snapshot conversion: a document this suite means to be
+// valid must validate and build a gateway, and a rejection here is a defect the
+// suite reports rather than a case it skips.
+[[nodiscard]] CommandGateway require_gateway(CommandRegistry registry, DocumentSnapshot document,
+                                             GatewayOptions options = {}) {
+    auto validated = ValidatedDocument::from(std::move(document));
+    if (const auto* error = std::get_if<Error>(&validated)) {
+        throw TestFailure("snapshot validation failed: " + error->message);
+    }
+    return CommandGateway(std::move(registry),
+                          std::get<ValidatedDocument>(std::move(validated)), std::move(options));
+}
+
 EG_TEST(registry_rejects_unknown_command) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     const auto outcome = gateway.execute(make_request("demo.unknown", "req-unknown"));
     require_error(outcome, ErrorCode::unknown_command);
     EG_REQUIRE_EQ(gateway.undo_depth(), std::size_t{0});
@@ -474,7 +490,7 @@ EG_TEST(registry_rejects_external_effects) {
 }
 
 EG_TEST(registry_rejects_unsupported_schema_version) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_value", "req-version");
     request.schema_version = 2;
     const auto outcome = gateway.execute(request);
@@ -482,7 +498,7 @@ EG_TEST(registry_rejects_unsupported_schema_version) {
 }
 
 EG_TEST(registry_rejects_malformed_arguments) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_value", "req-arguments");
     set_object_argument(request, 1);
     expect_write(request, 1, 1);
@@ -492,7 +508,7 @@ EG_TEST(registry_rejects_malformed_arguments) {
 }
 
 EG_TEST(gateway_rejects_stale_write_revision) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_value", "req-stale-write");
     set_object_argument(request, 1);
     set_value_argument(request, 99);
@@ -506,7 +522,7 @@ EG_TEST(gateway_rejects_stale_write_revision) {
 }
 
 EG_TEST(gateway_rejects_stale_read_revision) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_value", "req-stale-read");
     set_object_argument(request, 1);
     set_value_argument(request, 99);
@@ -520,7 +536,7 @@ EG_TEST(gateway_rejects_stale_read_revision) {
 }
 
 EG_TEST(transaction_commits_multi_object_edit_once) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     std::vector<EventSequence> sequences;
     const auto subscription = gateway.subscribe([&sequences](const DocumentEvent& event) {
         sequences.push_back(event.sequence);
@@ -563,7 +579,7 @@ EG_TEST(transaction_commits_multi_object_edit_once) {
 }
 
 EG_TEST(undo_and_redo_restore_state_with_new_revisions) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.edit_pair", "req-history-edit");
     set_triple_arguments(request, 1, 2, 3, 99);
     expect_write(request, 1, 1);
@@ -601,7 +617,7 @@ EG_TEST(undo_and_redo_restore_state_with_new_revisions) {
 }
 
 EG_TEST(history_reports_empty_stacks_and_new_edit_clears_redo) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     require_error(gateway.undo(), ErrorCode::nothing_to_undo);
     require_error(gateway.redo(), ErrorCode::nothing_to_redo);
 
@@ -633,7 +649,7 @@ EG_TEST(canceled_command_publishes_nothing) {
         return std::nullopt;
     };
     register_command(registry, std::move(definition));
-    CommandGateway gateway(std::move(registry), make_document());
+    CommandGateway gateway = require_gateway(std::move(registry), make_document());
     int notifications = 0;
     gateway.subscribe([&notifications](const DocumentEvent&) { ++notifications; });
 
@@ -669,7 +685,7 @@ EG_TEST(canceled_handler_discards_staged_candidate) {
         return context.check_canceled();
     };
     register_command(registry, std::move(definition));
-    CommandGateway gateway(std::move(registry), make_document());
+    CommandGateway gateway = require_gateway(std::move(registry), make_document());
     int notifications = 0;
     gateway.subscribe([&notifications](const DocumentEvent&) { ++notifications; });
 
@@ -688,7 +704,7 @@ EG_TEST(canceled_handler_discards_staged_candidate) {
 }
 
 EG_TEST(rejected_candidate_publishes_nothing) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     int notifications = 0;
     gateway.subscribe([&notifications](const DocumentEvent&) { ++notifications; });
 
@@ -714,7 +730,7 @@ EG_TEST(handler_exception_is_reported_without_publication) {
         throw std::runtime_error("handler failure");
     };
     register_command(registry, std::move(definition));
-    CommandGateway gateway(std::move(registry), make_document());
+    CommandGateway gateway = require_gateway(std::move(registry), make_document());
 
     auto request = make_request("demo.throw", "req-handler-throw");
     set_object_argument(request, 1);
@@ -729,7 +745,7 @@ EG_TEST(handler_exception_is_reported_without_publication) {
 }
 
 EG_TEST(listener_exception_is_contained) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     int healthy_calls = 0;
     gateway.subscribe([](const DocumentEvent&) { throw std::runtime_error("listener failure"); });
     gateway.subscribe([&healthy_calls](const DocumentEvent&) { ++healthy_calls; });
@@ -761,7 +777,7 @@ EG_TEST(stop_after_handler_prevents_commit) {
         return std::nullopt;
     };
     register_command(registry, std::move(definition));
-    CommandGateway gateway(std::move(registry), make_document());
+    CommandGateway gateway = require_gateway(std::move(registry), make_document());
 
     auto request = make_request("demo.set_value", "req-stop-after-handler");
     set_object_argument(request, 1);
@@ -777,7 +793,7 @@ EG_TEST(stop_after_handler_prevents_commit) {
 }
 
 EG_TEST(undeclared_writes_are_rejected) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_value", "req-undeclared");
     set_object_argument(request, 1);
     set_value_argument(request, 99);
@@ -812,7 +828,7 @@ EG_TEST(handler_reentrancy_cannot_commit_stale_candidate) {
     };
     register_command(registry, std::move(definition));
     register_command(registry, make_set_value_definition());
-    CommandGateway gateway(std::move(registry), make_document());
+    CommandGateway gateway = require_gateway(std::move(registry), make_document());
     gateway_pointer = &gateway;
 
     auto outer = make_request("demo.outer", "req-outer");
@@ -837,7 +853,7 @@ EG_TEST(double_no_op_detection_handles_nan_and_signed_zero) {
 
     CommandRegistry registry;
     register_command(registry, make_set_double_definition());
-    CommandGateway gateway(std::move(registry), std::move(document));
+    CommandGateway gateway = require_gateway(std::move(registry), std::move(document));
 
     auto nan_request = make_request("demo.set_double", "req-nan");
     set_object_argument(nan_request, 1);
@@ -869,7 +885,7 @@ EG_TEST(read_only_effect_cannot_mutate_document) {
     definition.command_id = "demo.read_only_write";
     definition.effect = EffectClass::read_only;
     register_command(registry, std::move(definition));
-    CommandGateway gateway(std::move(registry), make_document());
+    CommandGateway gateway = require_gateway(std::move(registry), make_document());
 
     auto request = make_request("demo.read_only_write", "req-read-only");
     set_object_argument(request, 1);
@@ -884,7 +900,7 @@ EG_TEST(read_only_effect_cannot_mutate_document) {
 }
 
 EG_TEST(repeat_last_reproduces_without_duplicate_result) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_pair", "req-pair");
     set_pair_arguments(request, 1, 2, 42, 43);
     expect_write(request, 1, 1);
@@ -912,7 +928,7 @@ EG_TEST(repeat_last_reproduces_without_duplicate_result) {
 }
 
 EG_TEST(non_repeatable_last_action_is_rejected) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.edit_pair", "req-edit-non-repeatable");
     set_triple_arguments(request, 1, 2, 3, 99);
     expect_write(request, 1, 1);
@@ -929,7 +945,7 @@ EG_TEST(non_repeatable_last_action_is_rejected) {
 }
 
 EG_TEST(reopen_parameters_are_immutable_and_reproduce_command) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_pair", "req-reopen-seed");
     set_pair_arguments(request, 1, 2, 42, 43);
     expect_write(request, 1, 1);
@@ -969,7 +985,7 @@ EG_TEST(reopen_parameters_are_immutable_and_reproduce_command) {
 
 EG_TEST(event_listener_cannot_mutate_history) {
     std::optional<CommandOutcome> nested;
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     const auto subscription = gateway.subscribe([&gateway, &nested](const DocumentEvent&) {
         nested = gateway.undo();
     });
@@ -989,10 +1005,103 @@ EG_TEST(event_listener_cannot_mutate_history) {
 }
 
 EG_TEST(request_envelope_validation) {
-    CommandGateway gateway(make_registry(), make_document());
+    CommandGateway gateway = require_gateway(make_registry(), make_document());
     auto request = make_request("demo.set_value", "");
     const auto outcome = gateway.execute(request);
     require_error(outcome, ErrorCode::invalid_request);
+}
+
+EG_TEST(initial_snapshot_keyed_under_another_object_id_is_rejected) {
+    DocumentSnapshot document;
+    const ObjectState misplaced = make_object(7, 1, 30);
+    document.objects.emplace(ObjectId{9}, misplaced);
+
+    auto validated = ValidatedDocument::from(std::move(document));
+
+    const auto* error = std::get_if<Error>(&validated);
+    EG_REQUIRE(error != nullptr);
+    EG_REQUIRE_EQ(error->code, ErrorCode::invalid_argument);
+    EG_REQUIRE(error->message.find("object 7 under the different object id 9") !=
+               std::string::npos);
+    EG_REQUIRE(!std::holds_alternative<ValidatedDocument>(validated));
+}
+
+EG_TEST(initial_snapshot_keyed_under_the_invalid_object_id_is_rejected) {
+    DocumentSnapshot document;
+    const ObjectState invalid = make_object(0, 1, 30);
+    document.objects.emplace(ObjectId{0}, invalid);
+
+    auto validated = ValidatedDocument::from(std::move(document));
+
+    const auto* error = std::get_if<Error>(&validated);
+    EG_REQUIRE(error != nullptr);
+    EG_REQUIRE_EQ(error->code, ErrorCode::invalid_argument);
+    EG_REQUIRE(error->message.find("invalid object id 0") != std::string::npos);
+    EG_REQUIRE(!std::holds_alternative<ValidatedDocument>(validated));
+}
+
+EG_TEST(gateway_keeps_one_identity_per_object_from_a_validated_snapshot) {
+    CommandGateway gateway = require_gateway(make_registry(), make_document(), GatewayOptions{2});
+
+    std::vector<ObjectId> event_ids;
+    const auto subscription = gateway.subscribe([&event_ids](const DocumentEvent& event) {
+        for (const auto& change : event.changes) {
+            event_ids.push_back(change.object_id);
+        }
+    });
+    EG_REQUIRE(subscription != 0);
+
+    const DocumentSnapshot loaded = gateway.snapshot();
+    for (const auto& entry : loaded.objects) {
+        EG_REQUIRE(entry.second.id == entry.first);
+    }
+    EG_REQUIRE(loaded.find(ObjectId{1}) != nullptr);
+    EG_REQUIRE_EQ(loaded.find(ObjectId{2})->id, ObjectId{2});
+
+    auto request = make_request("demo.edit_pair", "req-identity-edit");
+    set_triple_arguments(request, 1, 2, 3, 99);
+    expect_write(request, 1, 1);
+    expect_write(request, 2, 1);
+    expect_write(request, 3, 0);
+    const auto outcome = gateway.execute(request);
+    EG_REQUIRE(outcome.succeeded());
+
+    EG_REQUIRE_EQ(event_ids.size(), std::size_t{3});
+    const DocumentSnapshot after_edit = gateway.snapshot();
+    for (const auto id : event_ids) {
+        const ObjectState* stored = after_edit.find(id);
+        EG_REQUIRE(stored != nullptr);
+        EG_REQUIRE_EQ(stored->id, id);
+        EG_REQUIRE_EQ(outcome.revisions.at(id), stored->revision);
+    }
+
+    auto stale = make_request("demo.set_value", "req-identity-stale");
+    set_object_argument(stale, 3);
+    set_value_argument(stale, 7);
+    expect_write(stale, 3, 0);
+    require_error(gateway.execute(stale), ErrorCode::revision_conflict);
+
+    const auto undone = gateway.undo();
+    EG_REQUIRE(undone.succeeded());
+    for (const auto& entry : gateway.snapshot().objects) {
+        EG_REQUIRE(entry.second.id == entry.first);
+    }
+    EG_REQUIRE(gateway.snapshot().find(ObjectId{3}) == nullptr);
+    EG_REQUIRE_EQ(gateway.undo_depth(), std::size_t{0});
+    EG_REQUIRE_EQ(gateway.redo_depth(), std::size_t{1});
+
+    // GatewayOptions{2} above must still bound the stack through the checked path.
+    for (std::size_t round = 0; round < 4; ++round) {
+        auto step = make_request("demo.set_value", "req-identity-cap-" + std::to_string(round));
+        set_object_argument(step, 1);
+        set_value_argument(step, 20 + static_cast<std::int64_t>(round));
+        expect_write(step, 1, object_revision(gateway.snapshot(), 1));
+        EG_REQUIRE(gateway.execute(step).succeeded());
+    }
+    EG_REQUIRE_EQ(gateway.undo_depth(), std::size_t{2});
+    for (const auto& entry : gateway.snapshot().objects) {
+        EG_REQUIRE(entry.second.id == entry.first);
+    }
 }
 
 }  // namespace

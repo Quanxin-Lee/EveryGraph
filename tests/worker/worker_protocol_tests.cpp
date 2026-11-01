@@ -19,6 +19,7 @@
 #include <string_view>
 #include <thread>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "everygraph/application/job_scheduler.hpp"
@@ -64,6 +65,7 @@ using everygraph::application::Repeatability;
 using everygraph::application::SchedulerConfig;
 using everygraph::application::SubmitDisposition;
 using everygraph::application::to_string;
+using everygraph::application::ValidatedDocument;
 using everygraph::application::Value;
 using everygraph::application::WorkerBehavior;
 using everygraph::application::WorkerCommitContext;
@@ -287,6 +289,19 @@ void wait_until_running(JobScheduler& scheduler, const std::string& job_id) {
     DocumentSnapshot snapshot;
     snapshot.objects[kTarget] = state;
     return snapshot;
+}
+
+// Unwraps the checked-snapshot conversion: `target_document()` keys its one
+// object by that object's own id, so a rejection here is a defect this suite
+// reports rather than a case it skips.
+[[nodiscard]] CommandGateway require_gateway(CommandRegistry registry,
+                                             DocumentSnapshot document) {
+    auto validated = ValidatedDocument::from(std::move(document));
+    if (const auto* error = std::get_if<Error>(&validated)) {
+        throw TestFailure("snapshot validation failed: " + error->message);
+    }
+    return CommandGateway(std::move(registry),
+                          std::get<ValidatedDocument>(std::move(validated)));
 }
 
 [[nodiscard]] std::optional<std::int64_t> computed_value(const DocumentSnapshot& snapshot) {
@@ -884,7 +899,7 @@ EG_TEST(superseding_submission_replaces_the_old_candidate) {
     EG_REQUIRE_EQ(scheduler.reservation_count(), std::size_t{0});
     EG_REQUIRE_EQ(scheduler.known_job_count(), std::size_t{1});
 
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     PublishedTracker published;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent& event) {
         ++published.events;
@@ -1042,7 +1057,7 @@ EG_TEST(superseding_a_child_job_announces_the_stop_and_runs_the_replacement) {
     EG_REQUIRE_EQ(*superseded.process_exit_code, 0);
 
     // The superseded child candidate stays out of the document.
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     std::size_t published = 0;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent&) { ++published; });
     const auto sequence = gateway.last_sequence();
@@ -1086,7 +1101,7 @@ EG_TEST(superseding_a_child_job_that_ignores_the_stop_records_the_termination) {
     EG_REQUIRE(superseded.error.has_value());
     EG_REQUIRE(superseded.error->code == ErrorCode::canceled);
 
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     std::size_t published = 0;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent&) { ++published; });
     const auto sequence = gateway.last_sequence();
@@ -1125,7 +1140,7 @@ EG_TEST(child_result_commits_through_the_gateway_only_once) {
     const auto outcome = terminal_outcome(scheduler, "child-commit");
     EG_REQUIRE(outcome.succeeded());
 
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     PublishedTracker published;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent& event) {
         ++published.events;
@@ -1205,7 +1220,7 @@ EG_TEST(late_candidate_after_cancellation_is_not_committable) {
     EG_REQUIRE(outcome.error.has_value());
     EG_REQUIRE(outcome.error->message.find("committable") != std::string::npos);
 
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     std::size_t published = 0;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent&) { ++published; });
     const auto sequence = gateway.last_sequence();
@@ -1357,7 +1372,7 @@ EG_TEST(child_numerical_failure_maps_to_a_structured_error) {
 }
 
 EG_TEST(kernel_publishes_nothing_for_a_non_succeeded_candidate) {
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     PublishedTracker published;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent& event) {
         ++published.events;
@@ -1423,7 +1438,7 @@ EG_TEST(stale_candidate_after_a_landing_edit_conflicts) {
     const auto outcome = terminal_outcome(scheduler, "stale-1");
     EG_REQUIRE(outcome.succeeded());
 
-    CommandGateway gateway{compute_registry(), target_document()};
+    CommandGateway gateway = require_gateway(compute_registry(), target_document());
     std::size_t published = 0;
     gateway.subscribe([&published](const everygraph::application::DocumentEvent&) { ++published; });
     const auto applied = gateway.execute(manual_edit_request("edit-1", 42));

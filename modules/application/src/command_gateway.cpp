@@ -44,10 +44,10 @@ static_assert(std::is_nothrow_move_assignable_v<LastActionRecord>,
 
 }  // namespace
 
-CommandGateway::CommandGateway(CommandRegistry registry, DocumentSnapshot initial_state,
+CommandGateway::CommandGateway(CommandRegistry registry, ValidatedDocument initial_state,
                                GatewayOptions options)
     : registry_(std::move(registry)),
-      document_(std::move(initial_state.objects)),
+      document_(std::move(initial_state.snapshot_.objects)),
       max_undo_entries_(options.max_undo_entries) {}
 
 std::optional<foundation::Error> CommandGateway::validate_envelope(

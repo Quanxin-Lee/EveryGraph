@@ -3,6 +3,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "everygraph/application/value.hpp"
@@ -29,6 +30,27 @@ struct DocumentSnapshot {
     std::map<foundation::ObjectId, ObjectState> objects;
 
     [[nodiscard]] const ObjectState* find(foundation::ObjectId id) const noexcept;
+};
+
+// A document snapshot checked to hold one identity per object: every map key
+// equals the id the stored object carries, and no key is the invalid id zero.
+// CommandGateway is built only from this form, so a loader, import or
+// undo-from-disk path cannot hand it a document whose lookup keys disagree with
+// the identities they hold; `from` reports a rejection instead of re-keying the
+// caller's objects, and the checked map has no accessor outside the gateway.
+class ValidatedDocument {
+public:
+    ValidatedDocument() = default;
+
+    [[nodiscard]] static std::variant<ValidatedDocument, foundation::Error> from(
+        DocumentSnapshot snapshot);
+
+private:
+    friend class CommandGateway;
+
+    explicit ValidatedDocument(DocumentSnapshot snapshot);
+
+    DocumentSnapshot snapshot_;
 };
 
 class CommandTransaction {

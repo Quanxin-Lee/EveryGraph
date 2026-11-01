@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace everygraph::desktop {
@@ -252,7 +253,21 @@ application::CommandRegistry make_fake_registry() {
     return registry;
 }
 
-FakeProject::FakeProject() : gateway_(make_fake_registry(), make_fake_document()) {}
+namespace {
+
+[[nodiscard]] application::ValidatedDocument require_valid_document(
+    application::DocumentSnapshot document) {
+    auto validated = application::ValidatedDocument::from(std::move(document));
+    if (const auto* error = std::get_if<Error>(&validated)) {
+        throw std::runtime_error("fake document rejected: " + error->message);
+    }
+    return std::get<application::ValidatedDocument>(std::move(validated));
+}
+
+}  // namespace
+
+FakeProject::FakeProject()
+    : gateway_(make_fake_registry(), require_valid_document(make_fake_document())) {}
 
 application::CommandGateway& FakeProject::gateway() noexcept {
     return gateway_;

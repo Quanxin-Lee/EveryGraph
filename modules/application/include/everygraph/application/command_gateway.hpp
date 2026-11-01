@@ -36,7 +36,7 @@ struct GatewayOptions {
 
 class CommandGateway {
 public:
-    explicit CommandGateway(CommandRegistry registry, DocumentSnapshot initial_state = {},
+    explicit CommandGateway(CommandRegistry registry, ValidatedDocument initial_state = {},
                             GatewayOptions options = {});
     CommandGateway(const CommandGateway&) = delete;
     CommandGateway& operator=(const CommandGateway&) = delete;

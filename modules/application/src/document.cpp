@@ -9,6 +9,27 @@ const ObjectState* DocumentSnapshot::find(foundation::ObjectId id) const noexcep
     return iterator == objects.end() ? nullptr : &iterator->second;
 }
 
+std::variant<ValidatedDocument, foundation::Error> ValidatedDocument::from(
+    DocumentSnapshot snapshot) {
+    for (const auto& entry : snapshot.objects) {
+        if (!entry.first.is_valid()) {
+            return foundation::Error{
+                foundation::ErrorCode::invalid_argument,
+                "document snapshot holds an object under the invalid object id 0"};
+        }
+        if (entry.second.id != entry.first) {
+            return foundation::Error{
+                foundation::ErrorCode::invalid_argument,
+                "document snapshot keys object " + foundation::to_string(entry.second.id) +
+                    " under the different object id " + foundation::to_string(entry.first)};
+        }
+    }
+    return ValidatedDocument(std::move(snapshot));
+}
+
+ValidatedDocument::ValidatedDocument(DocumentSnapshot snapshot)
+    : snapshot_(std::move(snapshot)) {}
+
 CommandTransaction::CommandTransaction(std::map<foundation::ObjectId, ObjectState> baseline)
     : candidate_(std::move(baseline)) {}
 
