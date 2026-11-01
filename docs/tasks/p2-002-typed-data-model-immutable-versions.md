@@ -167,7 +167,7 @@ Observations this task did not change (rule 3 and rule 8; each is a request to t
 
 Next task / concrete next action: none for this task — it is accepted, committed at `f26d9e9` and unblocked for its consumers. P2-003, P2-004, P2-006 and P2-007 consume this core; the follow-ups this task may not start are the P1-004 staging-capability and structured-diagnostic-channel requests, the P2-001 section 3.5 code rows, the draft and payload retention rule, and the mirror graph, refresh and cycle cases on P2-010.
 
-Board sync request for P0-000 (rule 11; the board is P0-000's and this executor wrote no board field): row `P2-002`, state reached `accepted`, proving commit `f26d9e9`. The row currently reads `planned`, so P0-000 owes it the sync plus the `notes` and any dependency release; the waiting backlog is coordination work, not a reason to keep this task open.
+Board sync request for P0-000 (rule 11; the board is P0-000's and this executor wrote no board field): row `P2-002`, state reached `accepted`, proving commit `f26d9e9`. P0-000 owes that row the sync, its `notes` and any dependency release; the waiting backlog is coordination work, not a reason to keep this task open.
 
 Files or commands needed to resume: [data model](../architecture/data-model.md), [module design](../architecture/module-design.md), [project file format](../architecture/project-file-format.md), [functional scope](../planning/functional-scope.md), [P2-001 conformance plan](../engineering/data-conformance-plan.md), [P1-004 record](p1-004-command-transaction-kernel.md), [P1-011 record](p1-011-build-topology-per-module.md), [P1-013 record](p1-013-p1-exit-verification.md).
 
