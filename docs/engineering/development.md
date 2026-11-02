@@ -12,20 +12,22 @@ Observed on the implementation host, not inferred from a compatibility table:
 
 | Item | Observed value |
 | --- | --- |
-| OS | macOS 27.2, build 26B123 |
+| OS | macOS 27.0.1, build 26A434 |
 | Host and all three output binaries | arm64; Mach-O 64-bit arm64 executables |
-| Selected developer directory | `/Applications/Xcode.app/Contents/Developer` |
+| Selected developer directory | `/Library/Developer/CommandLineTools` |
 | Compiler | AppleClang 21.0.0 (`clang-2100.3.34.2`); CMake identifies `21.0.0.21000334` |
-| Compiler used by presets | `/usr/bin/clang++`, using the selected Xcode toolchain |
+| Compiler used by presets | `/usr/bin/clang++`, using the selected toolchain |
 | SDK | macOS 27.0 |
 | Deployment target | 14.4; also confirmed in the Debug binary's `LC_BUILD_VERSION` |
 | CMake | 3.31.6; project minimum 3.28 |
 | Ninja pip distribution | 1.11.1.4 |
 | `ninja --version` | `1.11.1.git.kitware.jobserver-1` |
-| Tool environment | `/tmp/everygraph-phase0-tools`, isolated Python virtual environment |
-| Local Python | 3.14.6; planning validation requires an interpreter >= 3.10 |
-| CMake-discovered Python | `/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14` |
+| Tool environment | repository `.venv`, prefixed on `PATH` by every recorded run |
+| Local Python | 3.13.9 (`.venv`); planning validation requires an interpreter >= 3.10 |
+| CMake-discovered Python | the interpreter `find_package(Python3)` selects, `.venv` when `Python3_EXECUTABLE` is pinned to it |
 | clang-format / clang-tidy | Not found on PATH; configuration supplied, checks not executed |
+
+Re-measured on 2026-11-02 during the P2-004 Qt-free regression on this host, which is why the OS, developer-directory, tool-environment and local-Python rows now report this host rather than the earlier `/tmp/everygraph-phase0-tools` run on macOS 27.2 build 26B123 with Python 3.14.6. The compiler, CMake, Ninja, SDK and deployment-target rows were unchanged by the rerun.
 
 The existing environment was provisioned with Python's `venv` and pip distributions `cmake==3.31.6` and `ninja==1.11.1.4`. The scaffold reused it by prefixing PATH; it installed no additional tools or libraries. The pip distribution version and the Ninja executable's reported version are deliberately recorded separately. Reproducing the provisioning method on a fresh host would use the following; these installation commands were not rerun during scaffold verification:
 
@@ -99,10 +101,15 @@ CMake requires `Python3` >= 3.10 with the `Interpreter` component. When `BUILD_T
 - `planning_validation`: the Python interpreter running `tools/validate_planning.py` from the source root, with a 60-second timeout.
 - `planning_validator_tests`: six standard-library unittest cases for validator behavior, with a 60-second timeout.
 - `command_kernel_tests`: the dependency-free command/transaction prototype executable, with a 60-second timeout.
+- `worker_protocol_tests`: the dependency-free worker codec and cancellation executable, with a 180-second timeout.
+- `data_tests`: the Qt-free P2-002 data-model executable over the typed value, identity/version, unit and row-alignment families, with a 120-second timeout.
+- `data_command_tests`: the Qt-free P2-004 worksheet-edit command executable over the row, cell, column and undo/repeat families, with a 120-second timeout.
 - `module_boundary_check`: a CMake script that rejects Qt includes and Qt type tokens in `modules/foundation` and `modules/application`, with a 30-second timeout.
 - `qt_probe_smoke`: only in Qt presets; the offscreen Qt Widgets probe with a 30-second timeout.
 
 The initial compiler-only runs used the anchored selection above. Before P1-004, the final review reran configure/build and the unfiltered suites; each passed 3/3. After P1-004, the Qt-free suites report 5/5 and the two Qt presets report 6/6; details and exact commands are in the kernel section below.
+
+Re-measured on 2026-11-02 during the P2-004 regression: `ctest --preset macos-debug -N` registers exactly the ten Qt-free entries listed above (`qt_probe_smoke` being the eleventh, Qt-only), and each of `macos-debug`, `macos-release` and `macos-sanitize` passes 10/10. `data_tests` and `data_command_tests` are the entries P2-002 and P2-004 added, so the per-task tables in the sections below record the runs of their own time and this 10/10 is the current full-suite total.
 
 ```sh
 ctest --preset macos-debug

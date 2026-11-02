@@ -1,0 +1,805 @@
+{
+  "fragment": "tests/data/commands/manifest-p2-004.json",
+  "owner_task": "P2-004",
+  "plan": "docs/engineering/data-conformance-plan.md",
+  "plan_version": "1.0",
+  "created": "2026-11-02",
+  "conventions": {
+    "sha256": "SHA-256 of the canonical JSON encoding (sorted keys, no spaces, ASCII escapes) of this entry's expected object",
+    "bytes": "UTF-8 length of that same canonical encoding",
+    "kind": "inline for hand-declared expected data; generated for seeded output reproducible from input.seed",
+    "cases": "test case names registered by tests/data/commands, each exercised by a case whose name carries the full fixture id",
+    "values": "the test source files that declare this fixture's cases; the cases themselves are the expected data, so the fragment holds no second golden table",
+    "diagnostics": "a domain detail code is written data.<code>; a code the P1-004 kernel reports itself is written application.<code>, which plan 3.5 maps to the same outer error code",
+    "expected_status": "pass, expected_diagnostic or deferred",
+    "boundary": "the slice of this fixture another task owns, and that task",
+    "minted": "TYP-019, TYP-020, UNIT-014, ID-014, ID-015, ID-016, ALIGN-019 and ALIGN-020 are added by P2-004 under plan section 15, which lets an implementation task add fixtures that alter no existing expectation; none reuses or renumbers an id the plan 1.0 tables or another fragment declares",
+    "review_status": "pending until the plan section 15 fixture review; the implementing task's independent reviewer is recorded in the task record",
+    "last_verified": "the executed run that proved this entry, recorded by the owning task record's Validation table"
+  },
+  "families": [
+    "TYP",
+    "ID",
+    "UNIT",
+    "ALIGN"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "EG-FX-TYP-019",
+      "family": "TYP",
+      "title": "Cell edits and block pastes validate type, width, missing state and category",
+      "requirement_ids": [
+        "DG-DATA-004",
+        "DG-DATA-005",
+        "ORG-DATA-011"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "7992edb21f1983f87a1fef0655fa74360985f5a676fe1aef773782d198b4eeb5",
+      "bytes": 1375,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/cell_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "data.type_mismatch",
+          "data.number_overflow",
+          "data.number_ambiguous",
+          "data.precision_loss",
+          "data.unknown_category",
+          "data.index_out_of_range"
+        ],
+        "invariants": [
+          "a cell edit publishes a successor version and the version it replaced stays readable with its values, metadata and identity unchanged",
+          "text into a numeric field, a blank into a field that declares no missing state, a fraction into an integer field and a value past the declared width are refusals that write nothing",
+          "an empty decimal payload and one that underflows the type to zero are refused, because a missing, error, NaN, infinite or empty text is never interchangeable with a value",
+          "the largest integer a width can name is refused by a float that cannot hold it exactly, and a decimal rounded past the signed bound is refused rather than stored as the boundary integer it did not name",
+          "a blank in a nullable field stores the missing state and never a zero",
+          "a category label outside the declared dictionary is refused instead of appended to it",
+          "an edit that states the value the column already holds publishes no object, no revision and no undo entry",
+          "a block paste writes from its anchor row and column, refuses a block reaching past the sheet or holding a value a target column cannot hold, and publishes nothing when no cell changes"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:4.1-1",
+        "data-conformance-plan:4.1-2",
+        "data-conformance-plan:4.1-3",
+        "data-conformance-plan:5.1-2",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact value, storage type and state class; stable detail code with location",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_cell_edit_publishes_a_successor_and_leaves_the_prior_version_intact",
+        "a_text_value_in_a_numeric_column_is_refused_and_the_value_stands",
+        "a_blank_cell_in_a_column_that_declares_no_missing_state_is_refused",
+        "a_blank_cell_in_a_nullable_column_is_stored_as_a_missing_value",
+        "a_fraction_into_an_integer_column_is_refused_as_a_precision_loss",
+        "a_value_outside_the_declared_width_is_refused_naming_the_type",
+        "an_empty_or_underflowing_decimal_payload_is_refused",
+        "an_integer_the_float_width_cannot_hold_is_refused_as_a_precision_loss",
+        "a_decimal_past_the_signed_integer_bound_is_refused",
+        "a_category_label_the_dictionary_does_not_declare_is_refused",
+        "a_cell_edit_that_states_the_value_the_column_holds_publishes_nothing",
+        "a_block_paste_writes_from_its_anchor_row_and_column",
+        "a_block_reaching_past_the_sheets_bounds_is_refused",
+        "a_block_with_one_value_a_column_cannot_hold_publishes_nothing",
+        "a_block_paste_that_changes_no_value_publishes_nothing"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "formula recalculation over an edited cell is P2-005 and reopen is P2-006; this fixture covers the in-memory edit command path only"
+    },
+    {
+      "fixture_id": "EG-FX-TYP-020",
+      "family": "TYP",
+      "title": "A column type change previews an incompatible conversion or refuses it",
+      "requirement_ids": [
+        "DG-DATA-002",
+        "DG-DATA-005",
+        "ORG-DATA-003"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "9284d33ba48d5348b305fd7e380660b5cbf86f7682fad1a56fdc54c17f046a38",
+      "bytes": 1176,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/column_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "data.precision_loss",
+          "data.type_mismatch",
+          "data.unknown_category",
+          "data.incompatible_unit"
+        ],
+        "invariants": [
+          "a preview reports the same loss as the change it predicts and writes nothing at all",
+          "a narrowing that would drop a value is refused until the caller declares the round policy, and the declared policy then states what it rounded",
+          "a numeric column does not become a temporal one through a type change",
+          "a type change keeps the unit the column declares and refuses a target naming another one",
+          "a categorical relabel moves each value through its label and refuses a label the dictionary does not hold",
+          "a value the target width does not hold exactly is refused by the preview and by the change alike, so no successor publishes a number that reads differently from the version it replaced",
+          "a non-finite state keeps its class through the one spelling this family writes for it, whatever payload the bit form installed, and is refused by a field that holds only finite values",
+          "the declared round policy rounds a fraction and never turns an infinity or NaN into an integer the caller did not state"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none",
+        "conversion_policy": "reject unless the caller declares round"
+      },
+      "policy_refs": [
+        "data-conformance-plan:4.1-1",
+        "data-conformance-plan:4.1-3",
+        "data-conformance-plan:4.1-7",
+        "data-conformance-plan:4.1-8",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "bit-exact for a preserved value; data.precision_loss naming source and target type",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_type_preview_and_the_refused_change_report_the_same_loss",
+        "a_type_preview_that_succeeds_still_changes_nothing",
+        "a_narrowing_change_needs_the_callers_declared_policy",
+        "a_numeric_column_never_becomes_a_temporal_one_by_a_type_change",
+        "a_type_change_never_drops_or_rekeys_the_unit_a_column_declares",
+        "a_relabelled_categorical_column_moves_each_value_through_its_label",
+        "a_type_change_to_a_float_that_cannot_hold_the_largest_integer_is_refused",
+        "a_non_finite_state_round_trips_through_text_and_refuses_an_integer_field",
+        "a_declared_round_policy_refuses_a_non_finite_state_in_an_integer_field",
+        "a_non_finite_payload_written_through_bits_reads_back_through_text"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-UNIT-014",
+      "family": "UNIT",
+      "title": "The unit a column declares governs every value an edit writes",
+      "requirement_ids": [
+        "EG-ADD-008",
+        "ORG-DATA-003",
+        "DG-DATA-004"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "738657007e8f48107f4945429f1e935f9756b9446218047d8430ade31cecdf38",
+      "bytes": 585,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/cell_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "data.incompatible_unit",
+          "data.unknown_unit",
+          "data.number_overflow"
+        ],
+        "invariants": [
+          "a value written in a convertible unit lands in the unit the column declares",
+          "a value in a unit of another dimension is refused rather than reinterpreted as a bare number",
+          "a unit on a value for a column that declares none is refused instead of dropped",
+          "an edit leaves the column's unit, role, display format and label alone",
+          "a conversion whose result leaves the range of the type is refused instead of published as an infinity"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:6.1-2",
+        "data-conformance-plan:6.1-4",
+        "data-conformance-plan:6.1-5",
+        "data-conformance-plan:6.1-6",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact when the factor is representable, otherwise 1e-12 relative",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_value_in_a_named_unit_lands_in_the_unit_the_column_declares",
+        "a_value_in_an_inconvertible_unit_is_refused_rather_than_reinterpreted",
+        "a_unit_on_a_value_for_a_unitless_column_is_refused",
+        "a_cell_edit_leaves_the_column_unit_role_format_and_label_alone",
+        "a_unit_conversion_past_the_top_of_double_is_refused"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "unit mapping at import is P2-003 and across save and reopen is P2-006; this fixture covers the unit the edit command reads and writes"
+    },
+    {
+      "fixture_id": "EG-FX-ID-005",
+      "family": "ID",
+      "title": "Insert, delete, move and undo rows and columns",
+      "requirement_ids": [
+        "ORG-DATA-003",
+        "DG-DATA-004",
+        "ORG-DATA-001"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "d127eda3b86d1ceac16d3f0a0c9088d5b763d88ce4c4f6b1a4153f802fa6a85f",
+      "bytes": 655,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/row_edit_tests.cpp",
+          "tests/data/commands/column_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "data.duplicate_id",
+          "data.unmapped_row"
+        ],
+        "invariants": [
+          "an inserted row takes a new identity and undo restores the exact prior row domain and version identities and bindings",
+          "a redo re-applies the row edit and a fresh edit closes the redo branch",
+          "a column insert at a position renumbers the columns after it and undo restores the prior order with every binding identity",
+          "a declared column order names every column of the worksheet exactly once",
+          "an edit naming an identity the document still holds is refused before anything is published"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-1",
+        "data-conformance-plan:5.1-4",
+        "data-conformance-plan:5.1-5",
+        "data-model:section-2"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "undo_restores_the_prior_domain_and_version_identities",
+        "redo_reapplies_a_row_edit_and_a_new_edit_clears_the_redo_stack",
+        "a_row_edit_that_reuses_a_live_identity_is_refused_before_publishing",
+        "a_column_insert_at_a_position_renumbers_the_columns_after_it",
+        "a_declared_column_order_names_every_column_once",
+        "undo_restores_the_previous_column_order_and_every_binding_identity"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-008",
+      "family": "ID",
+      "title": "Submit a cell edit with a stale expected revision",
+      "requirement_ids": [
+        "DG-DATA-004",
+        "ORG-DATA-003"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "964a55e35e13a9277799f266aba8c081de853e7dea35063ee8f54bfeb5bbf8b6",
+      "bytes": 396,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/cell_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "application.revision_conflict"
+        ],
+        "invariants": [
+          "an edit built against a stale expected revision is refused naming the revision it expected and the revision the object holds",
+          "the refusal publishes no version, no event and no undo entry",
+          "values, undo depth, published event count and last-action metadata are unchanged by it"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-6",
+        "data-conformance-plan:3.5",
+        "data-conformance-plan:14"
+      ],
+      "tolerance": "exact; the refusal is the kernel's application.revision_conflict, which plan 3.5 maps from data.stale_revision",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_stale_expected_revision_is_refused_and_the_newer_value_stands"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "the expected-revision check runs in the P1-004 kernel before the data handler, so the refusal carries the outer code and not a data.* detail; final code names stay inside plan section 14's open error-code registry decision owned by P1-004 and P2-002"
+    },
+    {
+      "fixture_id": "EG-FX-ID-013",
+      "family": "ID",
+      "title": "A row at a position after a move and an insertion",
+      "requirement_ids": [
+        "ORG-DATA-003",
+        "DG-DATA-004"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "78f95573b956385759cd06f4ce01b41b86b522028cc2c82ab98129a707512ca4",
+      "bytes": 376,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/row_edit_tests.cpp"
+        ],
+        "diagnostics": [],
+        "invariants": [
+          "a row move reorders the domain without renaming a row, and each value travels with its own row identity",
+          "a cell edit after a move addresses its row by identity, not by the position first seen",
+          "an inserted row keeps the identity it was given and holds no value until an edit declares one"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-1",
+        "data-conformance-plan:5.1-4",
+        "data-conformance-plan:7.1-4"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_row_move_reorders_the_domain_without_renaming_a_row",
+        "a_cell_edit_after_a_move_finds_its_row_by_identity",
+        "an_inserted_row_keeps_its_identity_and_holds_no_value"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "sorting and filtering views, and the correspondence half of ALIGN-010, belong to P2-010; this fixture covers the row identity the edit commands preserve"
+    },
+    {
+      "fixture_id": "EG-FX-ID-014",
+      "family": "ID",
+      "title": "Undo, redo and repeat-last-action over one transaction contract",
+      "requirement_ids": [
+        "ORG-DATA-003",
+        "DG-DATA-004"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "8637dbe204a30b08bf82e56ef49cf32a0e960070b5f75aeef104a7dba2985e8f",
+      "bytes": 725,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/undo_repeat_tests.cpp"
+        ],
+        "diagnostics": [
+          "application.nothing_to_undo",
+          "application.nothing_to_redo",
+          "application.not_repeatable"
+        ],
+        "invariants": [
+          "one undo reverses the whole transaction rather than one column of it and moves the entry onto the redo stack",
+          "a redo restores the edit under the identities it first used",
+          "repeating a cell edit that already landed states no difference and publishes nothing",
+          "a command that is not repeatable declines instead of issuing a second edit over identities the sheet now holds",
+          "an empty undo, redo and repeat each report the code that names which state is empty",
+          "the last-action record holds the transaction id and every revision its command produced"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-3",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact identities and revisions",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "undoing_a_row_edit_reverses_the_whole_transaction",
+        "redo_restores_the_edit_under_the_same_identities",
+        "repeating_a_cell_edit_is_a_no_op_rather_than_a_second_revision",
+        "a_row_insert_declines_to_repeat",
+        "an_empty_history_reports_nothing_to_undo_and_nothing_to_repeat",
+        "the_last_action_records_the_revisions_its_command_produced"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-015",
+      "family": "ID",
+      "title": "One edit is one transaction and one event names every object it moved",
+      "requirement_ids": [
+        "ORG-DATA-003",
+        "DG-DATA-004"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "25674cd17d40c049ab2fbfb77f43332bf96a96b349193ab240dda3e1c1836065",
+      "bytes": 517,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/undo_repeat_tests.cpp"
+        ],
+        "diagnostics": [],
+        "invariants": [
+          "a row edit publishes the worksheet, the revised row domain, each binding and each successor version in one revision and one event",
+          "the event's object list equals the revisions the outcome reports and each change is created or updated",
+          "a single-cell edit names only its binding and its successor version, and no other column of the sheet appears in the event",
+          "the subscriber is handed the same event the caller is told about"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-2",
+        "data-model:section-2",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact object ids and revisions",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_row_edit_publishes_domain_columns_and_versions_in_one_revision",
+        "a_cell_edit_event_names_the_binding_and_its_new_version_only"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ID-016",
+      "family": "ID",
+      "title": "No command reaches the document outside its declared write set",
+      "requirement_ids": [
+        "DG-DATA-004",
+        "ORG-DATA-003"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "379b5140542d34cc538db572b74fc81311934b5793ab2a1cb38f1d7425c83582",
+      "bytes": 429,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/undo_repeat_tests.cpp"
+        ],
+        "diagnostics": [
+          "application.reentrant_mutation",
+          "application.invalid_argument"
+        ],
+        "invariants": [
+          "a command issued from inside an event listener is refused before it runs and publishes nothing",
+          "an object the caller did not declare in its expected writes cannot be changed by a command",
+          "no edit command mutates a published version: the result is a new version or a refusal"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-conformance-plan:5.1-2",
+        "data-conformance-plan:5.1-7",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact; the refusal names the object it reached outside its declared write set",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_command_issued_from_an_event_listener_is_refused",
+        "an_undeclared_object_cannot_be_changed_by_a_command"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ALIGN-019",
+      "family": "ALIGN",
+      "title": "A row-shape edit rewrites every same-domain column in one revision",
+      "requirement_ids": [
+        "ORG-DATA-003",
+        "ORG-DATA-001",
+        "DG-DATA-004"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "49d28e35ef71644052f72165de8fec8e307cd0004ba31cd6bcff2c8b0244ef70",
+      "bytes": 917,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/row_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "data.unmapped_row",
+          "data.index_out_of_range"
+        ],
+        "invariants": [
+          "insert, delete, move and resize rewrite every same-domain column and the worksheet's row domain in one revision, so no reader sees a column ordered by the domain the sheet left",
+          "a new row gains the missing state in every column and a shrink drops the tail of every column",
+          "role, unit, display format, label and order index belong to the binding and survive a row edit",
+          "a resize that grows without new identities, a block covering rows it does not introduce and a position past the last row are refused naming the bounds",
+          "a move bounds its run by subtraction from the row count, so a start and length that add past the width of that count are refused rather than wrapping into a move that moves nothing",
+          "an edit that states no difference publishes no object and spends no identity"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-1",
+        "data-conformance-plan:7.1-1",
+        "data-conformance-plan:7.1-7",
+        "data-conformance-plan:7.1-9",
+        "data-conformance-plan:5.1-2",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_row_insert_rewrites_every_same_domain_column_in_one_revision",
+        "a_row_delete_leaves_role_unit_format_and_label_alone",
+        "a_row_edit_that_states_no_difference_publishes_no_object",
+        "a_resize_that_grows_names_new_identities_and_fills_the_block",
+        "a_resize_that_grows_without_new_identities_is_refused",
+        "a_resize_that_shrinks_keeps_the_head_of_every_column",
+        "a_row_edit_outside_the_sheets_bounds_is_refused",
+        "a_row_move_whose_run_adds_past_the_row_count_is_refused"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null
+    },
+    {
+      "fixture_id": "EG-FX-ALIGN-020",
+      "family": "ALIGN",
+      "title": "A mirror binding is read-only at every edit command",
+      "requirement_ids": [
+        "ORG-DATA-012",
+        "ORG-DATA-003"
+      ],
+      "kind": "inline",
+      "input": {
+        "generator": "tests-data-command-cases",
+        "generator_version": 1,
+        "seed": null
+      },
+      "sha256": "b4233dd1a17923a8b1d9f9d152a12b96266334696b43804173f8f7f1b2d25e97",
+      "bytes": 464,
+      "schema": {},
+      "expected": {
+        "values": [
+          "tests/data/commands/column_edit_tests.cpp",
+          "tests/data/commands/row_edit_tests.cpp"
+        ],
+        "diagnostics": [
+          "data.mirror_read_only"
+        ],
+        "invariants": [
+          "a cell set, a block paste, a type change and a row-shape edit over a sheet holding a mirror are refused with the read-only diagnostic",
+          "the refusal publishes no version and changes neither the mirror nor the binding it aliases",
+          "the mirror keeps aliasing the source column's version identity after the refusal"
+        ]
+      },
+      "expected_status": "pass",
+      "options": {
+        "locale": "C",
+        "timezone": "UTC",
+        "trim": "none",
+        "normalization": "none"
+      },
+      "policy_refs": [
+        "data-model:section-1",
+        "data-conformance-plan:7.1-6",
+        "data-conformance-plan:3.5",
+        "data-conformance-plan:15"
+      ],
+      "tolerance": "exact storage identity",
+      "environment": {
+        "locale": "C",
+        "timezone": "UTC",
+        "timezone_rules": "EG-TZ-RULES-1",
+        "unit_registry": "EG-UNIT-1"
+      },
+      "platform_scope": "macOS 14.4+ Apple Silicon executed; other targets unexecuted",
+      "rights": "synthetic",
+      "consumer_tasks": [
+        "P2-004"
+      ],
+      "cases": [
+        "a_cell_edit_of_a_mirror_is_refused",
+        "a_block_paste_covering_a_mirror_is_refused",
+        "a_type_change_of_a_mirror_is_refused",
+        "a_row_edit_of_a_sheet_holding_a_mirror_is_refused"
+      ],
+      "status": "active",
+      "review_status": "pending",
+      "last_verified": null,
+      "boundary": "mirror propagation, cycles and source deletion (ALIGN-007 to ALIGN-018) belong to P2-010; this fixture covers only the read-only refusal at an edit command"
+    }
+  ]
+}

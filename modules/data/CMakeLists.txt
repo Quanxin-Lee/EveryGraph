@@ -2,6 +2,7 @@ add_library(everygraph_data STATIC
     src/cell.cpp
     src/chunk.cpp
     src/commands.cpp
+    src/commands/worksheet_edit.cpp
     src/dataset.cpp
     src/datetime.cpp
     src/diagnostics.cpp
